@@ -1,0 +1,11 @@
+# 系统/编辑器
+.DS_Store
+Thumbs.db
+node_modules/
+
+# QA 截图（本地校验产物，不入库）
+qa/
+
+# 临时本地服务器
+tools/server.pid
+*.pid

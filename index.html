@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="考研备考 · 原生 JS PWA，可离线使用" />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="考研备考" />
+  <title>考研备考</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell" data-app>
+    <!-- 顶部固定栏 -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <span class="topbar__logo">KP</span>
+        <h1 class="topbar__title">考研备考</h1>
+      </div>
+      <div class="topbar__center" id="exam-countdown" data-countdown>
+        <span class="topbar__label">距离考试</span>
+        <span class="topbar__days" id="exam-days">--</span>
+        <span class="topbar__unit">天</span>
+      </div>
+      <div class="topbar__right">
+        <button class="btn btn--ghost btn--icon" id="export-data" data-export data-icon="↓" type="button" title="导出全部数据（JSON）" aria-label="导出数据">
+          <span class="btn-txt">↓ 导出</span>
+        </button>
+        <label class="btn btn--ghost btn--icon" data-icon="↑" title="导入数据（JSON）" aria-label="导入数据">
+          <span class="btn-txt">↑ 导入</span>
+          <input type="file" id="import-data" data-import accept="application/json,.json" hidden />
+        </label>
+        <button class="btn btn--primary" id="today-checkin" data-checkin type="button">
+          打卡
+        </button>
+      </div>
+    </header>
+
+    <!-- 导航：桌面侧栏 + 移动底部 Tab -->
+    <nav class="sidebar" id="sidebar" aria-label="主导航">
+      <ul class="sidebar__list">
+        <li class="nav-item" data-nav="dashboard"><span class="nav-item__icon">▤</span><span class="nav-item__text">仪表盘</span></li>
+        <li class="nav-item" data-nav="questions"><span class="nav-item__icon">❓</span><span class="nav-item__text">题库</span></li>
+        <li class="nav-item" data-nav="exam-past"><span class="nav-item__icon">📜</span><span class="nav-item__text">真题</span></li>
+        <li class="nav-item" data-nav="plan"><span class="nav-item__icon">🗓</span><span class="nav-item__text">计划</span></li>
+        <li class="nav-item" data-nav="vocab"><span class="nav-item__icon">📖</span><span class="nav-item__text">单词</span></li>
+        <li class="nav-item" data-nav="mistakes"><span class="nav-item__icon">📕</span><span class="nav-item__text">错题本</span></li>
+        <li class="nav-item" data-nav="review"><span class="nav-item__icon">🔁</span><span class="nav-item__text">间隔复习</span></li>
+        <li class="nav-item" data-nav="mock"><span class="nav-item__icon">🎯</span><span class="nav-item__text">模考</span></li>
+        <li class="nav-item" data-nav="notes"><span class="nav-item__icon">📝</span><span class="nav-item__text">笔记</span></li>
+      </ul>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main" id="main">
+      <section class="view" data-view="dashboard"></section>
+      <section class="view" data-view="questions"></section>
+      <section class="view" data-view="exam-past"></section>
+      <section class="view" data-view="plan"></section>
+      <section class="view" data-view="vocab"></section>
+      <section class="view" data-view="mistakes"></section>
+      <section class="view" data-view="review"></section>
+      <section class="view" data-view="mock"></section>
+      <section class="view" data-view="notes"></section>
+    </main>
+
+    <!-- 移动端底部 Tab -->
+    <nav class="tabbar" aria-label="底部导航">
+      <button class="tabbar__item" data-nav="dashboard">▤ 仪表盘</button>
+      <button class="tabbar__item" data-nav="questions">❓ 题库</button>
+      <button class="tabbar__item" data-nav="exam-past">📜 真题</button>
+      <button class="tabbar__item" data-nav="plan">🗓 计划</button>
+      <button class="tabbar__item" data-nav="vocab">📖 单词</button>
+      <button class="tabbar__item" data-nav="mistakes">📕 错题</button>
+      <button class="tabbar__item" data-nav="review">🔁 复习</button>
+      <button class="tabbar__item" data-nav="mock">🎯 模考</button>
+      <button class="tabbar__item" data-nav="notes">📝 笔记</button>
+    </nav>
+
+    <!-- 答题面板（覆盖层） -->
+    <div class="quiz-panel" id="quiz-panel" aria-hidden="true">
+      <div class="quiz-panel__inner" id="quiz-panel-inner"></div>
+    </div>
+
+    <!-- 离线 / 导入提示 -->
+    <div class="offline-hint" id="offline-hint" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="src/content.js"></script>
+  <script src="src/model.js"></script>
+  <script src="src/store.js"></script>
+  <script src="src/charts.js"></script>
+  <script src="src/app.js"></script>
+  <script src="sw-register.js"></script>
+</body>
+</html>
