@@ -1,6 +1,7 @@
 /**
- * tools/gen-icons.mjs — 无依赖生成美观 PWA 图标
- * 设计：圆角方形 + 品牌对角渐变 + 白色「翻开的书 + 上升箭头」
+ * tools/gen-icons.mjs — 无依赖生成「考研报考」PWA 图标
+ * 设计：圆角方形 + 品牌对角渐变 + 白色「定位针 + 上升箭头 + 校园建筑」
+ * 寓意：定位院校（择校）+ 成绩提升（箭头）+ 校园建筑（报考）
  * 采用 4x 超采样抗锯齿，输出 192/512/1024。
  * 用法：node tools/gen-icons.mjs
  */
@@ -44,17 +45,17 @@ function encodePNG(size, rgba) {
   return Buffer.concat([sig, pngChunk('IHDR', ihdr), pngChunk('IDAT', idat), pngChunk('IEND', Buffer.alloc(0))]);
 }
 
-/* ---------- 几何命中（0..1 归一化坐标） ---------- */
+/* ---------- 几何命中（0..1 归一化坐标，y 向下） ---------- */
 function hexToRgb(hex) {
   const m = hex.replace('#', '');
   return [parseInt(m.slice(0, 2), 16), parseInt(m.slice(2, 4), 16), parseInt(m.slice(4, 6), 16)];
 }
 
-const C0 = hexToRgb('#4f46e5');
-const C1 = hexToRgb('#a5b4fc'); // 更浅的品牌色，渐变更柔和
+const C0 = hexToRgb('#4f46e5'); // 品牌紫
+const C1 = hexToRgb('#a5b4fc'); // 浅紫
 const WHITE = [255, 255, 255];
 
-// 圆角方形（0..1）
+/* 圆角方形 */
 function inRoundSquare(u, v, r) {
   if (u < 0 || u > 1 || v < 0 || v > 1) return false;
   const cx = [r, 1 - r, r, 1 - r];
@@ -69,60 +70,70 @@ function inRoundSquare(u, v, r) {
   return true;
 }
 
-// 翻开的书：两个梯形叶（左/右），顶部外角高、中心书脊处略低（书自然合拢感）
-function inBook(u, v) {
-  const topOuterY = 0.34; // 叶顶部外角
-  const topCenterY = 0.42; // 中心书脊处（略低于外角，书合拢）
-  const bottomY = 0.70;    // 书底
-  const halfW = 0.28;     // 书半宽
-  const cx = 0.5;
-  function inLeaf(left) {
-    const s = left ? -1 : 1;
-    // 四边形：外角 (cx+s*halfW, topOuterY)、中心 (cx, topCenterY)、中心底 (cx, bottomY)、外底 (cx+s*halfW, bottomY)
-    const A = [cx + s * halfW, topOuterY];
-    const B = [cx, topCenterY];
-    const C = [cx, bottomY];
-    const D = [cx + s * halfW, bottomY];
-    // 点在凸四边形内：叉积一致性
-    function sign(P1, P2, P3) {
-      return (P2[0] - P1[0]) * (P3[1] - P1[1]) - (P3[0] - P1[0]) * (P2[1] - P1[1]);
-    }
-    const P = [u, v];
-    const d1 = sign(P, A, B), d2 = sign(P, B, C), d3 = sign(P, C, D), d4 = sign(P, D, A);
-    const hasPos = d1 > 0 || d2 > 0 || d3 > 0 || d4 > 0;
-    const hasNeg = d1 < 0 || d2 < 0 || d3 < 0 || d4 < 0;
-    return !(hasPos && hasNeg);
+/* 凸多边形命中（射线法，与顶点顺序无关，可靠） */
+function inPoly(P, poly) {
+  let inside = false;
+  const n = poly.length;
+  for (let i = 0, j = n - 1; i < n; j = i++) {
+    const xi = poly[i][0], yi = poly[i][1];
+    const xj = poly[j][0], yj = poly[j][1];
+    const intersects = ((yi > P[1]) !== (yj > P[1])) &&
+      (P[0] < (xj - xi) * (P[1] - yi) / (yj - yi) + xi);
+    if (intersects) inside = !inside;
   }
-  return inLeaf(true) || inLeaf(false);
+  return inside;
 }
 
-// 中央书脊缝隙（挖一条细缝，让左右叶分离）
-function inSpine(u, v) {
-  return Math.abs(u - 0.5) < 0.014 && v > 0.40 && v < 0.72;
+/* 1) 定位针（大头定位图标）：上圆 + 下尖 */
+function inPin(u, v) {
+  const cx = 0.5, cy = 0.38;
+  // 上半圆
+  if (Math.hypot(u - cx, v - cy) < 0.16 && v <= cy) return true;
+  // 下半尖（倒三角）
+  const tipY = 0.58;
+  if (v > cy && v < tipY) {
+    const t = (v - cy) / (tipY - cy);
+    const halfW = 0.16 * (1 - t);
+    return Math.abs(u - cx) < halfW;
+  }
+  return false;
+}
+/* 定位针内的小圆孔（挖掉） */
+function inPinHole(u, v) {
+  return Math.hypot(u - 0.5, v - 0.36) < 0.05;
 }
 
-// 上升箭头：斜杆（粗线段）+ 三角箭头，位置在书本右上方
+/* 2) 上升箭头：斜杆 + 三角头，位于定位针右上方 */
 function inArrow(u, v) {
-  const p1 = [0.64, 0.44], p2 = [0.82, 0.22];
+  const p1 = [0.60, 0.48], p2 = [0.78, 0.24];
   const dx = p2[0] - p1[0], dy = p2[1] - p1[1];
   const t = Math.max(0, Math.min(1, ((u - p1[0]) * dx + (v - p1[1]) * dy) / (dx * dx + dy * dy)));
   const qx = p1[0] + t * dx, qy = p1[1] + t * dy;
-  const inShaft = Math.hypot(u - qx, v - qy) < 0.034;
-  // 箭头三角：以 p2 为起点，沿箭杆方向
-  const tip = [0.84, 0.18];
-  const a1 = [0.74, 0.20];
-  const a2 = [0.80, 0.30];
-  function inTri(P, A, B, C) {
-    function sign(P1, P2, P3) {
-      return (P2[0] - P1[0]) * (P3[1] - P1[1]) - (P3[0] - P1[0]) * (P2[1] - P1[1]);
-    }
-    const Pt = [P[0], P[1]];
-    const d1 = sign(Pt, A, B), d2 = sign(Pt, B, C), d3 = sign(Pt, C, A);
-    const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
-    const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
-    return !(hasPos && hasNeg);
-  }
-  return inShaft || inTri([u, v], tip, a1, a2);
+  const inShaft = Math.hypot(u - qx, v - qy) < 0.026;
+  const tip = [0.80, 0.22];
+  const a1 = [0.68, 0.22];
+  const a2 = [0.78, 0.33];
+  const inHead = inPoly([u, v], [tip, a1, a2]);
+  return inShaft || inHead;
+}
+
+/* 3) 校园建筑：教学楼（主体矩形 + 屋顶 + 门洞 + 窗户）位于底部 */
+function inCampus(u, v) {
+  // 主体
+  const inBody = u > 0.32 && u < 0.68 && v > 0.68 && v < 0.86;
+  // 屋顶（梯形，射线法）
+  const inRoof = inPoly([u, v], [
+    [0.32, 0.68],
+    [0.68, 0.68],
+    [0.62, 0.60],
+    [0.38, 0.60]
+  ]);
+  // 门（挖掉）
+  const inDoor = u > 0.46 && u < 0.54 && v > 0.76 && v < 0.86;
+  // 窗户（挖掉 2 个，增强建筑识别度）
+  const inWinL = u > 0.36 && u < 0.42 && v > 0.70 && v < 0.76;
+  const inWinR = u > 0.58 && u < 0.64 && v > 0.70 && v < 0.76;
+  return (inBody || inRoof) && !inDoor && !inWinL && !inWinR;
 }
 
 /* ---------- 超采样绘制（4x） ---------- */
@@ -151,14 +162,9 @@ function render(size) {
       g = Math.min(255, Math.round(g + 255 * gloss));
       b = Math.min(255, Math.round(b + 255 * gloss));
 
-      const inShape = inBook(u, v) || inArrow(u, v);
-      if (inSpine(u, v)) {
-        // 书脊缝隙：用略深底色
-        const t2 = (u + v) / 2;
-        r = Math.round((C0[0] + (C1[0] - C0[0]) * t2) * 0.88);
-        g = Math.round((C0[1] + (C1[1] - C0[1]) * t2) * 0.88);
-        b = Math.round((C0[2] + (C1[2] - C0[2]) * t2) * 0.88);
-      } else if (inShape) {
+      // 图形：定位针 + 上升箭头 + 校园建筑
+      const inShape = inPin(u, v) || inArrow(u, v) || inCampus(u, v);
+      if (inShape && !inPinHole(u, v)) {
         r = WHITE[0]; g = WHITE[1]; b = WHITE[2];
       }
       rgba[i] = r;
@@ -201,4 +207,4 @@ for (const size of [192, 512, 1024]) {
   writeFileSync(out, buf);
   console.log('✓', out, (buf.length / 1024).toFixed(1) + ' KB');
 }
-console.log('✓ 图标生成完成（翻开的书 + 上升箭头，4x 抗锯齿）');
+console.log('✓ 图标生成完成（定位针 + 上升箭头 + 校园建筑，4x 抗锯齿）');

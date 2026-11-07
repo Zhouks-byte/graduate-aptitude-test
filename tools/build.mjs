@@ -30,6 +30,10 @@ const jsFiles = [
   'src/model.js',
   'src/store.js',
   'src/charts.js',
+  'src/school.js',
+  'src/apply.js',
+  'src/signup.js',
+  'src/score.js',
   'src/app.js',
   'sw-register.js'
 ];
@@ -50,6 +54,10 @@ const html = read('index.html')
   .replace(/<script src="src\/model\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/store\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/charts\.js"><\/script>\s*/g, '')
+  .replace(/<script src="src\/school\.js"><\/script>\s*/g, '')
+  .replace(/<script src="src\/apply\.js"><\/script>\s*/g, '')
+  .replace(/<script src="src\/signup\.js"><\/script>\s*/g, '')
+  .replace(/<script src="src\/score\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/app\.js"><\/script>\s*/g, '')
   .replace(/<script src="sw-register\.js"><\/script>\s*/g, '')
   .replace('</head>', '<style>\n' + safeCss + '\n</style>\n</head>')

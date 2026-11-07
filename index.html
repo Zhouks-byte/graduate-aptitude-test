@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="考研备考 · 原生 JS PWA，可离线使用" />
+  <meta name="description" content="考研择校 · 志愿模拟 · 报名模拟 · 成绩分析 · 计划 · 模考 · 笔记，数据仅存本机，可离线使用" />
   <meta name="theme-color" content="#4f46e5" />
   <meta name="color-scheme" content="light dark" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -44,41 +44,39 @@
     <nav class="sidebar" id="sidebar" aria-label="主导航">
       <ul class="sidebar__list">
         <li class="nav-item" data-nav="dashboard"><span class="nav-item__icon">▤</span><span class="nav-item__text">仪表盘</span></li>
-        <li class="nav-item" data-nav="questions"><span class="nav-item__icon">❓</span><span class="nav-item__text">题库</span></li>
-        <li class="nav-item" data-nav="exam-past"><span class="nav-item__icon">📜</span><span class="nav-item__text">真题</span></li>
-        <li class="nav-item" data-nav="plan"><span class="nav-item__icon">🗓</span><span class="nav-item__text">计划</span></li>
-        <li class="nav-item" data-nav="vocab"><span class="nav-item__icon">📖</span><span class="nav-item__text">单词</span></li>
-        <li class="nav-item" data-nav="mistakes"><span class="nav-item__icon">📕</span><span class="nav-item__text">错题本</span></li>
-        <li class="nav-item" data-nav="review"><span class="nav-item__icon">🔁</span><span class="nav-item__text">间隔复习</span></li>
+        <li class="nav-item" data-nav="school"><span class="nav-item__icon">🏫</span><span class="nav-item__text">考研择校</span></li>
+        <li class="nav-item" data-nav="apply"><span class="nav-item__icon">📝</span><span class="nav-item__text">志愿模拟</span></li>
+        <li class="nav-item" data-nav="signup"><span class="nav-item__icon">📑</span><span class="nav-item__text">报名模拟</span></li>
+        <li class="nav-item" data-nav="plan"><span class="nav-item__icon">🗓</span><span class="nav-item__text">备考计划</span></li>
+        <li class="nav-item" data-nav="score-analysis"><span class="nav-item__icon">📊</span><span class="nav-item__text">成绩分析</span></li>
         <li class="nav-item" data-nav="mock"><span class="nav-item__icon">🎯</span><span class="nav-item__text">模考</span></li>
-        <li class="nav-item" data-nav="notes"><span class="nav-item__icon">📝</span><span class="nav-item__text">笔记</span></li>
+        <li class="nav-item" data-nav="notes"><span class="nav-item__icon">📓</span><span class="nav-item__text">笔记</span></li>
       </ul>
     </nav>
 
     <!-- 主内容区 -->
     <main class="main" id="main">
       <section class="view" data-view="dashboard"></section>
-      <section class="view" data-view="questions"></section>
-      <section class="view" data-view="exam-past"></section>
+      <section class="view" data-view="school"></section>
+      <section class="view" data-view="apply"></section>
+      <section class="view" data-view="signup"></section>
       <section class="view" data-view="plan"></section>
-      <section class="view" data-view="vocab"></section>
-      <section class="view" data-view="mistakes"></section>
-      <section class="view" data-view="review"></section>
+      <section class="view" data-view="score-analysis"></section>
       <section class="view" data-view="mock"></section>
       <section class="view" data-view="notes"></section>
     </main>
 
-    <!-- 移动端底部 Tab（5 核心 + 1 更多；其余 4 模块走"更多"） -->
+    <!-- 移动端底部 Tab（5 核心 + 1 更多；其余模块走"更多"） -->
     <nav class="tabbar" aria-label="底部导航">
       <button class="tabbar__item" data-nav="dashboard"><span class="tabbar__icon">▤</span><span class="tabbar__text">仪表盘</span></button>
-      <button class="tabbar__item" data-nav="questions"><span class="tabbar__icon">❓</span><span class="tabbar__text">题库</span></button>
+      <button class="tabbar__item" data-nav="school"><span class="tabbar__icon">🏫</span><span class="tabbar__text">择校</span></button>
+      <button class="tabbar__item" data-nav="apply"><span class="tabbar__icon">📝</span><span class="tabbar__text">志愿</span></button>
+      <button class="tabbar__item" data-nav="signup"><span class="tabbar__icon">📑</span><span class="tabbar__text">报名</span></button>
       <button class="tabbar__item" data-nav="plan"><span class="tabbar__icon">🗓</span><span class="tabbar__text">计划</span></button>
-      <button class="tabbar__item" data-nav="vocab"><span class="tabbar__icon">📖</span><span class="tabbar__text">单词</span></button>
-      <button class="tabbar__item" data-nav="mistakes"><span class="tabbar__icon">📕</span><span class="tabbar__text">错题</span></button>
       <button class="tabbar__item tabbar__item--more" data-more-nav><span class="tabbar__icon">⋯</span><span class="tabbar__text">更多</span></button>
     </nav>
 
-    <!-- "更多" 模块 sheet（移动端：真题/复习/模考/笔记） -->
+    <!-- "更多" 模块 sheet（移动端：成绩/模考/笔记） -->
     <div class="sheet-overlay" id="sheet-overlay" aria-hidden="true">
       <div class="sheet" role="dialog" aria-label="更多功能">
         <div class="sheet__head">
@@ -86,10 +84,9 @@
           <button class="sheet__close" data-sheet-close aria-label="关闭">✕</button>
         </div>
         <div class="sheet__body">
-          <button class="sheet__item" data-nav="exam-past"><span>📜</span> 历年真题</button>
-          <button class="sheet__item" data-nav="review"><span>🔁</span> 间隔复习</button>
+          <button class="sheet__item" data-nav="score-analysis"><span>📊</span> 成绩分析</button>
           <button class="sheet__item" data-nav="mock"><span>🎯</span> 模考记录</button>
-          <button class="sheet__item" data-nav="notes"><span>📝</span> 学习笔记</button>
+          <button class="sheet__item" data-nav="notes"><span>📓</span> 学习笔记</button>
           <hr class="sheet__hr" />
           <button class="sheet__item sheet__item--muted" data-export-data><span>↓</span> 导出数据（JSON）</button>
           <label class="sheet__item sheet__item--muted" data-import-label><span>↑</span> 导入数据<input type="file" id="import-data" data-import accept="application/json,.json" hidden /></label>
@@ -97,7 +94,7 @@
       </div>
     </div>
 
-    <!-- 答题面板（覆盖层） -->
+    <!-- 答题面板（模考可能复用；保留无副作用） -->
     <div class="quiz-panel" id="quiz-panel" aria-hidden="true">
       <div class="quiz-panel__inner" id="quiz-panel-inner"></div>
     </div>
@@ -110,6 +107,10 @@
   <script src="src/model.js"></script>
   <script src="src/store.js"></script>
   <script src="src/charts.js"></script>
+  <script src="src/school.js"></script>
+  <script src="src/apply.js"></script>
+  <script src="src/signup.js"></script>
+  <script src="src/score.js"></script>
   <script src="src/app.js"></script>
   <script src="sw-register.js"></script>
 </body>

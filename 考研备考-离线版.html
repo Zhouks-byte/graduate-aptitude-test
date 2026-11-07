@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="考研备考 · 原生 JS PWA，可离线使用" />
+  <meta name="description" content="考研择校 · 志愿模拟 · 报名模拟 · 成绩分析 · 计划 · 模考 · 笔记，数据仅存本机，可离线使用" />
   <meta name="theme-color" content="#4f46e5" />
   <meta name="color-scheme" content="light dark" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -2250,7 +2250,7 @@ html, body {
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;          /* Firefox 隐藏滚动条 */
+    scrollbar-width: none;
     padding: 0 var(--sp-2);
     box-sizing: border-box;
   }
@@ -2265,124 +2265,204 @@ html, body {
     gap: 2px;
     border: none;
     background: transparent;
-    color: var(--text-muted);
-    font-size: 11px;
-    line-height: 1.2;
-    cursor: pointer;
-    padding: var(--sp-2) 0;
-    min-height: var(--tabbar-h);
+    color: var(--text-secondary);
+    font-size: 12px;
+    padding: 6px 4px;
+    border-radius: 8px;
     position: relative;
-    transition: color 0.15s;
-  }
-  .tabbar__icon {
-    font-size: 18px;
-    line-height: 1;
-    /* 图标区高度 20px，触达目标整格 ≥ 56px */
-  }
-  .tabbar__text {
-    font-size: 11px;
-    white-space: nowrap;
+    transition: color 0.15s ease-out, background 0.15s ease-out;
   }
   .tabbar__item.is-active {
     color: var(--brand-600);
-    font-weight: 600;
+    background: color-mix(in srgb, var(--brand-500) 10%, transparent);
   }
-  /* 选中指示：顶部一条短横条（比仅变色更清晰，流畅无动画成本） */
-  .tabbar__item.is-active::before {
+  .tabbar__item.is-active::after {
     content: '';
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 28px;
-    height: 3px;
-    border-radius: 0 0 3px 3px;
-    background: var(--brand-600);
+    width: 24px;
+    height: 2px;
+    background: var(--brand-500);
+    border-radius: 2px;
   }
-  /* "更多" 项图标弱化 */
-  .tabbar__item--more .tabbar__icon { font-size: 16px; }
-  .tabbar__item--more.is-active { color: var(--brand-600); }
+  .tabbar__icon { font-size: 18px; line-height: 1; }
 }
 
-/* ---------- "更多" 底部 sheet（移动端） ---------- */
+/* ---------- 顶栏：移动端精简 ---------- */
+@media (max-width: 768px) {
+  .topbar {
+    gap: var(--sp-2);
+    padding: 0 var(--sp-3);
+    height: 52px;
+  }
+  .topbar__logo {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  .topbar__title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .topbar__center {
+    font-size: 11px;
+  }
+  .topbar__center .topbar__days {
+    font-size: 14px;
+  }
+  .btn--ghost.btn--icon .btn-txt {
+    display: none;
+  }
+}
+
+/* ---------- 卡片：移动端紧凑 ---------- */
+@media (max-width: 768px) {
+  .card {
+    border-radius: 12px;
+    padding: var(--sp-3);
+  }
+  .card__title {
+    font-size: 16px;
+  }
+  .card__desc {
+    font-size: 13px;
+  }
+}
+
+/* ---------- 仪表盘：统计卡 2x2 网格 ---------- */
+@media (max-width: 768px) {
+  .dash-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sp-2);
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--sp-3);
+    border-radius: 10px;
+    background: var(--surface-2, var(--gray-50));
+  }
+  .stat__num {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat__label {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .stat__hint {
+    font-size: 11px;
+    color: var(--text-tertiary, var(--gray-400));
+  }
+}
+
+/* ---------- "更多" sheet ---------- */
 .sheet-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 40;
-  display: none;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
+  display: flex;
   align-items: flex-end;
   justify-content: center;
 }
-.sheet-overlay.is-open { display: flex; }
+.sheet-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
 .sheet {
   width: 100%;
   max-width: 480px;
   background: var(--surface);
-  border-radius: 20px 20px 0 0;
-  padding: 0 var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom));
-  box-shadow: 0 -8px 32px rgba(0,0,0,0.25);
-  animation: kp-sheet-up 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  max-height: 80vh;
-  overflow-y: auto;
+  border-radius: 16px 16px 0 0;
+  padding: var(--sp-3) var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom, 0px));
+  transform: translateY(100%);
+  transition: transform 0.25s ease-out;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
 }
-@keyframes kp-sheet-up {
-  from { transform: translateY(100%); opacity: 0.6; }
-  to   { transform: translateY(0);    opacity: 1; }
+.sheet-overlay.is-open .sheet {
+  transform: translateY(0);
 }
 .sheet__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--sp-4) 0 var(--sp-3);
-  position: sticky;
-  top: 0;
-  background: var(--surface);
-  z-index: 1;
+  margin-bottom: var(--sp-3);
 }
-.sheet__title { font-size: 15px; font-weight: 600; color: var(--text); }
+.sheet__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
 .sheet__close {
-  width: 32px; height: 32px;
+  width: 28px;
+  height: 28px;
   border: none;
-  background: var(--surface-alt);
-  color: var(--text-secondary);
+  background: var(--gray-100);
   border-radius: 50%;
+  color: var(--text-secondary);
   font-size: 14px;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.sheet__body { display: flex; flex-direction: column; gap: 2px; }
+.sheet__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 .sheet__item {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
-  width: 100%;
+  padding: var(--sp-3);
   border: none;
   background: transparent;
-  color: var(--text);
+  border-radius: 10px;
   font-size: 15px;
-  padding: var(--sp-3);
-  border-radius: var(--radius-md);
+  color: var(--text);
   cursor: pointer;
   text-align: left;
-  min-height: 48px;
+  width: 100%;
+  transition: background 0.15s;
 }
-.sheet__item > span { font-size: 18px; width: 24px; text-align: center; }
-.sheet__item:hover { background: var(--surface-alt); }
-.sheet__item--muted { color: var(--text-secondary); font-size: 14px; }
-.sheet__hr { border: none; height: 1px; background: var(--border); margin: var(--sp-2) 0; }
-
-/* 桌面（>768px）：sheet 居中卡片而非底部抽屉 */
+.sheet__item:hover, .sheet__item:active {
+  background: var(--gray-50);
+}
+.sheet__item--muted {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+.sheet__hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--sp-2) 0;
+}
+/* 桌面：sheet 居中 */
 @media (min-width: 769px) {
-  .sheet-overlay { align-items: center; }
-  .sheet {
-    border-radius: var(--radius-xl);
-    animation: kp-sheet-pop 0.2s ease;
-    max-width: 360px;
+  .sheet-overlay {
+    align-items: center;
+    justify-content: center;
   }
-  @keyframes kp-sheet-pop {
-    from { transform: scale(0.96); opacity: 0; }
-    to   { transform: scale(1);    opacity: 1; }
+  .sheet {
+    max-width: 420px;
+    border-radius: 16px;
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  }
+  .sheet-overlay.is-open .sheet {
+    transform: translateY(0) scale(1);
+    opacity: 1;
   }
 }
 
@@ -2396,7 +2476,7 @@ html, body {
 }
 @media (max-width: 768px) {
   .quiz-filters {
-    display: flex;        /* 覆盖主 CSS 的 flex-wrap 布局 */
+    display: flex;
     flex-direction: column;
     gap: var(--sp-2);
     flex-wrap: nowrap;
@@ -2447,100 +2527,573 @@ html, body {
     display: none;
     flex-direction: column;
     gap: var(--sp-2);
-    padding-top: var(--sp-2);
-    border-top: 1px dashed var(--border);
-    margin-top: var(--sp-1);
   }
-  .quiz-filters__collapsible.is-open { display: flex; }
-  .quiz-filters__group {
+  .quiz-filters__collapsible.is-open {
+    display: flex;
+  }
+  /* 覆盖主 CSS 的 group 显示 */
+  [data-filters-collapse] .quiz-filters__group {
     display: flex;
     flex-wrap: wrap;
     gap: var(--sp-2);
-    align-items: center;
   }
-  .quiz-filters__group .quiz-filters__label {
-    width: 100%;
-    margin-bottom: 2px;
-  }
-  .quiz-filters__limit {
+  [data-filters-collapse] .quiz-filters__limit {
     display: flex;
     align-items: center;
     gap: var(--sp-2);
-    width: 100%;
   }
 }
 
-/* 已选筛选摘要（露出在折叠区外，让用户知道当前筛选） */
-.quiz-filters__active {
+/* ---------- 通用：表单控件 / 输入框 ---------- */
+@media (max-width: 768px) {
+  input[type="text"], input[type="number"], input[type="date"], input[type="tel"], select, textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 15px; /* iOS 防止聚焦缩放 */
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-500) 15%, transparent);
+  }
+}
+
+/* ---------- 择校模块 ---------- */
+.sugg-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: var(--sp-3);
+  overflow: hidden;
+}
+.sugg-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface-2, var(--gray-50));
+  border-bottom: 1px solid var(--border);
+}
+.sugg-card__group {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.sugg-card__tier {
+  font-size: 12px;
+  font-weight: 500;
+}
+.sugg-card__list {
+  display: flex;
+  flex-direction: column;
+}
+.sugg-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text);
+  transition: background 0.12s;
+}
+.sugg-row:last-child { border-bottom: none; }
+.sugg-row:hover, .sugg-row:active { background: var(--gray-50); }
+.sugg-row__name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sugg-row__tag {
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--gray-100);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.sugg-row__prob {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+.sugg-row__fav { color: var(--ok); font-size: 12px; min-width: 16px; }
+.sugg-actions {
+  margin-top: var(--sp-3);
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- 院校详情弹窗 ---------- */
+.detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 300;
   display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+}
+.detail-overlay.is-open { display: flex; }
+.detail-panel {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: var(--sp-5, 20px);
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+.detail-close {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-3);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: var(--gray-100);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+.detail-tag {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 4px 0 var(--sp-3);
+}
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+.detail-block { margin-bottom: var(--sp-3); }
+.detail-block h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.detail-block p { font-size: 14px; color: var(--text); }
+.detail-actions {
+  display: flex;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+
+/* ---------- 志愿模拟填报 ---------- */
+.apply-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin: var(--sp-4) 0;
+}
+.apply-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-2);
+  align-items: center;
+  padding: var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2, var(--gray-50));
+}
+.apply-row__label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  grid-column: 1 / -1;
+}
+.apply-row__desc {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-left: 8px;
+}
+.apply-row__select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 14px;
+}
+.apply-row__check {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.apply-row__check.ok { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
+.apply-row__check.bad { background: color-mix(in srgb, var(--bad) 15%, transparent); color: var(--bad); }
+.apply-actions {
+  display: flex;
+  gap: var(--sp-2);
+  justify-content: flex-end;
+  margin-top: var(--sp-3);
+}
+.apply-submissions {
+  margin-top: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.apply-sub {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 8px;
+  background: var(--gray-50);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ---------- 报名模拟 ---------- */
+.signup-tl {
+  display: flex;
+  gap: 0;
+  margin: var(--sp-4) 0;
+  overflow-x: auto;
+  padding-bottom: var(--sp-2);
+}
+.tl-node {
+  flex: 0 0 auto;
+  min-width: 90px;
+  padding: var(--sp-3) 10px;
+  text-align: center;
+  position: relative;
+  border-radius: 10px;
+  background: var(--surface-2, var(--gray-50));
+  border: 1px solid var(--border);
+}
+.tl-node__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gray-300);
+  margin: 0 auto var(--sp-2);
+}
+.tl-node--done .tl-node__dot { background: var(--ok); }
+.tl-node--current .tl-node__dot { background: var(--brand-500); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-500) 20%, transparent); }
+.tl-node__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.tl-node__desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+.tl-node__days {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-tertiary, var(--gray-400));
+}
+
+.signup-form {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2, var(--gray-50));
+}
+.signup-form .card__title { margin-bottom: 4px; }
+.signup-field { margin-bottom: var(--sp-3); }
+.signup-field__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.signup-field__hint {
+  font-size: 12px;
+  color: var(--text-tertiary, var(--gray-400));
+  margin-top: 4px;
+}
+.signup-fee {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--brand-600);
+  margin: var(--sp-2) 0;
+}
+.signup-agree {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.signup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+.signup-done {
+  text-align: center;
+  padding: var(--sp-5, 24px) var(--sp-4);
+}
+.signup-done__mark {
+  font-size: 48px;
+  color: var(--ok);
+  margin-bottom: var(--sp-2);
+}
+.signup-sum {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.signup-sum__k { color: var(--text-secondary); }
+.signup-sum__v { font-weight: 500; }
+
+/* ---------- 成绩分析 ---------- */
+.score-form {
+  margin: var(--sp-4) 0;
+  padding: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2, var(--gray-50));
+}
+.score-form__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+.score-form__label { font-size: 13px; color: var(--text-secondary); }
+.score-form__label-input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 14px;
+}
+.score-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-3);
+}
+@media (min-width: 769px) {
+  .score-form__grid { grid-template-columns: repeat(4, 1fr); }
+}
+.score-input {
+  padding: var(--sp-3);
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.score-input__label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.score-input__label span { font-weight: 400; color: var(--text-tertiary, var(--gray-400)); }
+.score-input__value {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+.score-input__norm {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-tertiary, var(--gray-400));
+  text-align: center;
+}
+.score-form__actions { margin-top: var(--sp-3); text-align: right; }
+
+.score-diag {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3);
+  border-radius: 10px;
+  background: var(--surface-2, var(--gray-50));
+  border: 1px solid var(--border);
+}
+.score-diag__weak {
+  margin: var(--sp-2) 0;
+  font-size: 13px;
+  color: var(--text);
+}
+.score-diag__ok {
+  font-size: 13px;
+  color: var(--ok);
+}
+.score-diag__advice {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: var(--sp-2) 0;
+}
+.score-diag__rank {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.score-list {
+  margin-top: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.score-item {
+  padding: var(--sp-3);
+  border-radius: 10px;
+  background: var(--surface-2, var(--gray-50));
+  border: 1px solid var(--border);
+}
+.score-item__head {
+  display: flex;
+  align-items: center;
   gap: var(--sp-2);
   flex-wrap: wrap;
-  margin-top: var(--sp-2);
+  margin-bottom: var(--sp-2);
 }
-.quiz-filters__active.is-shown { display: flex; }
-.quiz-filters__active .chip {
-  position: relative;
-  padding-right: 24px;
-}
-.quiz-filters__active .chip::after {
-  content: '×';
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  opacity: 0.7;
-}
-
-/* ---------- 空状态美化 ---------- */
-.empty-state {
-  text-align: center;
-  padding: var(--sp-12) var(--sp-4);
-  color: var(--text-muted);
-}
-.empty-state__icon {
-  font-size: 40px;
-  margin-bottom: var(--sp-3);
-  opacity: 0.7;
-}
-.empty-state__title {
-  font-size: 15px;
+.score-item__total { font-weight: 600; color: var(--brand-600); font-size: 14px; }
+.score-item__pct {
+  font-size: 12px;
   color: var(--text-secondary);
-  margin: 0 0 var(--sp-1);
+  background: var(--gray-100);
+  padding: 2px 8px;
+  border-radius: 999px;
 }
-.empty-state__hint {
+.score-item__date { font-size: 12px; color: var(--text-tertiary, var(--gray-400)); margin-left: auto; }
+.score-item__scores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.score-chip {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--gray-100);
+  color: var(--text-secondary);
+}
+.score-trend {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3);
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.score-trend svg { display: block; margin: 0 auto; max-width: 100%; }
+
+/* ---------- 仪表盘：功能入口卡 ---------- */
+.dash-entries {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+.dash-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--sp-3);
+  border-radius: 10px;
+  background: var(--surface-2, var(--gray-50));
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
   font-size: 13px;
-  margin: 0;
-  line-height: 1.6;
+  transition: border-color 0.15s, background 0.15s;
+}
+.dash-entry:hover, .dash-entry:active {
+  border-color: var(--brand-400);
+  background: color-mix(in srgb, var(--brand-500) 8%, transparent);
+}
+.dash-entry__icon { font-size: 20px; }
+
+/* ---------- 今日待办任务 ---------- */
+.dashboard-today {
+  margin-top: var(--sp-3);
+  padding: var(--sp-3);
+  border-radius: 10px;
+  background: var(--surface-2, var(--gray-50));
+  border: 1px solid var(--border);
+}
+.dashboard-today__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--sp-2);
+}
+.dashboard-today__empty {
+  font-size: 13px;
+  color: var(--ok);
+  text-align: center;
+}
+.dash-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.dash-task {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: border-color 0.15s;
+}
+.dash-task:hover, .dash-task:active {
+  border-color: var(--brand-400);
+}
+.dash-task__icon { font-size: 16px; }
+.dash-task__text { flex: 1; }
+.dash-task__go { color: var(--text-tertiary, var(--gray-400)); font-size: 12px; }
+
+/* ---------- 通用 chip（复用现有 .chip，此处只补 is-active 颜色） ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip.is-active {
+  background: var(--brand-500);
+  color: #fff;
+  border-color: var(--brand-500);
 }
 
-/* ---------- 仪表盘：环形卡片紧凑 + 进度条更粗 ---------- */
-@media (max-width: 480px) {
-  .dash-rings {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--sp-2);
-  }
-  .dash-ring {
-    padding: var(--sp-3) var(--sp-2);
-    gap: 2px;
-  }
-  .dash-ring__svg { width: 72px; height: 72px; }
-  .dash-ring__label { font-size: 12px; }
-  .dash-ring__meta { font-size: 11px; }
-  /* 今日学习卡片（高亮）尺寸收小 */
-  .dash-ring--time .dash-ring__svg { width: 72px; height: 72px; }
-}
-
-/* ---------- 流畅性：减少非必要动画，统一缓动 ---------- */
-.btn, .chip, .tabbar__item, .quiz-card, .dash-ring, .sheet__item {
-  /* 统一 150ms ease-out，符合 Material 动效标准，触感更"跟手" */
-  transition: transform 0.15s ease-out, opacity 0.15s ease-out,
-              background-color 0.15s ease-out, color 0.15s ease-out,
-              border-color 0.15s ease-out, box-shadow 0.15s ease-out;
-}
-/* 按钮按压缩放（移动端手感） */
+/* ---------- 按钮按压缩放（移动端手感） ---------- */
 @media (hover: none) {
-  .btn:active, .chip:active, .tabbar__item:active, .sheet__item:active {
+  .btn:active, .chip:active, .tabbar__item:active, .sheet__item:active,
+  .sugg-row:active, .dash-entry:active, .dash-task:active {
     transform: scale(0.97);
   }
 }
@@ -2574,41 +3127,39 @@ html, body {
     <nav class="sidebar" id="sidebar" aria-label="主导航">
       <ul class="sidebar__list">
         <li class="nav-item" data-nav="dashboard"><span class="nav-item__icon">▤</span><span class="nav-item__text">仪表盘</span></li>
-        <li class="nav-item" data-nav="questions"><span class="nav-item__icon">❓</span><span class="nav-item__text">题库</span></li>
-        <li class="nav-item" data-nav="exam-past"><span class="nav-item__icon">📜</span><span class="nav-item__text">真题</span></li>
-        <li class="nav-item" data-nav="plan"><span class="nav-item__icon">🗓</span><span class="nav-item__text">计划</span></li>
-        <li class="nav-item" data-nav="vocab"><span class="nav-item__icon">📖</span><span class="nav-item__text">单词</span></li>
-        <li class="nav-item" data-nav="mistakes"><span class="nav-item__icon">📕</span><span class="nav-item__text">错题本</span></li>
-        <li class="nav-item" data-nav="review"><span class="nav-item__icon">🔁</span><span class="nav-item__text">间隔复习</span></li>
+        <li class="nav-item" data-nav="school"><span class="nav-item__icon">🏫</span><span class="nav-item__text">考研择校</span></li>
+        <li class="nav-item" data-nav="apply"><span class="nav-item__icon">📝</span><span class="nav-item__text">志愿模拟</span></li>
+        <li class="nav-item" data-nav="signup"><span class="nav-item__icon">📑</span><span class="nav-item__text">报名模拟</span></li>
+        <li class="nav-item" data-nav="plan"><span class="nav-item__icon">🗓</span><span class="nav-item__text">备考计划</span></li>
+        <li class="nav-item" data-nav="score-analysis"><span class="nav-item__icon">📊</span><span class="nav-item__text">成绩分析</span></li>
         <li class="nav-item" data-nav="mock"><span class="nav-item__icon">🎯</span><span class="nav-item__text">模考</span></li>
-        <li class="nav-item" data-nav="notes"><span class="nav-item__icon">📝</span><span class="nav-item__text">笔记</span></li>
+        <li class="nav-item" data-nav="notes"><span class="nav-item__icon">📓</span><span class="nav-item__text">笔记</span></li>
       </ul>
     </nav>
 
     <!-- 主内容区 -->
     <main class="main" id="main">
       <section class="view" data-view="dashboard"></section>
-      <section class="view" data-view="questions"></section>
-      <section class="view" data-view="exam-past"></section>
+      <section class="view" data-view="school"></section>
+      <section class="view" data-view="apply"></section>
+      <section class="view" data-view="signup"></section>
       <section class="view" data-view="plan"></section>
-      <section class="view" data-view="vocab"></section>
-      <section class="view" data-view="mistakes"></section>
-      <section class="view" data-view="review"></section>
+      <section class="view" data-view="score-analysis"></section>
       <section class="view" data-view="mock"></section>
       <section class="view" data-view="notes"></section>
     </main>
 
-    <!-- 移动端底部 Tab（5 核心 + 1 更多；其余 4 模块走"更多"） -->
+    <!-- 移动端底部 Tab（5 核心 + 1 更多；其余模块走"更多"） -->
     <nav class="tabbar" aria-label="底部导航">
       <button class="tabbar__item" data-nav="dashboard"><span class="tabbar__icon">▤</span><span class="tabbar__text">仪表盘</span></button>
-      <button class="tabbar__item" data-nav="questions"><span class="tabbar__icon">❓</span><span class="tabbar__text">题库</span></button>
+      <button class="tabbar__item" data-nav="school"><span class="tabbar__icon">🏫</span><span class="tabbar__text">择校</span></button>
+      <button class="tabbar__item" data-nav="apply"><span class="tabbar__icon">📝</span><span class="tabbar__text">志愿</span></button>
+      <button class="tabbar__item" data-nav="signup"><span class="tabbar__icon">📑</span><span class="tabbar__text">报名</span></button>
       <button class="tabbar__item" data-nav="plan"><span class="tabbar__icon">🗓</span><span class="tabbar__text">计划</span></button>
-      <button class="tabbar__item" data-nav="vocab"><span class="tabbar__icon">📖</span><span class="tabbar__text">单词</span></button>
-      <button class="tabbar__item" data-nav="mistakes"><span class="tabbar__icon">📕</span><span class="tabbar__text">错题</span></button>
       <button class="tabbar__item tabbar__item--more" data-more-nav><span class="tabbar__icon">⋯</span><span class="tabbar__text">更多</span></button>
     </nav>
 
-    <!-- "更多" 模块 sheet（移动端：真题/复习/模考/笔记） -->
+    <!-- "更多" 模块 sheet（移动端：成绩/模考/笔记） -->
     <div class="sheet-overlay" id="sheet-overlay" aria-hidden="true">
       <div class="sheet" role="dialog" aria-label="更多功能">
         <div class="sheet__head">
@@ -2616,10 +3167,9 @@ html, body {
           <button class="sheet__close" data-sheet-close aria-label="关闭">✕</button>
         </div>
         <div class="sheet__body">
-          <button class="sheet__item" data-nav="exam-past"><span>📜</span> 历年真题</button>
-          <button class="sheet__item" data-nav="review"><span>🔁</span> 间隔复习</button>
+          <button class="sheet__item" data-nav="score-analysis"><span>📊</span> 成绩分析</button>
           <button class="sheet__item" data-nav="mock"><span>🎯</span> 模考记录</button>
-          <button class="sheet__item" data-nav="notes"><span>📝</span> 学习笔记</button>
+          <button class="sheet__item" data-nav="notes"><span>📓</span> 学习笔记</button>
           <hr class="sheet__hr" />
           <button class="sheet__item sheet__item--muted" data-export-data><span>↓</span> 导出数据（JSON）</button>
           <label class="sheet__item sheet__item--muted" data-import-label><span>↑</span> 导入数据<input type="file" id="import-data" data-import accept="application/json,.json" hidden /></label>
@@ -2627,7 +3177,7 @@ html, body {
       </div>
     </div>
 
-    <!-- 答题面板（覆盖层） -->
+    <!-- 答题面板（模考可能复用；保留无副作用） -->
     <div class="quiz-panel" id="quiz-panel" aria-hidden="true">
       <div class="quiz-panel__inner" id="quiz-panel-inner"></div>
     </div>
@@ -3080,20 +3630,152 @@ html, body {
     }
   ];
 
+  /* 院校库（用于择校 / 志愿模拟填报） */
+  var kp_schoolsMeta = {
+    /* 985 */
+    'tsinghua': { id: 'tsinghua', name: '清华大学', level: '985', type: '综合', city: '北京',
+      base25: 1.9, fee: 8000, duration: 3, ratio2025: '1:18', line2025: '385',
+      majors: '计算机 / 软件 / 经管 / 机械 / 自动化',
+      tags: ['自划线', '推免生优先', '顶尖'], website: 'https://www.tsinghua.edu.cn' },
+    'pku':      { id: 'pku', name: '北京大学', level: '985', type: '综合', city: '北京',
+      base25: 1.9, fee: 8000, duration: 3, ratio2025: '1:16', line2025: '385',
+      majors: '文学 / 经管 / 医 / 法 / 理学',
+      tags: ['自划线', '顶尖'], website: 'https://www.pku.edu.cn' },
+    'fudan':    { id: 'fudan', name: '复旦大学', level: '985', type: '综合', city: '上海',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:15', line2025: '375',
+      majors: '经管 / 医学 / 法学 / 数学',
+      tags: ['自划线'], website: 'https://www.fudan.edu.cn' },
+    'shu':      { id: 'shu', name: '上海交通大学', level: '985', type: '理工', city: '上海',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:14', line2025: '375',
+      majors: '机械 / 经管 / 电气 / 计算机',
+      tags: ['自划线'], website: 'https://www.sjtu.edu.cn' },
+    'njust':    { id: 'njust', name: '南京大学', level: '985', type: '综合', city: '南京',
+      base25: 1.4, fee: 7000, duration: 3, ratio2025: '1:12', line2025: '365',
+      majors: '物理 / 天文学 / 计算机 / 经管',
+      tags: ['自划线'], website: 'https://www.nju.edu.cn' },
+    'rcces':    { id: 'rcces', name: '中国人民大学', level: '985', type: '文科', city: '北京',
+      base25: 1.6, fee: 8000, duration: 3, ratio2025: '1:13', line2025: '375',
+      majors: '经济 / 管理 / 法学 / 新闻',
+      tags: ['自划线', '经管强校'], website: 'https://www.ruc.edu.cn' },
+    /* 211 */
+    'buaa':     { id: 'buaa', name: '北京航空航天大学', level: '211', type: '理工', city: '北京',
+      base25: 1.3, fee: 7000, duration: 3, ratio2025: '1:10', line2025: '355',
+      majors: '航空 / 计算机 / 经管 / 机械',
+      tags: ['国防七子'], website: 'https://www.buaa.edu.cn' },
+    'hit':      { id: 'hit', name: '哈尔滨工业大学', level: '211', type: '理工', city: '哈尔滨',
+      base25: 1.2, fee: 7000, duration: 3, ratio2025: '1:9', line2025: '350',
+      majors: '计算机 / 机械 / 土木 / 电气',
+      tags: ['C9', '工科强'], website: 'https://www.hit.edu.cn' },
+    'hust':     { id: 'hust', name: '华中科技大学', level: '211', type: '理工', city: '武汉',
+      base25: 1.2, fee: 7000, duration: 3, ratio2025: '1:11', line2025: '350',
+      majors: '机械 / 光电 / 计算机 / 经管',
+      tags: ['工科强'], website: 'https://www.hust.edu.cn' },
+    'sdsu':     { id: 'sdsu', name: '山东大学', level: '211', type: '综合', city: '济南',
+      base25: 0.9, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '数学 / 物理 / 文学 / 经管',
+      tags: ['老牌 985'], website: 'https://www.sdu.edu.cn' },
+    'sysu':     { id: 'sysu', name: '中山大学', level: '211', type: '综合', city: '广州',
+      base25: 1.1, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '345',
+      majors: '医学 / 经管 / 数学 / 法',
+      tags: ['华南强校'], website: 'https://www.sysu.edu.cn' },
+    'scut':     { id: 'scut', name: '华南理工大学', level: '211', type: '理工', city: '广州',
+      base25: 1.0, fee: 6500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '建筑 / 计算机 / 食品 / 机械',
+      tags: ['工科强'], website: 'https://www.scut.edu.cn' },
+    'swu':      { id: 'swu', name: '西南大学', level: '211', type: '师范', city: '重庆',
+      base25: 0.7, fee: 6000, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '教育 / 心理 / 食品 / 农学',
+      tags: ['师范'], website: 'https://www.swu.edu.cn' },
+    'xjtu':     { id: 'xjtu', name: '西安交通大学', level: '211', type: '理工', city: '西安',
+      base25: 1.2, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '345',
+      majors: '电气 / 机械 / 能源 / 经管',
+      tags: ['老牌 985'], website: 'https://www.xjtu.edu.cn' },
+    'xidian':   { id: 'xidian', name: '西安电子科技大学', level: '211', type: '理工', city: '西安',
+      base25: 0.9, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '335',
+      majors: '计算机 / 电子 / 通信 / 密码',
+      tags: ['电子强校'], website: 'https://www.xidian.edu.cn' },
+    'nankai':   { id: 'nankai', name: '南开大学', level: '211', type: '综合', city: '天津',
+      base25: 1.0, fee: 6500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '数学 / 化学 / 经管 / 历史',
+      tags: ['老牌 985'], website: 'https://www.nankai.edu.cn' },
+    /* 双非（双一流/省重点） */
+    'zju':      { id: 'zju', name: '浙江大学', level: '985', type: '综合', city: '杭州',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:14', line2025: '375',
+      majors: '计算机 / 机械 / 经管 / 法学',
+      tags: ['自划线', '顶尖'], website: 'https://www.zju.edu.cn' },
+    'ustc':     { id: 'ustc', name: '中国科学技术大学', level: '985', type: '理工', city: '合肥',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:15', line2025: '375',
+      majors: '物理 / 数学 / 计算机 / 核能',
+      tags: ['顶尖', '基础学科'], website: 'https://www.ustc.edu.cn' },
+    'tongji':   { id: 'tongji', name: '同济大学', level: '985', type: '理工', city: '上海',
+      base25: 1.5, fee: 8000, duration: 3, ratio2025: '1:13', line2025: '365',
+      majors: '建筑 / 土木 / 设计 / 经管',
+      tags: ['建筑强校'], website: 'https://www.tongji.edu.cn' },
+    'hu':       { id: 'hu', name: '华中科技大学（985）', level: '985', type: '理工', city: '武汉',
+      base25: 1.4, fee: 7000, duration: 3, ratio2025: '1:11', line2025: '355',
+      majors: '机械 / 光电 / 计算机',
+      tags: ['自划线'], website: 'https://www.hust.edu.cn' }
+  };
+
+  /* 推荐分组（冲/稳/保） */
+  var kp_suggestSchools = [
+    { id: 'tsinghua', group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'pku',      group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'fudan',    group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'shu',      group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'zju',      group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'ustc',     group: '冲刺（顶尖 985）', tier: 'hot' },
+
+    { id: 'rcces',    group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'njust',    group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'tongji',   group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'buaa',     group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'hust',     group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'xjtu',     group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'xidian',   group: '匹配（强 211 / 985）', tier: 'match' },
+
+    { id: 'hit',      group: '保底（稳 211）', tier: 'safe' },
+    { id: 'nankai',   group: '保底（稳 211）', tier: 'safe' },
+    { id: 'sysu',     group: '保底（稳 211）', tier: 'safe' },
+    { id: 'sdsu',     group: '保底（稳 211）', tier: 'safe' },
+    { id: 'scut',     group: '保底（稳 211）', tier: 'safe' },
+    { id: 'swu',      group: '保底（稳 211）', tier: 'safe' }
+  ];
+  /* 估算成功率（默认 target=380）：基于目标分与 2025 参考线的差距 */
+  (function () {
+    var target = 380;
+    kp_suggestSchools.forEach(function (s) {
+      var m = kp_schoolsMeta[s.id];
+      if (!m) return;
+      var line = Number(m.line2025) || 340;
+      var diff = target - line;
+      var p;
+      if (diff >= 40) p = 0.92;
+      else if (diff >= 25) p = 0.85;
+      else if (diff >= 10) p = 0.72;
+      else if (diff >= 0) p = 0.58;
+      else if (diff >= -10) p = 0.45;
+      else if (diff >= -25) p = 0.30;
+      else p = 0.18;
+      m.estChance = p;
+      m.line25 = line;
+    });
+  })();
+
   var KP_CONTENT = {
-    /** 导航模块配置 */
+    /** 导航模块配置（新结构：移除题库/真题/单词/错题，新增 4 个新模块） */
     modules: [
-      { id: 'dashboard',  label: '仪表盘' },
-      { id: 'questions',  label: '题库' },
-      { id: 'exam-past',  label: '真题' },
-      { id: 'plan',       label: '计划' },
-      { id: 'vocab',      label: '单词' },
-      { id: 'mistakes',   label: '错题本' },
-      { id: 'mock',       label: '模考' },
-      { id: 'notes',      label: '笔记' }
+      { id: 'dashboard',     label: '仪表盘' },
+      { id: 'school',        label: '考研择校' },
+      { id: 'apply',        label: '志愿模拟' },
+      { id: 'signup',       label: '报名模拟' },
+      { id: 'plan',         label: '备考计划' },
+      { id: 'score-analysis', label: '成绩分析' },
+      { id: 'mock',         label: '模考' },
+      { id: 'notes',        label: '笔记' }
     ],
 
-    /** 题库样题（4 科各 10 道） */
+    /** 题库样题（保留用于模考/成绩分析引用） */
     kp_sampleQuestions: kp_sampleQuestions,
 
     /** 单词样例（100+）：{word, phonetic, meaning, example} */
@@ -3115,7 +3797,13 @@ html, body {
     planTemplates: [],
 
     /** 模考卷（占位） */
-    mockPapers: []
+    mockPapers: [],
+
+    /** 院校元数据（择校 / 志愿 / 成绩分析引用） */
+    kp_schoolsMeta: kp_schoolsMeta,
+
+    /** 推荐院校分组（冲/稳/保） */
+    kp_suggestSchools: kp_suggestSchools
   };
 
   global.KP_CONTENT = KP_CONTENT;
@@ -3489,14 +4177,18 @@ html, body {
     /* 计划模块 */
     streak: { count: 0, lastDate: null }, /* 连续打卡 {count, lastDate} */
 
-    /* 真题模块 */
-    'past.records': [],  /* 真题作答记录 {paperId, qid, answer, correct, score, reason, seconds, ts} */
-
     /* 模考模块 */
     'mock.records': [],  /* 模考记录 {id, date, subject, score, maxScore, accuracy, weakPoints[], ts} */
 
     /* 笔记模块 */
-    'note.list': [] /* 笔记 {id, subject, tag, content, ts} */
+    'note.list': [],     /* 笔记 {id, subject, tag, content, ts} */
+
+    /* ---------- 择校 / 志愿 / 报名 / 成绩 4 个新模块 ---------- */
+    'school.list': [],          /* 收藏院校 [{id, ts}] */
+    'apply.draft': {},          /* 志愿草稿 {hot, match, safe} */
+    'apply.submissions': [],    /* 志愿提交记录 [{id, chance, draft, score, ts, date}] */
+    'signup.state': {},         /* 报名状态 {nodes:{}, info:{}} */
+    'score.submissions': []     /* 成绩记录 [{id, label, scores, total, pct, ts, date}] */
   };
 
   /* 内存态：init() 前为空，init() 后与 localStorage 同步 */
@@ -4565,6 +5257,719 @@ html, body {
 }(typeof window !== 'undefined' ? window : this));
 
 
+/* 模块：考研择校
+ * 数据层：KP_CONTENT.kp_suggestSchools + KP_CONTENT.kp_schoolsMeta
+ * 存储层：kp_store 键 'school.list'（用户添加/收藏的学校记录）
+ * 功能：条件（省份/城市/层次/学科/预算/备考起点）→ 匹配院校 + 录取概率估算 + 详情
+ */
+(function (global) {
+  'use strict';
+
+  var S = {};
+
+  /* ---------- 学校详情弹窗 ---------- */
+  var detailOverlay = null;
+
+  S.openDetail = function (id, viewRoot) {
+    var meta = global.KP_CONTENT ? global.KP_CONTENT.kp_schoolsMeta : {};
+    var s = meta[id];
+    if (!s) return;
+    var root = viewRoot || document;
+    detailOverlay = root.querySelector('[data-school-detail]');
+    if (!detailOverlay) {
+      detailOverlay = document.createElement('div');
+      detailOverlay.className = 'detail-overlay';
+      detailOverlay.setAttribute('data-school-detail', '1');
+      document.body.appendChild(detailOverlay);
+    }
+    var tags = (s.tags || []).map(function (t) { return '<span class="chip is-active">' + esc(t) + '</span>'; }).join('');
+    detailOverlay.innerHTML =
+      '<div class="detail-panel" role="dialog" aria-label="院校详情">' +
+        '<button class="detail-close" data-detail-close>✕</button>' +
+        '<h2 class="card__title">' + esc(s.name) + '</h2>' +
+        '<div class="detail-tag">' + esc(s.level) + ' · ' + esc(s.type) + ' · ' + esc(s.city) + '</div>' +
+        '<div class="detail-tags">' + tags + '</div>' +
+        '<div class="detail-block"><h4>2025 考研参考线</h4><p>' + esc(s.line2025) + '</p></div>' +
+        '<div class="detail-block"><h4>报录比（2025）</h4><p>' + esc(s.ratio2025) + '</p></div>' +
+        '<div class="detail-block"><h4>推荐专业</h4><p>' + esc(s.majors) + '</p></div>' +
+        '<div class="detail-block"><h4>学费（元/年）</h4><p>' + s.fee.toLocaleString() + ' · 学制 ' + esc(s.duration) + ' 年</p></div>' +
+        '<div class="detail-actions">' +
+          '<button class="btn btn--primary" data-detail-fav="' + esc(s.id) + '">收藏该院校</button>' +
+          '<a class="btn btn--ghost" target="_blank" rel="noopener" href="' + s.website + '">访问官网</a>' +
+        '</div>' +
+      '</div>';
+    detailOverlay.classList.add('is-open');
+    detailOverlay.addEventListener('click', onDetailClick, false);
+  };
+
+  function onDetailClick(e) {
+    var close = e.target.closest('[data-detail-close]');
+    if (close || e.target === detailOverlay) {
+      detailOverlay.classList.remove('is-open');
+      detailOverlay.removeEventListener('click', onDetailClick, false);
+      detailOverlay.innerHTML = '';
+      return;
+    }
+    var favBtn = e.target.closest('[data-detail-fav]');
+    if (favBtn) {
+      var id = favBtn.getAttribute('data-detail-fav');
+      var store = global.KP_STORE;
+      if (store) {
+        var list = store.get('school.list') || [];
+        var dup = false;
+        for (var i = 0; i < list.length; i++) if (list[i].id === id) { dup = true; break; }
+        if (!dup) {
+          list.push({ id: id, ts: new Date().toISOString() });
+          store.set('school.list', list);
+        }
+      }
+      if (global.KP_APP._onSchoolChange) global.KP_APP._onSchoolChange();
+      close.click();
+    }
+  }
+
+  /* ---------- 概率估算：基于目标分与院校 2025 参考线的差距 ---------- */
+  function estChance(score, line) {
+    if (!line) return 0.5;
+    var diff = score - line;
+    if (diff >= 40) return 0.92;
+    if (diff >= 25) return 0.85;
+    if (diff >= 10) return 0.72;
+    if (diff >= 0) return 0.58;
+    if (diff >= -10) return 0.45;
+    if (diff >= -25) return 0.30;
+    return 0.18;
+  }
+
+  /* ---------- 视图 ---------- */
+  S.render = function (view) {
+    var content = global.KP_CONTENT ? global.KP_CONTENT.kp_suggestSchools : [];
+    var meta = global.KP_CONTENT ? global.KP_CONTENT.kp_schoolsMeta : {};
+    var store = global.KP_STORE;
+    var storeFavs = store ? store.get('school.list') || [] : [];
+    var favSet = {};
+    storeFavs.forEach(function (f) { favSet[f.id] = true; });
+
+    var score = store ? (store.get('profile') || {}).targetScore || 380 : 380;
+
+    /* 分组统计 */
+    var groups = {};
+    content.forEach(function (c) {
+      var g = c.group;
+      if (!groups[g]) groups[g] = { label: g, tier: c.tier, items: [] };
+      groups[g].items.push(c);
+    });
+
+    var tierLabel = { hot: '热门', match: '匹配', safe: '保底' };
+    var tierColor = { hot: 'var(--bad)', match: 'var(--brand-500)', safe: 'var(--ok)' };
+
+    var rows = '';
+    Object.keys(groups).forEach(function (g) {
+      var grp = groups[g];
+      rows += '<div class="sugg-card" data-sugg-tier="' + grp.tier + '">' +
+        '<div class="sugg-card__head">' +
+          '<span class="sugg-card__group">' + esc(grp.label) + '</span>' +
+          '<span class="sugg-card__tier" style="color:' + tierColor[grp.tier] + '">' +
+            tierLabel[grp.tier] + ' · ' + grp.items.length + ' 所</span>' +
+        '</div>' +
+        '<div class="sugg-card__list">' +
+        grp.items.map(function (c) {
+          var m = meta[c.id] || {};
+          var ch = estChance(score, m.line25);
+          var fav = favSet[c.id] ? ' ✓' : '';
+          return '<button class="sugg-row" data-open="' + esc(c.id) + '">' +
+            '<span class="sugg-row__name">' + esc(m.name || c.id) + '</span>' +
+            '<span class="sugg-row__tag">' + esc(m.level || '') + '</span>' +
+            '<span class="sugg-row__prob" style="color:' + tierColor[grp.tier] + '">' +
+              Math.round(ch * 100) + '%' + '</span>' +
+            '<span class="sugg-row__fav">' + fav + '</span>' +
+          '</button>';
+        }).join('') +
+        '</div>' +
+      '</div>';
+    });
+
+    var viewEl = view;
+    viewEl.innerHTML =
+      '<div class="card school-card">' +
+        '<h2 class="card__title">考研择校</h2>' +
+        '<p class="card__desc">按「目标分 ' + score + ' 分」匹配推荐 · 点击行查看详情</p>' +
+        rows +
+        '<div class="sugg-actions">' +
+          '<button class="btn btn--primary" data-open-suggest>模拟报考</button>' +
+        '</div>' +
+      '</div>';
+
+    viewEl.addEventListener('click', function (e) {
+      var row = e.target.closest('[data-open]');
+      if (row) {
+        var id = row.getAttribute('data-open');
+        S.openDetail(id, viewEl);
+        return;
+      }
+      var sug = e.target.closest('[data-open-suggest]');
+      if (sug) {
+        var act = global.KP_APP._openApplySheet ? global.KP_APP._openApplySheet() : null;
+        if (act) {
+          var target = content[0] && meta[content[0].id];
+          if (target && global.KP_APP.activate) global.KP_APP.activate('apply');
+        }
+      }
+    }, true);
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  global.KP_SCHOOL = S;
+})(typeof window !== 'undefined' ? window : this);
+
+
+/* 模块：志愿模拟填报
+ * 数据层：KP_CONTENT.kp_suggestSchools + kp_schoolsMeta
+ * 存储层：kp_store 'apply.draft'（草稿）/ 'apply.submissions'（提交记录）
+ * 功能：3 志愿（冲/稳/保）选择 + 自动概率校验 + 保存草稿 + 提交记录
+ */
+(function (global) {
+  'use strict';
+
+  var A = {};
+
+  var TIER = [
+    { key: 'hot', label: '冲', desc: '高于目标分，低概率' },
+    { key: 'match', label: '稳', desc: '贴近目标分，中概率' },
+    { key: 'safe', label: '保', desc: '低于目标分，高概率' }
+  ];
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  A.render = function (view) {
+    var content = global.KP_CONTENT ? global.KP_CONTENT.kp_suggestSchools : [];
+    var meta = global.KP_CONTENT ? global.KP_CONTENT.kp_schoolsMeta : {};
+    var store = global.KP_STORE;
+
+    var draft = store ? (store.get('apply.draft') || {}) : {};
+    /* 默认每个 tier 取一个推荐 */
+    if (!draft.hot || !draft.match || !draft.safe) {
+      var first = { hot: null, match: null, safe: null };
+      content.forEach(function (c) {
+        if (!first[c.tier]) first[c.tier] = c.id;
+      });
+      draft.hot = draft.hot || first.hot;
+      draft.match = draft.match || first.match;
+      draft.safe = draft.safe || first.safe;
+    }
+
+    var profile = store ? (store.get('profile') || {}) : {};
+    var score = profile.targetScore || 380;
+
+    /* 提交记录 */
+    var subs = store ? (store.get('apply.submissions') || []) : [];
+
+    var rows = TIER.map(function (t) {
+      var selId = draft[t.key];
+      var sel = meta[selId];
+      var ch = sel ? sel.estChance : 0;
+      if (typeof ch !== 'number') ch = 0.5;
+      var ok = ch >= 0.35;
+      return '<div class="apply-row" data-apply-tier="' + t.key + '">' +
+        '<div class="apply-row__label">' + t.label + ' <span class="apply-row__desc">' + t.desc + '</span></div>' +
+        '<select class="apply-row__select" data-select="' + t.key + '">' +
+        content.filter(function (c) { return c.tier === t.key; }).map(function (c) {
+          var m = meta[c.id];
+          var selOpt = c.id === selId ? ' selected' : '';
+          return '<option value="' + esc(c.id) + '"' + selOpt + '>' +
+            esc(m ? m.name : c.id) + '（' + Math.round((m ? m.estChance : 0) * 100) + '%）' +
+          '</option>';
+        }).join('') +
+        '</select>' +
+        '<div class="apply-row__check ' + (ok ? 'ok' : 'bad') + '">' +
+          '<span>' + Math.round(ch * 100) + '%</span> ' +
+          (ok ? '✓ 达标' : '⚠ 概率偏低') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var subHtml = '';
+    if (subs.length) {
+      subHtml = '<h3 class="card__title" style="margin-top:var(--sp-4)">提交记录</h3><div class="apply-submissions">' +
+        subs.slice(0, 8).map(function (s) {
+          var m = meta[s.id];
+          return '<div class="apply-sub">' +
+            '<span>' + esc(s.date) + '</span>' +
+            '<span>' + esc(m ? m.name : s.id) + '</span>' +
+            '<span>' + Math.round(s.chance * 100) + '%</span>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+    }
+
+    view.innerHTML =
+      '<div class="card apply-card">' +
+        '<h2 class="card__title">志愿模拟填报</h2>' +
+        '<p class="card__desc">按「冲 / 稳 / 保」三梯度选择目标院校，目标分 ' + score + '</p>' +
+        '<div class="apply-grid">' + rows + '</div>' +
+        '<div class="apply-actions">' +
+          '<button class="btn btn--ghost" data-apply-draft>保存草稿</button>' +
+          '<button class="btn btn--primary" data-apply-submit>提交模拟填报</button>' +
+        '</div>' +
+        subHtml +
+      '</div>';
+
+    var self = this;
+    view.addEventListener('change', function (e) {
+      var sel = e.target.closest('[data-select]');
+      if (!sel) return;
+      var tier = sel.getAttribute('data-select');
+      var val = sel.value;
+      draft[tier] = val;
+      /* 更新对应 row 的 check */
+      var rowEl = view.querySelector('[data-apply-tier="' + tier + '"]');
+      var m = meta[val];
+      var ch = m ? m.estChance : 0;
+      var ok = ch >= 0.35;
+      var check = rowEl.querySelector('.apply-row__check');
+      check.className = 'apply-row__check ' + (ok ? 'ok' : 'bad');
+      check.innerHTML = '<span>' + Math.round(ch * 100) + '%</span> ' + (ok ? '✓ 达标' : '⚠ 概率偏低');
+      A._draft = draft;
+    });
+
+    view.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-apply-draft]');
+      if (t) {
+        if (store) store.set('apply.draft', A._draft || draft);
+        flash(view, '已保存草稿');
+        return;
+      }
+      var s = e.target.closest('[data-apply-submit]');
+      if (s) self.submit(A._draft || draft, store, meta, score, view);
+    }, true);
+
+    A._draft = draft;
+  };
+
+  A.submit = function (draft, store, meta, score, view) {
+    if (!draft.hot || !draft.match || !draft.safe) { alert('请先选择冲/稳/保三个志愿'); return; }
+    /* 取最稳（match）作为代表 */
+    var targetId = draft.match;
+    var m = meta[targetId];
+    var chance = m ? m.estChance : 0;
+    var rec = {
+      id: targetId,
+      chance: chance,
+      draft: { hot: draft.hot, match: draft.match, safe: draft.safe },
+      score: score,
+      ts: new Date().toISOString(),
+      date: new Date().toISOString().slice(0, 10)
+    };
+    if (store) {
+      var subs = store.get('apply.submissions') || [];
+      subs.unshift(rec);
+      if (subs.length > 50) subs.length = 50;
+      store.set('apply.submissions', subs);
+      store.set('apply.draft', draft);
+    }
+    flash(view, '已提交模拟填报 · ' + (m ? m.name : targetId) + ' · ' + Math.round(chance * 100) + '%');
+    /* 刷新提交记录 */
+    A.render(view);
+  };
+
+  function flash(view, msg) {
+    var hint = document.getElementById('offline-hint');
+    if (!hint) return;
+    hint.textContent = msg;
+    hint.classList.add('show');
+    setTimeout(function () { hint.classList.remove('show'); }, 2200);
+  }
+
+  global.KP_APPLY = A;
+})(typeof window !== 'undefined' ? window : this);
+
+
+/* 模块：报名模拟
+ * 数据层：KP_CONTENT.kp_signupFlow（流程节点）
+ * 存储层：kp_store 'signup.state'（各节点完成状态 + 信息）
+ * 功能：模拟报名流程向导（5 节点） + 信息表单 + 完成页 + 时间轴
+ */
+(function (global) {
+  'use strict';
+
+  var B = {};
+
+  var NODES = [
+    { id: 'account', label: '账号注册', desc: '学信网 / 研招网 实名注册', days: 7 },
+    { id: 'info', label: '基本信息', desc: '学历 / 身份证 / 专业', days: 2 },
+    { id: 'add', label: '添加志愿', desc: '学校 / 专业 / 导师', days: 5 },
+    { id: 'fee', label: '缴费确认', desc: '模拟缴费 300–400 元', days: 1 },
+    { id: 'print', label: '打印准考证', desc: '考前 10 天下载', days: 10 }
+  ];
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  B.render = function (view) {
+    var store = global.KP_STORE;
+    var state = store ? (store.get('signup.state') || {}) : {};
+    if (!state.nodes) state.nodes = {};
+    if (!state.info) state.info = {};
+
+    /* 当前进度 */
+    var idx = 0;
+    for (var i = 0; i < NODES.length; i++) {
+      if (state.nodes[NODES[i].id]) { idx = i + 1; } else break;
+    }
+    var allDone = idx >= NODES.length;
+
+    var self = this;
+
+    /* 时间轴 */
+    var timeline = NODES.map(function (n, i) {
+      var done = state.nodes[n.id];
+      var current = !done && i === idx && !allDone;
+      var cls = done ? 'tl-node--done' : (current ? 'tl-node--current' : 'tl-node--todo');
+      return '<div class="tl-node ' + cls + '">' +
+        '<div class="tl-node__dot"></div>' +
+        '<div class="tl-node__label">' + esc(n.label) + '</div>' +
+        '<div class="tl-node__desc">' + esc(n.desc) + '</div>' +
+        '<div class="tl-node__days">' + n.days + ' 天</div>' +
+      '</div>';
+    }).join('');
+
+    /* 当前节点表单 */
+    var formHtml = '';
+    if (!allDone) {
+      var n = NODES[idx];
+      formHtml = '<div class="signup-form" data-signup-node="' + esc(n.id) + '">' +
+        '<h3 class="card__title">第 ' + (idx + 1) + ' 步 · ' + esc(n.label) + '</h3>' +
+        '<p class="card__desc">' + esc(n.desc) + '</p>' +
+        B._formFor(n.id, state.info) +
+        '<div class="signup-actions">' +
+          (idx > 0 ? '<button class="btn btn--ghost" data-signup-prev>上一步</button>' : '') +
+          '<button class="btn btn--primary" data-signup-next>完成并下一步</button>' +
+        '</div>' +
+      '</div>';
+    } else {
+      formHtml = '<div class="signup-done" data-signup-done>' +
+        '<div class="signup-done__mark">✓</div>' +
+        '<h3 class="card__title">报名流程已全部完成</h3>' +
+        '<p class="card__desc">已模拟走完 5 个节点，共 ' +
+          NODES.reduce(function (s, x) { return s + x.days; }, 0) + ' 天。</p>' +
+        B._infoSummary(state.info) +
+        '<div class="signup-actions"><button class="btn btn--ghost" data-signup-reset>重置流程</button></div>' +
+      '</div>';
+    }
+
+    view.innerHTML =
+      '<div class="card signup-card">' +
+        '<h2 class="card__title">报名模拟</h2>' +
+        '<p class="card__desc">5 节点时间轴 · 模拟研招网 报名 流程</p>' +
+        '<div class="signup-tl">' + timeline + '</div>' +
+        formHtml +
+      '</div>';
+
+    view.addEventListener('click', function (e) {
+      var next = e.target.closest('[data-signup-next]');
+      if (next) { self._advance(idx, state, store, view); return; }
+      var prev = e.target.closest('[data-signup-prev]');
+      if (prev) { self._back(idx, state, store, view); return; }
+      var reset = e.target.closest('[data-signup-reset]');
+      if (reset) { self._reset(store, view); return; }
+    }, true);
+
+    /* 表单 input 实时写 state */
+    view.querySelectorAll('[data-signup-input]').forEach(function (inp) {
+      inp.value = state.info[inp.getAttribute('data-signup-input')] || '';
+      inp.addEventListener('input', function () {
+        state.info[inp.getAttribute('data-signup-input')] = inp.value;
+        if (store) store.set('signup.state', state);
+      });
+    });
+  };
+
+  B._formFor = function (nodeId, info) {
+    function field(name, label, type, ph) {
+      var t = type || 'text';
+      return '<div class="signup-field">' +
+        '<label class="signup-field__label" for="si-' + esc(name) + '">' + esc(label) + '</label>' +
+        '<input class="signup-field__input" id="si-' + esc(name) + '" data-signup-input="' + esc(name) + '" ' +
+          'type="' + t + '" placeholder="' + esc(ph || '') + '" ' +
+          (t === 'date' ? 'min="2025-10-01" max="2025-10-31"' : '') + '/>' +
+      '</div>';
+    }
+    switch (nodeId) {
+      case 'account':
+        return field('phone', '手机号', 'tel', '11 位手机号') +
+          field('realname', '姓名', 'text', '与身份证一致');
+      case 'info':
+        return field('edu', '学历', 'select', '') +
+          '<div class="signup-field__hint">本科 / 硕士 / 专科（同等学力）</div>' +
+          field('major', '本科专业', 'text', '如：计算机科学与技术') +
+          field('gradYear', '毕业年份', 'number', '如 2026');
+      case 'add':
+        return field('targetSchool', '目标院校', 'text', '如：华东师范大学') +
+          field('targetMajor', '目标专业', 'text', '如：教育学') +
+          field('advisor', '意向导师（选填）', 'text', '姓名 / 研究方向');
+      case 'fee':
+        return '<div class="signup-field"><span class="signup-field__label">模拟缴费</span>' +
+          '<div class="signup-fee">¥ ' + (300 + Math.floor(Math.random() * 100)) + '（模拟）</div></div>' +
+          '<label class="signup-agree"><input type="checkbox" data-signup-input="agreePay" /> 我已确认模拟缴费规则</label>';
+      case 'print':
+        return field('printAt', '打印时间', 'date', '考前 10 天');
+    }
+    return '';
+  };
+
+  B._infoSummary = function (info) {
+    var rows = [];
+    if (info.phone) rows.push(['手机号', info.phone]);
+    if (info.realname) rows.push(['姓名', info.realname]);
+    if (info.edu) rows.push(['学历', info.edu]);
+    if (info.major) rows.push(['本科专业', info.major]);
+    if (info.targetSchool) rows.push(['目标院校', info.targetSchool]);
+    if (info.targetMajor) rows.push(['目标专业', info.targetMajor]);
+    return rows.map(function (r) {
+      return '<div class="signup-sum"><span class="signup-sum__k">' + esc(r[0]) +
+        '</span><span class="signup-sum__v">' + esc(r[1]) + '</span></div>';
+    }).join('');
+  };
+
+  B._advance = function (idx, state, store, view) {
+    var n = NODES[idx];
+    /* 简单校验 */
+    if (n.id === 'account' && !state.info.phone) {
+      alert('请填写手机号'); return;
+    }
+    if (n.id === 'add' && !state.info.targetSchool) {
+      alert('请填写目标院校'); return;
+    }
+    state.nodes[n.id] = { done: true, ts: new Date().toISOString() };
+    if (store) store.set('signup.state', state);
+    B.render(view);
+  };
+
+  B._back = function (idx, state, store, view) {
+    if (idx > 0) {
+      delete state.nodes[NODES[idx].id];
+      if (store) store.set('signup.state', state);
+    }
+    B.render(view);
+  };
+
+  B._reset = function (store, view) {
+    if (store) store.set('signup.state', {});
+    B.render(view);
+  };
+
+  global.KP_SIGNUP = B;
+})(typeof window !== 'undefined' ? window : this);
+
+
+/* 模块：考试成绩分析
+ * 数据层：KP_CONTENT.kp_scoreNorm（全国平均分参考）
+ * 存储层：kp_store 'score.submissions'（成绩记录）
+ * 功能：多科成绩录入 + 总分/位次估算 + 趋势 + 薄弱点诊断 + 院校匹配
+ */
+(function (global) {
+  'use strict';
+
+  var C = {};
+
+  var SUBJECTS = ['政治', '英语', '数学', '专业课'];
+  var FULL = { '政治': 100, '英语': 100, '数学': 150, '专业课': 150 };
+  var NORM = {
+    '政治':  { avg: 58, sd: 14, top: 80 },
+    '英语':  { avg: 62, sd: 16, top: 85 },
+    '数学':  { avg: 75, sd: 20, top: 108 },
+    '专业课': { avg: 105, sd: 24, top: 145 }
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  /* 位次估算：按正态分布累计（1 个标准差 ≈ 68%） */
+  function estPercentile(score, avg, sd) {
+    if (!sd) return 0.5;
+    var z = (score - avg) / sd;
+    /* 近似误差函数：数值积分法（Simpson 200 步） */
+    var N = 200, lo = -4, hi = z;
+    if (lo > hi) { var t = lo; lo = hi; hi = t; }
+    var dx = (hi - lo) / N;
+    var sum = 0;
+    for (var i = 0; i <= N; i++) {
+      var x = lo + i * dx;
+      var w = (i === 0 || i === N) ? 1 : (i % 2 ? 4 : 2);
+      sum += w * Math.exp(-0.5 * x * x);
+    }
+    var integral = (dx / 3) * sum;
+    return Math.max(0, Math.min(1, 0.5 + integral / 2.5066282746));
+  }
+
+  C.addRecord = function (scores, label, view) {
+    var store = global.KP_STORE;
+    if (!store) return;
+    var subs = store.get('score.submissions') || [];
+    var total = 0, maxTotal = 0;
+    SUBJECTS.forEach(function (s) {
+      var v = Number(scores[s]) || 0;
+      total += v;
+      maxTotal += FULL[s];
+    });
+    /* 位次估算：各科分别估算后取平均 */
+    var pctAvg = 0;
+    SUBJECTS.forEach(function (s) {
+      var v = Number(scores[s]) || 0;
+      var n = NORM[s];
+      pctAvg += estPercentile(v, n.avg, n.sd) / SUBJECTS.length;
+    });
+    var sub = {
+      id: 'sc' + Date.now().toString(36),
+      label: label || ('第 ' + (subs.length + 1) + ' 次'),
+      scores: scores,
+      total: total,
+      pct: Math.round(pctAvg * 10000) / 100,
+      ts: new Date().toISOString(),
+      date: new Date().toISOString().slice(0, 10)
+    };
+    subs.unshift(sub);
+    if (subs.length > 30) subs.length = 30;
+    store.set('score.submissions', subs);
+    C.render(view);
+  };
+
+  C.render = function (view) {
+    var store = global.KP_STORE;
+    var subs = store ? (store.get('score.submissions') || []) : [];
+    var self = this;
+
+    var latest = subs[0] || null;
+
+    /* 诊断：基于最新一次 */
+    var diagHtml = '';
+    if (latest) {
+      var weak = [];
+      SUBJECTS.forEach(function (s) {
+        var v = Number(latest.scores[s]) || 0;
+        var n = NORM[s];
+        var p = estPercentile(v, n.avg, n.sd);
+        if (p < 0.45) weak.push(s);
+      });
+      var totalPct = latest.pct;
+      var advice = totalPct >= 80 ? '冲刺 985 院校，建议主攻专业课拉分'
+        : totalPct >= 65 ? '报考 211 / 强势双非，稳住政治英语'
+        : totalPct >= 50 ? '建议「保底」志愿为主，优先选择国家线 B 区'
+        : '基础薄弱期：先 6 个月打地基，不要急于择校';
+      diagHtml = '<div class="score-diag" data-score-diag>' +
+        '<h3 class="card__title">诊断（基于 ' + esc(latest.label) + '）</h3>' +
+        (weak.length
+          ? '<p class="score-diag__weak">薄弱科目：' +
+            weak.map(function (w) { return '<span class="chip">' + w + '</span>'; }).join(' ') +
+            '</p>' : '<p class="score-diag__ok">各科均衡，无明显短板</p>') +
+        '<p class="score-diag__advice">建议：' + esc(advice) + '</p>' +
+        '<p class="score-diag__rank">全国位次估算 <b>' + totalPct + '%</b></p>' +
+      '</div>';
+    }
+
+    /* 趋势（最新 6 次，KP_CHARTS.trend 期望 score + accuracy(0-1) 字段） */
+    var trendData = subs.slice(0, 6).map(function (s) {
+      return { label: s.label, score: s.total, accuracy: s.pct / 100 };
+    }).reverse();
+
+    var trendHtml = '';
+    if (trendData.length >= 2) {
+      trendHtml = '<div class="score-trend" data-score-trend></div>';
+    }
+
+    /* 提交记录列表 */
+    var listHtml = '';
+    if (subs.length) {
+      listHtml = '<h3 class="card__title" style="margin-top:var(--sp-4)">提交记录</h3><div class="score-list">' +
+        subs.slice(0, 10).map(function (s) {
+          var scores = SUBJECTS.map(function (k) {
+            return '<span class="score-chip">' + k + ' ' + esc(String(s.scores[k] || 0)) + '</span>';
+          }).join('');
+          return '<div class="score-item">' +
+            '<div class="score-item__head">' +
+              '<b>' + esc(s.label) + '</b>' +
+              '<span class="score-item__total">' + s.total + ' 分</span>' +
+              '<span class="score-item__pct">' + s.pct + '%</span>' +
+              '<span class="score-item__date">' + esc(s.date) + '</span>' +
+            '</div>' +
+            '<div class="score-item__scores">' + scores + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+    }
+
+    view.innerHTML =
+      '<div class="card score-card">' +
+        '<h2 class="card__title">考试成绩分析</h2>' +
+        '<p class="card__desc">录入模考/真题成绩 · 自动诊断 · 位次估算</p>' +
+
+        '<div class="score-form" data-score-form>' +
+          '<div class="score-form__head">' +
+            '<label class="score-form__label">批次</label>' +
+            '<input class="score-form__label-input" type="text" data-score-label ' +
+              'placeholder="如：第 3 次模考" value="" />' +
+          '</div>' +
+          '<div class="score-form__grid">' +
+            SUBJECTS.map(function (s) {
+              return '<div class="score-input" data-score-input="' + s + '">' +
+                '<label class="score-input__label">' + s + ' <span>（' + FULL[s] + '）</span></label>' +
+                '<input class="score-input__value" type="number" min="0" max="' + FULL[s] + '" ' +
+                  'placeholder="0" />' +
+                '<div class="score-input__norm">参考 平均 ' + NORM[s].avg +
+                  ' / 优秀 ' + NORM[s].top + '</div>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+          '<div class="score-form__actions">' +
+            '<button class="btn btn--primary" data-score-submit>提交并分析</button>' +
+          '</div>' +
+        '</div>' +
+
+        diagHtml +
+        trendHtml +
+        listHtml +
+      '</div>';
+
+    /* 趋势图 */
+    var tEl = view.querySelector('[data-score-trend]');
+    if (tEl && global.KP_CHARTS) {
+      global.KP_CHARTS.trend(tEl, trendData, { leftMax: 500 });
+    }
+
+    view.addEventListener('click', function (e) {
+      var sub = e.target.closest('[data-score-submit]');
+      if (!sub) return;
+      var form = view.querySelector('[data-score-form]');
+      var scores = {};
+      SUBJECTS.forEach(function (s) {
+        var el = form.querySelector('[data-score-input="' + s + '"] input');
+        scores[s] = el ? (Number(el.value) || 0) : 0;
+      });
+      var labelEl = form.querySelector('[data-score-label]');
+      var label = labelEl ? labelEl.value.trim() : '';
+      self.addRecord(scores, label || undefined, view);
+    }, true);
+  };
+
+  global.KP_SCORE = C;
+})(typeof window !== 'undefined' ? window : this);
+
+
 /* 应用入口：导航切换 + 题库练习模块 + 各模块占位渲染 */
 (function (global) {
   'use strict';
@@ -4572,27 +5977,19 @@ html, body {
   var KP_APP = {};
 
   var MODULES = [
-    'dashboard', 'questions', 'exam-past', 'plan',
-    'vocab', 'mistakes', 'mock', 'notes', 'review'
+    'dashboard', 'school', 'apply', 'signup',
+    'plan', 'score-analysis', 'mock', 'notes'
   ];
 
   var LABELS = {
-    dashboard:  '仪表盘',
-    questions:  '题库',
-    'exam-past':'真题',
-    plan:       '计划',
-    vocab:      '单词',
-    mistakes:   '错题本',
-    mock:       '模考',
-    notes:      '笔记',
-    review:     '间隔复习'
-  };
-
-  var TYPE_LABELS = {
-    single: '单选',
-    multi:  '多选',
-    blank:  '填空',
-    reading:'阅读'
+    dashboard:      '仪表盘',
+    school:         '考研择校',
+    apply:          '志愿模拟',
+    signup:         '报名模拟',
+    plan:           '备考计划',
+    'score-analysis': '成绩分析',
+    mock:           '模考',
+    notes:          '笔记'
   };
 
   function $(sel, root) {
@@ -4618,2548 +6015,137 @@ html, body {
       '</div>';
   }
 
-  /* ---------- 题库练习 ---------- */
-  var QUIZ = {
-    view: null,            // #view-questions
-    panel: null,          // #quiz-panel
-    panelInner: null,
-    timer: null,          // 限时模式定时器
-    session: null,        // 当前作答会话
-
-    /* 取样题（KP_CONTENT 已加载） */
-    allQuestions: function () {
-      return global.KP_CONTENT && global.KP_CONTENT.kp_sampleQuestions || [];
-    },
-
-    /* 列表页渲染：四重筛选 + 题干搜索 + 限时选项 */
-    renderList: function () {
-      var view = this.view;
-      if (!view) return;
-      var qs = this.allQuestions();
-
-      // 收集筛选维度
-      var subjects = uniq(qs.map(function (q) { return q.subject; }));
-      var chapters = uniq(qs.map(function (q) { return q.chapter; }));
-      var types = uniq(qs.map(function (q) { return q.type; }));
-      var diffs = uniq(qs.map(function (q) { return q.difficulty; })).sort();
-
-      var favs = global.KP_STORE ? global.KP_STORE.getFavs() : [];
-      var wrongSet = {};
-      (global.KP_STORE ? global.KP_STORE.get('wrong') : []).forEach(function (w) { wrongSet[w.qid] = true; });
-
-      view.innerHTML = '' +
-        '<div class="card">' +
-          '<h2 class="card__title">题库练习</h2>' +
-          '<p class="card__desc">共 ' + qs.length + ' 道样题 · 支持筛选、限时练习、收藏、错题本</p>' +
-
-          '<div class="quiz-filters" data-quiz-filters>' +
-            group('科目', subjects, 'subj', true) +
-            group('章节', chapters, 'chap', true) +
-            group('题型', types, 'type', true) +
-            group('难度', diffs, 'diff', true) +
-            '<div class="quiz-filters__search-wrap" style="flex:1;min-width:140px;display:flex;align-items:center;gap:var(--sp-2);">' +
-              '<input class="quiz-filters__search" type="search" placeholder="搜索题干…" data-quiz-search />' +
-            '</div>' +
-            '<div class="quiz-filters__limit">' +
-              '<span class="quiz-filters__label">限时</span>' +
-              '<input type="number" min="0" max="300" placeholder="分" data-quiz-limit value="" />' +
-            '</div>' +
-          '</div>' +
-
-          '<div class="quiz-list" data-quiz-list></div>' +
-        '</div>';
-
-      // 状态缓存
-      var state = this.filterState();
-      state.subj = []; state.chap = []; state.type = []; state.diff = [];
-      state.search = ''; state.limit = 0;
-      this.state = state;
-
-      // 绑定筛选
-      bindFilters(view, this);
-      this.renderListItems();
-
-      function group(label, items, key, withAll) {
-        var chips = items.map(function (v) {
-          var label = v;
-          if (key === 'type') label = TYPE_LABELS[v] || v;
-          if (key === 'diff') label = '★'.repeat(v) + '☆'.repeat(5 - v);
-          return '<button class="chip" data-filter-key="' + key + '" data-filter-val="' + esc(String(v)) + '">' + esc(label) + '</button>';
-        }).join('');
-        var allBtn = withAll ? '<button class="chip is-active" data-filter-key="' + key + '" data-filter-val="*">全部</button>' : '';
-        return '<div class="quiz-filters__group"><span class="quiz-filters__label">' + label + '</span>' + allBtn + chips + '</div>';
-      }
-
-      function filterState() {
-        return this.state || {};
-      }
-      filterState = function () { return this.state || {}; }.bind(this);
-      return { group: group, filterState: filterState };
-    },
-
-    /* 渲染题目列表 */
-    renderListItems: function () {
-      var list = this.view && $('[data-quiz-list]', this.view);
-      if (!list) return;
-      var st = this.state || {};
-      var qs = this.allQuestions();
-
-      var items = qs.filter(function (q) {
-        if (st.subj && st.subj.length && st.subj.indexOf(q.subject) === -1) return false;
-        if (st.chap && st.chap.length && st.chap.indexOf(q.chapter) === -1) return false;
-        if (st.type && st.type.length && st.type.indexOf(q.type) === -1) return false;
-        if (st.diff && st.diff.length && st.diff.indexOf(q.difficulty) === -1) return false;
-        if (st.search) {
-          var s = st.search.toLowerCase();
-          if (q.stem.toLowerCase().indexOf(s) === -1) return false;
-        }
-        return true;
-      });
-
-      if (!items.length) {
-        list.innerHTML = '<div class="card__desc" style="text-align:center;padding:var(--sp-8)">没有符合条件的题目</div>';
-        return;
-      }
-
-      var favs = global.KP_STORE ? global.KP_STORE.getFavs() : [];
-      var wrongSet = {};
-      (global.KP_STORE ? global.KP_STORE.get('wrong') : []).forEach(function (w) { wrongSet[w.qid] = true; });
-
-      list.innerHTML = items.map(function (q) {
-        var isFav = favs.indexOf(q.id) !== -1;
-        var isWrong = wrongSet[q.id];
-        var wrongTag = isWrong ? '<span style="color:var(--bad);font-weight:600;margin-left:var(--sp-1)">✗ 错题</span>' : '';
-        return '' +
-          '<article class="quiz-card" data-qid="' + q.id + '">' +
-            '<div class="quiz-card__meta">' +
-              '<span class="quiz-card__subject">' + esc(q.subject) + '</span>' +
-              '<span class="quiz-card__chapter">' + esc(q.chapter) + '</span>' +
-              '<span class="quiz-card__type">' + (TYPE_LABELS[q.type] || q.type) + '</span>' +
-              '<span class="quiz-card__diff">' + '★'.repeat(q.difficulty) + '</span>' +
-              wrongTag +
-            '</div>' +
-            '<p class="quiz-card__stem">' + esc(q.stem) + '</p>' +
-            '<div class="quiz-card__actions">' +
-              '<button class="quiz-card__fav ' + (isFav ? 'is-fav' : '') + '" data-fav="' + q.id + '" title="收藏">' + (isFav ? '★' : '☆') + '</button>' +
-              '<button class="btn btn--primary" data-start="' + q.id + '">开始练习</button>' +
-            '</div>' +
-          '</article>';
-      }).join('');
-
-      // 收藏切换
-      $all('[data-fav]', list).forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          var qid = btn.getAttribute('data-fav');
-          var nowFav = global.KP_STORE.toggleFav(qid);
-          btn.classList.toggle('is-fav', nowFav);
-          btn.textContent = nowFav ? '★' : '☆';
-        });
-      });
-
-      // 开始练习
-      $all('[data-start]', list).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var qid = btn.getAttribute('data-start');
-          var limitMin = st.limit || 0;
-          this.startQuiz(qid, limitMin);
-        }.bind(this));
-      });
-    },
-
-    /* 开始答题面板
-       context: 'practice'(默认) | 'redo'(错题重做)
-       onResult(correct) 可选回调，重做场景用于掌握/累计重试 */
-    startQuiz: function (qid, limitMinutes, context, onResult) {
-      var qs = this.allQuestions().filter(function (q) { return q.id === qid; });
-      if (!qs.length) return;
-      var q = qs[0];
-      this.session = {
-        q: q,
-        answer: q.type === 'multi' ? [] : (q.type === 'blank' ? '' : ''),
-        isMulti: q.type === 'multi',
-        isBlank: q.type === 'blank',
-        startedAt: Date.now(),
-        submitted: false,
-        limitMinutes: limitMinutes || 0,
-        context: context || 'practice',
-        onResult: typeof onResult === 'function' ? onResult : null
-      };
-
-      this.panel.classList.add('is-open');
-      this.panel.setAttribute('aria-hidden', 'false');
-      this.renderPanel();
-
-      if ((limitMinutes || 0) > 0) {
-        this.startTimer(limitMinutes);
-      }
-    },
-
-    /** 重做错题（供错题本调用）：复用答题组件，答对掌握 / 答错累加 */
-    redoWrong: function (qid) {
-      var wrongItem = global.KP_STORE && global.KP_STORE.get('wrong').filter(function (w) { return w.qid === qid; })[0];
-      this.startQuiz(qid, 0, 'redo', function (correct) {
-        if (!global.KP_STORE) return;
-        if (correct) {
-          global.KP_STORE.masterWrong(qid);
-        } else {
-          global.KP_STORE.addWrong({
-            qid: qid,
-            reason: '重做仍错',
-            status: 'pending'
-          });
-        }
-      });
-    },
-
-    /* 渲染答题面板 */
-    renderPanel: function () {
-      var s = this.session;
-      var q = s.q;
-      var inner = this.panelInner;
-      if (!inner) return;
-
-      var optHtml = '';
-      if (q.type === 'blank') {
-        optHtml = '<input class="quiz-blank" type="text" data-blank-input placeholder="填写答案…" autocomplete="off" value="' + esc(s.answer || '') + '" />';
-      } else {
-        optHtml = '<ul class="quiz-opts" data-opts-list>' +
-          q.options.map(function (opt, i) {
-            var letter = opt.charAt(0);
-            var selected = s.answer === letter || (Array.isArray(s.answer) && s.answer.indexOf(letter) !== -1);
-            return '<li class="quiz-opt ' + (selected ? 'is-selected' : '') + '" data-opt-letter="' + letter + '" data-opt-index="' + i + '">' +
-              '<span class="quiz-opt__badge">' + letter + '</span>' +
-              '<span class="quiz-opt__text">' + esc(opt.slice(3).trim()) + '</span>' +
-            '</li>';
-          }).join('') +
-        '</ul>';
-      }
-
-      var timerHtml = '';
-      if (s.limitMinutes > 0) {
-        timerHtml = '<div class="quiz-timer ' + (this._timerActive ? 'is-active' : '') + '" data-timer>' +
-          '<span data-timer-text>--:--</span>' +
-          '<div class="quiz-timer__bar"><div class="quiz-timer__bar-fill" data-timer-bar style="width:100%"></div></div>' +
-        '</div>';
-      }
-
-      inner.innerHTML = '' +
-        '<div class="quiz-panel__header">' +
-          '<div>' +
-            '<div class="quiz-card__meta" style="margin-bottom:var(--sp-1)">' +
-              '<span class="quiz-card__subject">' + esc(q.subject) + '</span>' +
-              '<span class="quiz-card__chapter">' + esc(q.chapter) + '</span>' +
-              '<span class="quiz-card__type">' + (TYPE_LABELS[q.type] || q.type) + '</span>' +
-              '<span class="quiz-card__diff">' + '★'.repeat(q.difficulty) + '</span>' +
-            '</div>' +
-          '</div>' +
-          timerHtml +
-          '<button class="quiz-panel__close" data-close-panel title="关闭">✕</button>' +
-        '</div>' +
-
-        '<p class="quiz-card__stem" style="font-size:15px">' + esc(q.stem) + '</p>' +
-        optHtml +
-
-        '<div class="quiz-actions">' +
-          '<button class="btn" data-close-panel2>关闭</button>' +
-          '<button class="btn btn--primary" data-submit-answer>提交</button>' +
-        '</div>' +
-
-        '<div class="quiz-feedback" data-feedback></div>';
-
-      // 绑定选项点击
-      $all('[data-opt-letter]', inner).forEach(function (el) {
-        el.addEventListener('click', function () {
-          var letter = el.getAttribute('data-opt-letter');
-          if (s.isMulti) {
-            var idx = s.answer.indexOf(letter);
-            if (idx === -1) s.answer.push(letter);
-            else s.answer.splice(idx, 1);
-            $all('[data-opt-letter]', inner).forEach(function (o) {
-              var l = o.getAttribute('data-opt-letter');
-              o.classList.toggle('is-selected', s.answer.indexOf(l) !== -1);
-            });
-          } else {
-            s.answer = letter;
-            $all('[data-opt-letter]', inner).forEach(function (o) {
-              o.classList.toggle('is-selected', o.getAttribute('data-opt-letter') === letter);
-            });
-          }
-        });
-      });
-
-      // 填空输入
-      var blankInput = $('[data-blank-input]', inner);
-      if (blankInput) {
-        blankInput.addEventListener('input', function () {
-          s.answer = this.value;
-        });
-      }
-
-      // 关闭
-      $all('[data-close-panel],[data-close-panel2]', inner).forEach(function (b) {
-        b.addEventListener('click', function () { this.closePanel(); }.bind(this));
-      });
-
-      // 提交
-      var submitBtn = $('[data-submit-answer]', inner);
-      if (submitBtn) {
-        submitBtn.addEventListener('click', function () {
-          this.submitAnswer();
-        }.bind(this));
-      }
-
-      // 键盘 Enter 提交
-      if (blankInput) {
-        blankInput.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter') this.submitAnswer();
-        }.bind(this));
-      }
-    },
-
-    /* 提交并判分 */
-    submitAnswer: function () {
-      var s = this.session;
-      if (!s || s.submitted) return;
-      s.submitted = true;
-
-      var secs = Math.round((Date.now() - s.startedAt) / 1000);
-      var judge = global.KP_MODEL.judgeAnswer(s.q, s.answer);
-      var correct = judge.correct;
-
-      // 写记录
-      if (global.KP_STORE) {
-        global.KP_STORE.addRecord({
-          qid: s.q.id,
-          answer: s.answer,
-          correct: correct,
-          seconds: secs,
-          ts: Date.now()
-        });
-      }
-
-      // 错题入本 / 重做结算
-      if (s.context === 'redo') {
-        // 重做场景：答对标记掌握并出队列，答错累加重试
-        if (correct && global.KP_STORE) {
-          global.KP_STORE.masterWrong(s.q.id);
-        } else if (global.KP_STORE) {
-          global.KP_STORE.addWrong({
-            qid: s.q.id,
-            reason: '重做仍错',
-            status: 'pending'
-          });
-        }
-        if (s.onResult) s.onResult(correct);
-      } else if (!correct && global.KP_STORE) {
-        global.KP_STORE.addWrong({
-          qid: s.q.id,
-          reason: (s.answer === '' || (Array.isArray(s.answer) && !s.answer.length)) ? '未作答' : '作答错误',
-          status: 'pending',
-          retries: 0
-        });
-      }
-
-      // 间隔复习：答过的题都进入 kp_review 追踪
-      //  - 答错：stage 重置 0（今日开始复习周期）
-      //  - 答对：保留/推进已有 stage（首次答对则初始化 stage=0 待复习）
-      if (global.KP_STORE) {
-        if (!correct) {
-          global.KP_STORE.reviewForgot(s.q.id);
-        } else {
-          global.KP_STORE.getReview(s.q.id);
-        }
-      }
-
-      this.renderFeedback(correct, secs, s.answer, s.context);
-    },
-
-    /* 渲染判分反馈 */
-    renderFeedback: function (correct, secs, userAnswer, context) {
-      var s = this.session;
-      var q = s.q;
-      var fb = this.panelInner && $('[data-feedback]', this.panelInner);
-      if (!fb) return;
-
-      var userText;
-      if (Array.isArray(userAnswer)) userText = userAnswer.sort().join(', ');
-      else userText = userAnswer === '' || userAnswer == null ? '（未作答）' : userAnswer;
-
-      var isRedo = context === 'redo';
-      var resultLabel = correct ? '✓ 回答正确' : '✗ 回答错误';
-      var hint = '';
-      if (isRedo) {
-        hint = correct ? '<br><br>已标记为掌握，本题移出错题本。'
-                       : '<br><br>仍在错，重做次数 +1，可稍后再试。';
-      } else if (!correct) {
-        hint = '<br><br>已自动加入错题本，可在「错题本」模块重做。';
-      }
-
-      fb.innerHTML = '' +
-        '<div class="quiz-feedback__result ' + (correct ? 'is-correct' : 'is-wrong') + '">' +
-          '<span>' + resultLabel + '</span>' +
-          '<span style="font-size:12px;color:var(--text-secondary)">用时 ' + secs + 's</span>' +
-        '</div>' +
-        '<div class="quiz-feedback__analysis">' +
-          '<strong>正确答案：</strong>' +
-          (Array.isArray(q.answer) ? q.answer.join(', ') : esc(String(q.answer))) +
-          '<br><strong>你的答案：</strong>' + esc(userText) +
-          '<br><br><strong>解析：</strong>' + esc(q.analysis || '（无）') +
-          hint +
-        '</div>' +
-        '<div class="quiz-actions" style="justify-content:flex-end;margin-top:var(--sp-3)">' +
-          '<button class="btn" data-close-panel3>' + (isRedo ? '返回错题本' : '返回列表') + '</button>' +
-          '<button class="btn btn--primary" data-retry>' + (correct ? '完成' : '再试一次') + '</button>' +
-        '</div>';
-
-      // 标记该选项反馈
-      $all('[data-opt-letter]', this.panelInner).forEach(function (o) {
-        var letter = o.getAttribute('data-opt-letter');
-        var isCorrectOpt = Array.isArray(q.answer) ? q.answer.indexOf(letter) !== -1 : q.answer === letter;
-        if (isCorrectOpt) o.style.borderColor = 'var(--ok)';
-      });
-
-      $('[data-close-panel3]', this.panelInner).addEventListener('click', function () {
-        this.closePanel();
-      }.bind(this));
-      $('[data-retry]', this.panelInner).addEventListener('click', function () {
-        this.startQuiz(q.id, s.limitMinutes, s.context, s.onResult);
-      }.bind(this));
-
-      fb.classList.add('is-shown');
-    },
-
-    /* 关闭面板 */
-    closePanel: function () {
-      var wasRedo = this.session && this.session.context === 'redo';
-      this.stopTimer();
-      this.session = null;
-      this._timerActive = false;
-      var panel = this.panel;
-      if (panel) {
-        panel.classList.remove('is-open');
-        panel.setAttribute('aria-hidden', 'true');
-        this.panelInner.innerHTML = '';
-      }
-      this.renderListItems();
-      // 重做场景关闭后刷新错题本（若当前在错题本视图）
-      if (wasRedo && global.KP_APP._mistakesViewActive) {
-        global.KP_APP._renderMistakes();
-        global.KP_APP._mistakesViewActive = false;
-      }
-    },
-
-    /* 限时模式 */
-    startTimer: function (minutes) {
-      this.stopTimer();
-      this._timerActive = true;
-      var remaining = minutes * 60;
-      var total = remaining;
-      var el = this.panelInner && $('[data-timer]', this.panelInner);
-      var textEl = el && $('[data-timer-text]', el);
-      var barEl = el && $('[data-timer-bar]', el);
-
-      function tick() {
-        remaining--;
-        if (remaining <= 0) {
-          this.stopTimer();
-          if (this._timerActive === false && this.session && !this.session.submitted) {
-            // 倒计时归零自动交卷
-            if (this.session) {
-              this.session.submitted = true;
-              // 交卷：未答的题按未作答处理
-              this.submitAnswer();
-            }
-          }
-          if (textEl) textEl.textContent = '00:00';
-          if (barEl) barEl.style.width = '0%';
-          if (el) { el.classList.add('is-active', 'is-danger'); }
-          return;
-        }
-        var m = Math.floor(remaining / 60);
-        var s = remaining % 60;
-        if (textEl) textEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-        if (barEl) barEl.style.width = Math.round((remaining / total) * 100) + '%';
-        if (el && remaining <= 30) el.classList.add('is-danger');
-        this._quizTimer = setTimeout(tick.bind(this), 1000);
-      }
-      if (el) el.classList.add('is-active');
-      tick();
-    },
-
-    stopTimer: function () {
-      if (this._quizTimer) {
-        clearTimeout(this._quizTimer);
-        this._quizTimer = null;
-      }
-    }
-  };
-
-  function bindFilters(view, quiz) {
-    var filterRoot = $('[data-quiz-filters]', view);
-    if (!filterRoot) return;
-
-    // 点击 chip 筛选
-    filterRoot.addEventListener('click', function (e) {
-      var chip = e.target.closest('[data-filter-key]');
-      if (!chip) return;
-      var key = chip.getAttribute('data-filter-key');
-      var val = chip.getAttribute('data-filter-val');
-
-      if (val === '*') {
-        // 选“全部”：清空该维度
-        quiz.state[key] = [];
-        $all('[data-filter-key="' + key + '"]', filterRoot).forEach(function (c) { c.classList.remove('is-active'); });
-        chip.classList.add('is-active');
-      } else {
-        // 切换
-        var arr = quiz.state[key] || [];
-        if (!arr.length || arr.indexOf(val) !== -1) {
-          quiz.state[key] = [val];
-        } else {
-          arr.push(val);
-          quiz.state[key] = arr;
-        }
-        $all('[data-filter-key="' + key + '"]', filterRoot).forEach(function (c) {
-          var cv = c.getAttribute('data-filter-val');
-          c.classList.toggle('is-active', cv === '*' ? false : arr.indexOf(cv) !== -1);
-        });
-        var allChip = filterRoot.querySelector('[data-filter-key="' + key + '"][data-filter-val="*"]');
-        if (allChip) allChip.classList.toggle('is-active', arr.length === 0);
-      }
-      quiz.renderListItems();
-    });
-
-    // 搜索
-    var search = $('[data-quiz-search]', filterRoot);
-    if (search) {
-      search.addEventListener('input', function () {
-        quiz.state.search = this.value.trim();
-        quiz.renderListItems();
-      });
-    }
-
-    // 限时
-    var limit = $('[data-quiz-limit]', filterRoot);
-    if (limit) {
-      limit.addEventListener('input', function () {
-        var v = parseInt(this.value, 10) || 0;
-        quiz.state.limit = v;
-      });
-    }
-
-    // 移动端：筛选折叠开关 + 已选摘要 + 角标
-    var toggle = $('[data-filters-toggle]', filterRoot);
-    var collapse = $('[data-filters-collapse]', filterRoot);
-    var activeRow = $('[data-filter-active]', filterRoot);
-    var badge = toggle && $('[data-filter-badge]', toggle);
-
-    function activeCount() {
-      var n = 0;
-      ['subj', 'chap', 'type', 'diff'].forEach(function (k) {
-        n += (quiz.state[k] || []).length;
-      });
-      return n;
-    }
-    function refreshSummary() {
-      if (!activeRow) return;
-      var parts = [];
-      ['subj', 'chap', 'type', 'diff'].forEach(function (k) {
-        var sel = quiz.state[k] || [];
-        if (sel.length) parts.push(sel.map(function (v) { return esc(k === 'diff' ? v + '★' : String(v)); }).join('、'));
-      });
-      if (parts.length) {
-        activeRow.innerHTML = parts.map(function (p) {
-          return '<button class="chip is-active" data-summary-chip>' + p + '</button>';
-        }).join('');
-        activeRow.classList.add('is-shown');
-      } else {
-        activeRow.classList.remove('is-shown');
-      }
-      if (badge) {
-        var n = activeCount();
-        badge.hidden = n === 0;
-        badge.textContent = n;
-      }
-    }
-    if (toggle && collapse) {
-      toggle.addEventListener('click', function () {
-        var open = collapse.classList.toggle('is-open');
-        toggle.classList.toggle('is-open', open);
-        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-      // 点已选摘要 chip = 展开筛选区查看/取消
-      if (activeRow) {
-        activeRow.addEventListener('click', function (e) {
-          var c = e.target.closest('[data-summary-chip]');
-          if (!c) return;
-          collapse.classList.add('is-open');
-          toggle.classList.add('is-open');
-          toggle.setAttribute('aria-expanded', 'true');
-        });
-      }
-      // 初次 + 每次筛选变化后刷新摘要
-      refreshSummary();
-      var origRender = quiz.renderListItems;
-      quiz.renderListItems = function () {
-        origRender.apply(this, arguments);
-        refreshSummary();
-      };
-    }
-  }
-
-  function uniq(arr) {
-    var seen = {};
-    var out = [];
-    for (var i = 0; i < arr.length; i++) {
-      var v = arr[i];
-      if (v == null) continue;
-      var k = String(v);
-      if (!seen[k]) { seen[k] = true; out.push(v); }
-    }
-    return out;
-  }
-
-  /* ---------- CSV 导出 ---------- */
-  function csvEscape(v) {
-    var s = String(v == null ? '' : v);
-    if (/[",\n\r]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
-    return s;
-  }
-
-  /* ---------- 错题本聚合页 ---------- */
-  var MISTAKES = {
-    view: null,           // #view-mistakes
-    activeSubject: 'all', // 当前选中科目
-
-    /* 取「已入错题」的题目（按 qid 反查样题，保证数据完整） */
-    wrongEntries: function () {
-      var wrong = global.KP_STORE ? global.KP_STORE.get('wrong') : [];
-      var qs = global.KP_CONTENT ? global.KP_CONTENT.kp_sampleQuestions : [];
-      var qmap = {};
-      qs.forEach(function (q) { qmap[q.id] = q; });
-      return wrong.map(function (w) {
-        return {
-          qid: w.qid,
-          subject: (qmap[w.qid] && qmap[w.qid].subject) || '未知',
-          chapter: (qmap[w.qid] && qmap[w.qid].chapter) || '',
-          q: qmap[w.qid] || null,
-          reason: w.reason || '',
-          status: w.status || 'pending',
-          retries: w.retries || 0
-        };
-      });
-    },
-
-    /* 我的最近一次作答（用于展示「我的答案」） */
-    lastAnswer: function (qid) {
-      var recs = global.KP_STORE ? global.KP_STORE.get('records') : [];
-      for (var i = recs.length - 1; i >= 0; i--) {
-        if (recs[i].qid === qid) return recs[i];
-      }
-      return null;
-    },
-
-    render: function () {
-      var view = this.view;
-      if (!view) return;
-      var self = this;
-
-      var entries = this.wrongEntries();
-      var subjects = uniq(entries.map(function (e) { return e.subject; }));
-
-      // 若当前科目已无错题，回退到全部
-      if (this.activeSubject !== 'all' && subjects.indexOf(this.activeSubject) === -1) {
-        this.activeSubject = 'all';
-      }
-
-      var shown = this.activeSubject === 'all'
-        ? entries
-        : entries.filter(function (e) { return e.subject === self.activeSubject; });
-
-      // 构建科目 Tab 区（有题才显示 Tab）
-      var middleHtml;
-      if (entries.length) {
-        var chips = subjects.map(function (s) {
-          return '<button class="chip ' + (self.activeSubject === s ? 'is-active' : '') + '" data-mtab="' + esc(s) + '">' + esc(s) + '</button>';
-        }).join('');
-        middleHtml = '<div class="mistakes-tabs" data-mistakes-tabs>' +
-          '<button class="chip ' + (self.activeSubject === 'all' ? 'is-active' : '') + '" data-mtab="all">全部</button>' +
-          chips +
-        '</div>';
-      } else {
-        middleHtml = '<div class="card__desc" style="text-align:center;padding:var(--sp-8)">暂无错题，保持！</div>';
-      }
-
-      view.innerHTML = '' +
-        '<div class="card mistakes-card">' +
-          '<div class="mistakes-card__head">' +
-            '<div>' +
-              '<h2 class="card__title">错题本</h2>' +
-              '<p class="card__desc">共 ' + entries.length + ' 道待掌握 · 重做答对即掌握移出错题本</p>' +
-            '</div>' +
-            '<button class="btn" data-export-csv>导出 CSV</button>' +
-          '</div>' +
-          middleHtml +
-          '<div class="mistakes-list" data-mistakes-list></div>' +
-        '</div>';
-
-      // 科目 Tab
-      $all('[data-mtab]', view).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          self.activeSubject = this.getAttribute('data-mtab');
-          self.render();
-        });
-      });
-
-      // 导出
-      var exportBtn = $('[data-export-csv]', view);
-      if (exportBtn) {
-        exportBtn.addEventListener('click', function () {
-          self.exportCsv(entries);
-        });
-      }
-
-      // 列表（仅当前科目）
-      this.renderList(shown);
-    },
-
-    renderList: function (entries) {
-      var view = this.view;
-      var list = view && $('[data-mistakes-list]', view);
-      if (!list) return;
-      var self = this;
-
-      if (!entries.length) {
-        list.innerHTML = '<div class="card__desc" style="text-align:center;padding:var(--sp-8)">该科目暂无错题</div>';
-        return;
-      }
-
-      list.innerHTML = entries.map(function (e) {
-        var q = e.q;
-        if (!q) {
-          return '<article class="mistake-item mistake-item--missing">' +
-            '<p class="quiz-card__stem">题目 ' + esc(e.qid) + '（题库未找到，无法重做）</p>' +
-          '</article>';
-        }
-
-        var last = self.lastAnswer(e.qid);
-        var myAns = last ? last.answer : null;
-        var myAnsText;
-        if (Array.isArray(myAns)) myAnsText = myAns.length ? myAns.slice().sort().join(', ') : '未作答';
-        else myAnsText = (myAns === '' || myAns == null) ? '未作答' : String(myAns);
-
-        return '' +
-          '<article class="mistake-item" data-mqid="' + e.qid + '">' +
-            '<div class="mistake-item__meta">' +
-              '<span class="mistake-item__subject">' + esc(e.subject) + '</span>' +
-              (e.chapter ? '<span class="mistake-item__chapter">' + esc(e.chapter) + '</span>' : '') +
-              '<span class="mistake-item__type">' + (TYPE_LABELS[q.type] || q.type) + '</span>' +
-              '<span class="mistake-item__retries" ' + (e.retries > 0 ? 'data-has-retry="1"' : '') + '>重做 ' + e.retries + ' 次</span>' +
-            '</div>' +
-            '<p class="mistake-item__stem">' + esc(q.stem) + '</p>' +
-            '<div class="mistake-item__answers">' +
-              '<div class="answer-line answer-line--ok"><span class="answer-line__label">正确答案</span>' +
-                '<span>' + (Array.isArray(q.answer) ? q.answer.join(', ') : esc(String(q.answer))) + '</span></div>' +
-              '<div class="answer-line answer-line--bad"><span class="answer-line__label">我的答案</span>' +
-                '<span>' + esc(myAnsText) + '</span></div>' +
-            '</div>' +
-            (e.reason ? '<div class="mistake-item__reason">错因：' + esc(e.reason) + '</div>' : '') +
-            '<div class="mistake-item__actions">' +
-              '<button class="btn btn--primary" data-redo="' + e.qid + '">重做</button>' +
-            '</div>' +
-          '</article>';
-      }).join('');
-
-      // 重做按钮：复用题库答题组件
-      $all('[data-redo]', list).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var qid = this.getAttribute('data-redo');
-          global.KP_APP._mistakesViewActive = true;
-          global.KP_APP._quiz.redoWrong(qid);
-        });
-      });
-    },
-
-    /* 导出 CSV：文件名 kp_wrong_<date>.csv */
-    exportCsv: function (entries) {
-      var qs = global.KP_CONTENT ? global.KP_CONTENT.kp_sampleQuestions : [];
-      var qmap = {};
-      qs.forEach(function (q) { qmap[q.id] = q; });
-
-      var header = ['题号', '科目', '章节', '题型', '题干', '正确答案', '我的答案', '错因', '重做次数', '状态'];
-      var lines = [header.map(csvEscape).join(',')];
-
-      var self = this;
-      entries.forEach(function (e) {
-        var q = e.q || qmap[e.qid];
-        var last = q ? self.lastAnswer(e.qid) : null;
-        var myAns = last ? last.answer : '';
-        myAns = Array.isArray(myAns) ? myAns.join('') : (myAns == null ? '' : myAns);
-        var myAnsCell = (myAns === '' || myAns == null) ? '未作答' : myAns;
-        var correctAns = Array.isArray(q && q.answer) ? (q.answer || []).join('') : (q ? String(q.answer) : '');
-        lines.push([
-          e.qid,
-          e.subject,
-          e.chapter,
-          q ? (TYPE_LABELS[q.type] || q.type) : '',
-          q ? q.stem : ('题目 ' + e.qid),
-          correctAns,
-          myAnsCell,
-          e.reason,
-          e.retries,
-          e.status === 'mastered' ? '已掌握' : '待掌握'
-        ].map(csvEscape).join(','));
-      });
-
-      var csv = '\uFEFF' + lines.join('\r\n'); // BOM 让 Excel 识别 UTF-8
-      var d = new Date();
-      var dateStr = d.getFullYear() +
-        (d.getMonth() + 1 < 10 ? '0' : '') + (d.getMonth() + 1) +
-        (d.getDate() < 10 ? '0' : '') + d.getDate();
-      var filename = 'kp_wrong_' + dateStr + '.csv';
-
-      try {
-        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-        if (global.navigator && global.navigator.msSaveOrOpenBlob) {
-          global.navigator.msSaveOrOpenBlob(blob, filename);
-        } else {
-          var url = URL.createObjectURL(blob);
-          var a = document.createElement('a');
-          a.href = url;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }
-      } catch (err) {
-        global.alert && global.alert('导出失败：' + err.message);
-      }
-    }
-  };
-
-  /* ---------- 间隔复习模块 ---------- */
-  var REVIEW = {
-    view: null,           // #view-review
-
-    /* 取今日到期题目（qid 列表 → 带样题元数据） */
-    dueItems: function () {
-      var qids = global.KP_STORE ? global.KP_STORE.dueToday() : [];
-      var qs = global.KP_CONTENT ? global.KP_CONTENT.kp_sampleQuestions : [];
-      var qmap = {};
-      qs.forEach(function (q) { qmap[q.id] = q; });
-      var review = global.KP_STORE ? global.KP_STORE.get('review') : {};
-
-      return qids.map(function (qid) {
-        var q = qmap[qid];
-        var r = review[qid];
-        return {
-          qid: qid,
-          q: q || null,
-          subject: (q && q.subject) || '未知',
-          chapter: (q && q.chapter) || '',
-          type: q ? (TYPE_LABELS[q.type] || q.type) : '',
-          stem: q ? q.stem : ('题目 ' + qid),
-          stage: r ? (r.stage || 0) : 0
-        };
-      });
-    },
-
-    /* 今日全部待复习总数（供仪表盘） */
-    dueCount: function () {
-      return global.KP_STORE ? global.KP_STORE.dueToday().length : 0;
-    },
-
-    render: function () {
-      var view = this.view;
-      if (!view) return;
-      var self = this;
-
-      var items = this.dueItems();
-      var total = items.length;
-      // 今日已处理（lastDate = 今天）
-      var today = new Date().toISOString().slice(0, 10);
-      var review = global.KP_STORE ? global.KP_STORE.get('review') : {};
-      var done = 0;
-      Object.keys(review).forEach(function (qid) {
-        if (review[qid].lastDate === today) done++;
-      });
-
-      // 按科目分组
-      var groups = {};
-      var order = [];
-      items.forEach(function (it) {
-        if (!groups[it.subject]) { groups[it.subject] = []; order.push(it.subject); }
-        groups[it.subject].push(it);
-      });
-
-      view.innerHTML = '' +
-        '<div class="card review-card">' +
-          '<div class="review-card__head">' +
-            '<div>' +
-              '<h2 class="card__title">间隔复习</h2>' +
-              '<p class="card__desc">基于艾宾浩斯遗忘曲线 · 今日待复习 ' + total + ' 题 · 已处理 ' + done + '</p>' +
-            '</div>' +
-            '<div class="review-card__progress"><div class="review-card__progress-fill" data-review-progress style="width:0%"></div></div>' +
-          '</div>' +
-
-          '<div class="review-list" data-review-list>' +
-            (total === 0
-              ? '<div class="card__desc" style="text-align:center;padding:var(--sp-8)">今日无待复习题目，稍后再来看！</div>'
-              : order.map(function (subj) {
-                  return '' +
-                    '<div class="review-group" data-review-group>' +
-                      '<div class="review-group__title">' + esc(subj) + '<span class="review-group__count">' + groups[subj].length + '</span></div>' +
-                      '<div class="review-group__items">' +
-                        groups[subj].map(function (it) {
-                          return '' +
-                            '<div class="review-item" data-review-qid="' + it.qid + '">' +
-                              '<div class="review-item__meta">' +
-                                '<span class="review-item__chapter">' + esc(it.chapter) + '</span>' +
-                                '<span class="review-item__type">' + esc(it.type) + '</span>' +
-                                '<span class="review-item__stage">第 ' + it.stage + ' 轮</span>' +
-                              '</div>' +
-                              '<p class="review-item__stem">' + esc(it.stem) + '</p>' +
-                              '<div class="review-item__actions">' +
-                                '<button class="btn btn--sm btn--ok" data-review-master="' + it.qid + '">✓ 已复习</button>' +
-                                '<button class="btn btn--sm btn--bad" data-review-forgot="' + it.qid + '">✗ 忘了</button>' +
-                              '</div>' +
-                            '</div>';
-                        }).join('') +
-                      '</div>' +
-                    '</div>';
-                }).join('')) +
-          '</div>' +
-        '</div>';
-
-      // 已复习：stage+1
-      $all('[data-review-master]', view).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var qid = this.getAttribute('data-review-master');
-          global.KP_STORE.reviewMastered(qid);
-          self.render();
-        });
-      });
-
-      // 忘了：stage 重置 0
-      $all('[data-review-forgot]', view).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var qid = this.getAttribute('data-review-forgot');
-          global.KP_STORE.reviewForgot(qid);
-          self.render();
-        });
-      });
-
-      this.updateProgress();
-    },
-
-    /* 更新进度条：今日已处理（lastDate=今天）占全部到期题比例 */
-    updateProgress: function () {
-      var view = this.view;
-      if (!view) return;
-      var review = global.KP_STORE ? global.KP_STORE.get('review') : {};
-      var today = new Date().toISOString().slice(0, 10);
-      var total = 0, done = 0;
-      Object.keys(review).forEach(function (qid) {
-        total++;
-        if (review[qid].lastDate === today) done++;
-      });
-      var fill = view.querySelector('[data-review-progress]');
-      if (fill) {
-        var pct = total ? Math.round((done / total) * 100) : 100;
-        fill.style.width = Math.max(0, Math.min(100, pct)) + '%';
-      }
-      var desc = view.querySelector('.review-card__desc');
-      if (desc) {
-        var dueNow = this.dueCount();
-        desc.textContent = '基于艾宾浩斯遗忘曲线 · 今日待复习 ' + dueNow + ' 题 · 已处理 ' + done + ' / ' + total;
-      }
-    }
-  };
-
-  /* ---------- 真题模块 ---------- */
-  var PAST = {
-    view: null,
-    activePaperId: null,   // 当前打开的试卷
-    filter: { year: '', subject: '' },
-    /* 当前卷的临时作答态 {qid: {answer, submitted, reason}} */
-    draft: {},
-
-    REASONS: ['知识点不熟', '计算失误', '审题错误', '方法不对'],
-
-    papers: function () {
-      return global.KP_CONTENT ? global.KP_CONTENT.kp_past_papers : [];
-    },
-
-    paperById: function (id) {
-      var list = this.papers();
-      for (var i = 0; i < list.length; i++) {
-        if (list[i].paperId === id) return list[i];
-      }
-      return null;
-    },
-
-    /* 试卷列表（按年份/科目筛选 + 统计已作状态） */
-    filteredPapers: function () {
-      var store = global.KP_STORE;
-      var f = this.filter;
-      var out = this.papers().filter(function (p) {
-        if (f.year && String(p.year) !== String(f.year)) return false;
-        if (f.subject && p.subject !== f.subject) return false;
-        return true;
-      });
-      // 统计作答
-      out.forEach(function (p) {
-        var recs = store ? store.pastRecordsByPaper(p.paperId) : [];
-        var byQid = {};
-        recs.forEach(function (r) { byQid[r.qid] = r; });
-        var answered = 0, gained = 0, total = 0, correct = 0;
-        (p.questions || []).forEach(function (q) {
-          total += Number(q.score) || 0;
-          var r = byQid[q.qid];
-          if (!r) return;
-          answered++;
-          if (r.correct) { gained += Number(q.score) || 0; correct++; }
-        });
-        p._answered = answered;
-        p._total = p.questions.length;
-        p._gained = gained;
-        p._totalScore = total;
-        p._correct = correct;
-        p._scored = answered > 0;
-      });
-      return out;
-    },
-
-    yearOptions: function () {
-      var set = {};
-      this.papers().forEach(function (p) { set[p.year] = true; });
-      return Object.keys(set).sort(function (a, b) { return b - a; });
-    },
-
-    subjectOptions: function () {
-      var set = {};
-      this.papers().forEach(function (p) { set[p.subject] = true; });
-      return Object.keys(set);
-    },
-
-    /* ---------- 视图渲染 ---------- */
-
-    render: function () {
-      var view = this.view;
-      if (!view) return;
-      if (this.activePaperId) {
-        this.renderPaper();
-      } else {
-        this.renderList();
-      }
-    },
-
-    renderList: function () {
-      var view = this.view;
-      if (!view) return;
-      var self = this;
-
-      var years = this.yearOptions();
-      var subjects = this.subjectOptions();
-
-      view.innerHTML = '' +
-        '<div class="card past-card">' +
-          '<div class="past-card__head">' +
-            '<div>' +
-              '<h2 class="card__title">真题样卷</h2>' +
-              '<p class="card__desc">内置 ' + this.papers().length + ' 套样卷 · 逐题作答 + 详细解析 + 错因标签</p>' +
-            '</div>' +
-          '</div>' +
-
-          /* 筛选 */
-          '<div class="past-filters" data-past-filters>' +
-            '<div class="past-filters__group"><span class="past-filters__label">年份</span>' +
-              '<button class="chip' + (!this.filter.year ? ' is-active' : '') + '" data-past-year="*">全部</button>' +
-              years.map(function (y) {
-                return '<button class="chip' + (String(self.filter.year) === String(y) ? ' is-active' : '') + '" data-past-year="' + y + '">' + y + '</button>';
-              }).join('') +
-            '</div>' +
-            '<div class="past-filters__group"><span class="past-filters__label">科目</span>' +
-              '<button class="chip' + (!this.filter.subject ? ' is-active' : '') + '" data-past-subject="*">全部</button>' +
-              subjects.map(function (s) {
-                return '<button class="chip' + (self.filter.subject === s ? ' is-active' : '') + '" data-past-subject="' + esc(s) + '">' + esc(s) + '</button>';
-              }).join('') +
-            '</div>' +
-          '</div>' +
-
-          /* 试卷列表 */
-          '<div class="past-list" data-past-list></div>' +
-        '</div>';
-
-      // 筛选绑定
-      $all('[data-past-year]', view).forEach(function (c) {
-        c.addEventListener('click', function () {
-          var v = this.getAttribute('data-past-year');
-          self.filter.year = (v === '*') ? '' : v;
-          self.renderList();
-        });
-      });
-      $all('[data-past-subject]', view).forEach(function (c) {
-        c.addEventListener('click', function () {
-          var v = this.getAttribute('data-past-subject');
-          self.filter.subject = (v === '*') ? '' : v;
-          self.renderList();
-        });
-      });
-
-      this.renderPaperList();
-    },
-
-    renderPaperList: function () {
-      var view = this.view;
-      var box = view && view.querySelector('[data-past-list]');
-      if (!box) return;
-      var self = this;
-      var list = this.filteredPapers();
-
-      if (!list.length) {
-        box.innerHTML = '<div class="card__desc" style="text-align:center;padding:var(--sp-6)">当前筛选条件下暂无试卷</div>';
-        return;
-      }
-
-      box.innerHTML = list.map(function (p) {
-        var status = p._scored
-          ? ('已作答 · 得分 <b>' + p._gained + '/' + p._totalScore + '</b>（' + Math.round(p._totalScore ? (p._gained / p._totalScore) * 100 : 0) + '%）')
-          : '未作答';
-        var cls = p._scored ? 'past-paper__status is-done' : 'past-paper__status';
-        return '' +
-          '<div class="past-paper" data-paper-open="' + p.paperId + '">' +
-            '<div class="past-paper__main">' +
-              '<div class="past-paper__title">' + esc(p.title) + '</div>' +
-              '<div class="past-paper__meta">' +
-                '<span class="past-paper__chip">' + p.year + '</span>' +
-                '<span class="past-paper__chip">' + esc(p.subject) + '</span>' +
-                '<span class="past-paper__chip">📝 ' + p.questions.length + ' 题</span>' +
-                '<span class="past-paper__chip">⏱ ' + p.duration + ' 分钟</span>' +
-              '</div>' +
-            '</div>' +
-            '<div class="past-paper__side">' +
-              '<div class="' + cls + '">' + status + '</div>' +
-              '<button class="btn btn--sm' + (p._scored ? ' btn--warn' : ' btn--primary') + '" data-paper-open-btn="' + p.paperId + '">' +
-                (p._scored ? '重做' : '开始作答') + '</button>' +
-            '</div>' +
-          '</div>';
-      }).join('');
-
-      $all('[data-paper-open-btn]', box).forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          self.openPaper(this.getAttribute('data-paper-open-btn'));
-        });
-      });
-      $all('[data-paper-open]', box).forEach(function (row) {
-        row.addEventListener('click', function () {
-          self.openPaper(this.getAttribute('data-paper-open'));
-        });
-      });
-    },
-
-    openPaper: function (paperId) {
-      this.activePaperId = paperId;
-      this.draft = {};
-      this.renderPaper();
-    },
-
-    /* ---------- 试卷详情：逐题作答 ---------- */
-
-    renderPaper: function () {
-      var view = this.view;
-      if (!view) return;
-      var self = this;
-      var paper = this.paperById(this.activePaperId);
-      if (!paper) { this.activePaperId = null; this.renderList(); return; }
-      var store = global.KP_STORE;
-
-      var totalScore = 0;
-      paper.questions.forEach(function (q) { totalScore += Number(q.score) || 0; });
-
-      // 载入已有记录作为草稿初值
-      var recs = store ? store.pastRecordsByPaper(paper.paperId) : [];
-      var byQid = {};
-      recs.forEach(function (r) { byQid[r.qid] = r; });
-      this.draft = {};
-      paper.questions.forEach(function (q) {
-        this.draft[q.qid] = {
-          answer: byQid[q.qid] ? byQid[q.qid].answer : null,
-          submitted: !!byQid[q.qid],
-          reason: byQid[q.qid] ? (byQid[q.qid].reason || '') : '',
-          correct: byQid[q.qid] ? byQid[q.qid].correct : null
-        };
-      }, this);
-
-      view.innerHTML = '' +
-        '<div class="card past-card past-detail">' +
-          '<div class="past-card__head">' +
-            '<div>' +
-              '<button class="btn btn--sm" data-past-back>← 返回列表</button>' +
-              '<h2 class="card__title" style="margin-top:var(--sp-2)">' + esc(paper.title) + '</h2>' +
-              '<p class="card__desc">' + paper.year + ' 年 · ' + esc(paper.subject) + ' · 满分 ' + totalScore + ' 分 · ' + paper.questions.length + ' 题</p>' +
-            '</div>' +
-            '<div class="past-detail__score" data-past-score></div>' +
-          '</div>' +
-
-          '<div class="past-questions" data-past-questions></div>' +
-
-          '<div class="past-paper__actions">' +
-            '<button class="btn btn--primary" data-past-submit>提交整卷</button>' +
-          '</div>' +
-        '</div>';
-
-      $('[data-past-back]', view).addEventListener('click', function () {
-        self.activePaperId = null;
-        self.renderList();
-      });
-
-      $('[data-past-submit]', view).addEventListener('click', function () {
-        self.submitAll(paper);
-      });
-
-      this.renderQuestions(paper);
-      this.renderScore(paper);
-    },
-
-    /* 逐题渲染 */
-    renderQuestions: function (paper) {
-      var view = this.view;
-      var box = view && view.querySelector('[data-past-questions]');
-      if (!box) return;
-      var self = this;
-      var model = global.KP_MODEL;
-
-      box.innerHTML = paper.questions.map(function (q, idx) {
-        var d = self.draft[q.qid];
-        var isMulti = Array.isArray(q.answer);
-        var isBlank = q.type === 'blank' || (q.options && q.options.length === 0 && !isMulti);
-
-        var qHtml = '' +
-          '<div class="past-q ' + (d.submitted ? 'is-submitted' : '') + '" data-past-q="' + q.qid + '">' +
-            '<div class="past-q__head">' +
-              '<span class="past-q__idx">' + (idx + 1) + '</span>' +
-              '<span class="past-q__score">' + q.score + ' 分</span>' +
-              (d.submitted
-                ? (d.correct
-                    ? '<span class="past-q__tag is-ok">✓ 答对</span>'
-                    : '<span class="past-q__tag is-bad">✗ 答错</span>')
-                : '<span class="past-q__tag">未提交</span>') +
-            '</div>' +
-            '<p class="past-q__stem">' + esc(q.stem) + '</p>';
-
-        // 选项渲染
-        if (q.options && q.options.length) {
-          if (isMulti) {
-            qHtml += '<div class="past-q__opts past-q__opts--multi">' +
-              q.options.map(function (opt) {
-                var letter = opt.slice(0, 1);
-                var checked = Array.isArray(d.answer) && d.answer.indexOf(letter) !== -1;
-                return '<label class="opt opt--multi' + (checked ? ' is-on' : '') + '">' +
-                  '<input type="checkbox" data-qopt="' + q.qid + '" value="' + letter + '"' + (checked ? ' checked' : '') + '/>' +
-                  '<span>' + esc(opt) + '</span>' +
-                '</label>';
-              }).join('') +
-            '</div>';
-          } else {
-            qHtml += '<div class="past-q__opts">' +
-              q.options.map(function (opt) {
-                var letter = opt.slice(0, 1);
-                var on = d.answer === letter;
-                return '<label class="opt' + (on ? ' is-on' : '') + '">' +
-                  '<input type="radio" name="past-' + q.qid + '" data-qopt="' + q.qid + '" value="' + letter + '"' + (on ? ' checked' : '') + '/>' +
-                  '<span>' + esc(opt) + '</span>' +
-                '</label>';
-              }).join('') +
-            '</div>';
-          }
-        } else {
-          // 填空
-          qHtml += '<div class="past-q__blank">' +
-            '<input type="text" data-qblank="' + q.qid + '" value="' + esc(d.answer || '') + '" placeholder="填写答案" />' +
-          '</div>';
-        }
-
-        // 单题提交
-        qHtml += '<div class="past-q__foot">' +
-          (d.submitted
-            ? '<button class="btn btn--sm btn--warn" data-past-retry="' + q.qid + '">重答</button>'
-            : '<button class="btn btn--sm btn--primary" data-past-check="' + q.qid + '">提交本题</button>') +
-        '</div>';
-
-        // 错因标签（答错后显示）
-        if (d.submitted && d.correct === false) {
-          qHtml += '<div class="past-q__reason" data-past-reason-box="' + q.qid + '">' +
-            '<span class="past-q__reason-label">错因：</span>' +
-            self.REASONS.map(function (rs) {
-              var on = d.reason === rs;
-              return '<button class="chip' + (on ? ' is-active' : '') + '" data-reason="' + rs + '" data-reason-qid="' + q.qid + '">' + esc(rs) + '</button>';
-            }).join('') +
-          '</div>';
-        }
-
-        // 详细解析（提交后显示）
-        if (d.submitted) {
-          qHtml += '<div class="past-q__analysis">' +
-            '<div class="past-q__analysis-title">' + (d.correct ? '解析（答对）' : '解析（答错）') + '</div>' +
-            '<div class="past-q__analysis-body">' + esc(q.detailed_analysis || '暂无解析') + '</div>' +
-            (q.answer !== null && q.answer !== undefined ? '<div class="past-q__analysis-answer">参考答案：' +
-              (Array.isArray(q.answer) ? q.answer.join(' / ') : esc(String(q.answer))) + '</div>' : '') +
-          '</div>';
-        }
-
-        qHtml += '</div>';
-        return qHtml;
-      }).join('');
-
-      // 选项事件
-      $all('[data-qopt]', box).forEach(function (inp) {
-        inp.addEventListener('change', function () {
-          var qid = this.getAttribute('data-qopt');
-          var q = paper.questions.filter(function (x) { return x.qid === qid; })[0];
-          var isMulti = Array.isArray(q.answer);
-          if (isMulti) {
-            var all = $all('[data-qopt="' + qid + '"]', box);
-            var arr = [];
-            all.forEach(function (cb) { if (cb.checked) arr.push(cb.value); });
-            self.draft[qid].answer = arr;
-          } else {
-            self.draft[qid].answer = this.value;
-            // 单选高亮
-            $all('[data-qopt="' + qid + '"]', box).forEach(function (cb) {
-              cb.closest('.opt').classList.toggle('is-on', cb.checked);
-            });
-          }
-        });
-      });
-      // 填空事件
-      $all('[data-qblank]', box).forEach(function (inp) {
-        inp.addEventListener('input', function () {
-          self.draft[this.getAttribute('data-qblank')].answer = this.value;
-        });
-      });
-      // 单题提交
-      $all('[data-past-check]', box).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          self.checkQuestion(paper, this.getAttribute('data-past-check'));
-        });
-      });
-      // 重答
-      $all('[data-past-retry]', box).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var qid = this.getAttribute('data-past-retry');
-          self.draft[qid].submitted = false;
-          self.draft[qid].correct = null;
-          self.draft[qid].reason = '';
-          self.renderQuestions(paper);
-        });
-      });
-      // 错因标签
-      $all('[data-reason]', box).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var qid = this.getAttribute('data-reason-qid');
-          var reason = this.getAttribute('data-reason');
-          self.draft[qid].reason = reason;
-          // 写回 store
-          var rec = global.KP_STORE.pastRecordsByPaper(paper.paperId)
-            .filter(function (r) { return r.qid === qid; })[0];
-          if (rec) {
-            rec.reason = reason;
-            var arr = global.KP_STORE.get('past.records');
-            for (var i = 0; i < arr.length; i++) {
-              if (arr[i].qid === qid && arr[i].paperId === paper.paperId) {
-                arr[i].reason = reason;
-                break;
-              }
-            }
-            global.KP_STORE.set('past.records', arr);
-          }
-          // 更新高亮
-          $all('[data-reason-qid="' + qid + '"]', box).forEach(function (b) {
-            b.classList.toggle('is-active', b === this);
-          }, this);
-          self.renderScore(paper);
-        });
-      });
-    },
-
-    /* 判定并保存单题 */
-    checkQuestion: function (paper, qid) {
-      var model = global.KP_MODEL;
-      var store = global.KP_STORE;
-      var q = paper.questions.filter(function (x) { return x.qid === qid; })[0];
-      if (!q) return;
-      var d = this.draft[qid];
-      var result = model.judgeAnswer(q, d.answer);
-      var correct = result.correct;
-
-      d.submitted = true;
-      d.correct = correct;
-      if (!d.reason) d.reason = '';
-
-      // 写 store
-      store.addPastRecord({
-        paperId: paper.paperId,
-        qid: qid,
-        answer: d.answer,
-        correct: correct,
-        score: Number(q.score) || 0,
-        reason: (correct || !d.reason) ? '' : d.reason,
-        seconds: 0
-      });
-
-      this.renderQuestions(paper);
-      this.renderScore(paper);
-    },
-
-    /* 提交整卷：对未提交题做自动判定 */
-    submitAll: function (paper) {
-      var self = this;
-      var unsubmitted = paper.questions.filter(function (q) {
-        return !self.draft[q.qid].submitted;
-      });
-      if (unsubmitted.length) {
-        unsubmitted.forEach(function (q) { self.checkQuestion(paper, q.qid); });
-      }
-      this.renderScore(paper);
-    },
-
-    /* 总分条 */
-    renderScore: function (paper) {
-      var view = this.view;
-      var box = view && view.querySelector('[data-past-score]');
-      if (!box) return;
-      var store = global.KP_STORE;
-      var s = store.pastScore(paper);
-
-      var done = s.answered;
-      var total = paper.questions.length;
-      box.innerHTML = '' +
-        '<div class="past-detail__score-num">' + s.gained + ' <span class="past-detail__score-max">/ ' + s.total + '</span></div>' +
-        '<div class="past-detail__score-sub">已作 ' + done + '/' + total + ' · 正确 ' + s.correctCount + ' · 错 ' + s.wrongCount + '</div>' +
-        (Object.keys(s.reasons).length
-          ? '<div class="past-detail__reasons">' +
-              Object.keys(s.reasons).map(function (k) {
-                return '<span class="chip">' + esc(k) + ' ×' + s.reasons[k] + '</span>';
-              }).join('') +
-            '</div>'
-          : '');
-    }
-  };
-
-  /* ---------- 单词记忆模块 ---------- */
-  var VOCAB = {
-    view: null,
-    flipped: false,   // 当前卡是否已翻面
-    current: null,    // 当前单词 {word, phonetic, meaning, example}
-    sessionIndex: 0,  // 本次会话已完成的卡片数（「换一批」重置）
-    seen: {},         // 本次会话已评过的单词 {word: rating}
-
-    words: function () {
-      return global.KP_CONTENT ? global.KP_CONTENT.kp_sampleWords : [];
-    },
-
-    wordMap: function () {
-      var map = {};
-      this.words().forEach(function (w) { map[w.word] = w; });
-      return map;
-    },
-
-    /* 统计：今日新学 / 已掌握 / 待复习 */
-    stats: function () {
-      var store = global.KP_STORE;
-      var learned = store ? store.vocabLearnedToday() : 0;
-      var mastered = store ? store.vocabMasteredCount() : 0;
-      var pending = store ? store.vocabPendingCount() : 0;
-      var due = store ? store.vocabDueToday().length : 0;
-      return { learned: learned, mastered: mastered, pending: pending, due: due };
-    },
-
-    /* 下一张：优先今日到期复习（跳过本次会话已评过的），其次未学过的新词 */
-    nextCard: function () {
-      var store = global.KP_STORE;
-      var words = this.words();
-      if (!words.length) return null;
-      var seen = this.seen;
-
-      // 1. 今日到期复习（优先），跳过本次会话已评过的
-      var due = store ? store.vocabDueToday() : [];
-      var wm = this.wordMap();
-      for (var i = 0; i < due.length; i++) {
-        if (wm[due[i]] && !seen[due[i]]) return wm[due[i]];
-      }
-
-      // 2. 未学过、且不在复习/已掌握队列的新词（同样跳过会话内已评的）
-      var learnedSet = {};
-      if (store) {
-        store.vocabLearnedWords().forEach(function (w) { learnedSet[w] = true; });
-        var s = store.get('settings');
-        if (s && Array.isArray(s.vocabMasteredSet)) {
-          s.vocabMasteredSet.forEach(function (w) { learnedSet[w] = true; });
-        }
-        var rv = store.get('vocab.review');
-        for (var k in rv) {
-          if (Object.prototype.hasOwnProperty.call(rv, k)) learnedSet[k] = true;
-        }
-      }
-      for (var j = 0; j < words.length; j++) {
-        if (!learnedSet[words[j].word] && !seen[words[j].word]) return words[j];
-      }
-      // 全部已学过/在队列中 → 无新词可学，返回 null 展示「已完成」
-      return null;
-    },
-
-    render: function () {
-      var view = this.view;
-      if (!view) return;
-      var self = this;
-
-      var words = this.words();
-      if (!words.length) {
-        view.innerHTML = '<div class="card"><h2 class="card__title">单词</h2><p class="card__desc">暂无单词数据</p></div>';
-        return;
-      }
-
-      var st = this.stats();
-
-      view.innerHTML = '' +
-        '<div class="card vocab-card">' +
-          '<div class="vocab-card__head">' +
-            '<div>' +
-              '<h2 class="card__title">单词记忆</h2>' +
-              '<p class="card__desc">共 ' + words.length + ' 词 · 今日新学 ' + st.learned + ' · 已掌握 ' + st.mastered + ' · 待复习 ' + st.pending + '</p>' +
-            '</div>' +
-            '<button class="btn btn--sm" data-vocab-shuffle>换一批</button>' +
-          '</div>' +
-
-          /* 记忆卡片 */
-          '<div class="vocab-card__zone" data-vocab-zone></div>' +
-
-          /* 卡片下方：翻面提示 + 评级按钮 */
-          '<div class="vocab-actions">' +
-            '<button class="btn btn--sm" data-vocab-flip>翻面看释义</button>' +
-            '<div class="vocab-rate" data-vocab-rate style="display:none">' +
-              '<button class="btn btn--sm btn--ok" data-vocab-known>✓ 认识</button>' +
-              '<button class="btn btn--sm btn--warn" data-vocab-fuzzy>◐ 模糊</button>' +
-              '<button class="btn btn--sm btn--bad" data-vocab-forgot>✗ 不认识</button>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
-
-      // 绑定事件
-      $('[data-vocab-shuffle]', view).addEventListener('click', function () {
-        self.sessionIndex = 0;
-        self.seen = {};
-        self.flipped = false;
-        self.render();
-      });
-      var flip = function () {
-        self.flipped = !self.flipped;
-        self.renderCard();
-      };
-      $('[data-vocab-flip]', view).addEventListener('click', flip);
-      // 点卡片本身也可翻面
-      var zone = $('[data-vocab-zone]', view);
-      if (zone) zone.addEventListener('click', function (e) {
-        if (e.target.closest('.vocab-rate')) return; // 评级区不触发
-        flip();
-      });
-      $('[data-vocab-known]', view).addEventListener('click', function () {
-        self.rateCurrent('known');
-      });
-      $('[data-vocab-fuzzy]', view).addEventListener('click', function () {
-        self.rateCurrent('fuzzy');
-      });
-      $('[data-vocab-forgot]', view).addEventListener('click', function () {
-        self.rateCurrent('forgot');
-      });
-
-      this.renderCard();
-    },
-
-    /* 渲染当前卡片（翻面切换显示/隐藏释义） */
-    renderCard: function () {
-      var view = this.view;
-      if (!view) return;
-      var zone = view.querySelector('[data-vocab-zone]');
-      if (!zone) return;
-
-      this.current = this.nextCard();
-      if (!this.current) {
-        zone.innerHTML = '<div class="vocab-card__done">所有单词都处理完毕，点击「换一批」重新开始。</div>';
-        return;
-      }
-
-      var w = this.current;
-      var review = global.KP_STORE ? global.KP_STORE.get('vocab.review') : {};
-      var stage = review[w.word] ? (review[w.word].stage || 0) : 0;
-
-      // 未翻面：只显示单词 + 音标；翻面：显示释义 + 例句 + 评级按钮
-      zone.innerHTML = '' +
-        '<div class="vocab-card__face ' + (this.flipped ? 'is-flipped' : '') + '">' +
-          '<div class="vocab-card__word">' + esc(w.word) + '</div>' +
-          '<div class="vocab-card__phonetic">' + esc(w.phonetic) + '</div>' +
-          (stage > 0 ? '<div class="vocab-card__stage">复习队列 · 第 ' + stage + ' 轮</div>' : '') +
-          '<div class="vocab-card__detail ' + (this.flipped ? '' : 'is-hidden') + '">' +
-            '<div class="vocab-card__meaning">' + esc(w.meaning) + '</div>' +
-            (w.example ? '<div class="vocab-card__example">例句：' + esc(w.example) + '</div>' : '') +
-          '</div>' +
-        '</div>';
-
-      // 评级按钮区：翻面后才显示
-      var rateBox = view.querySelector('[data-vocab-rate]');
-      var flipBtn = view.querySelector('[data-vocab-flip]');
-      if (rateBox) rateBox.style.display = this.flipped ? '' : 'none';
-      if (flipBtn) flipBtn.textContent = this.flipped ? '合上卡片' : '翻面看释义';
-    },
-
-    /* 评级当前单词 */
-    rateCurrent: function (rating) {
-      var store = global.KP_STORE;
-      if (!store || !this.current) return;
-      var word = this.current.word;
-      var today = new Date().toISOString().slice(0, 10);
-
-      // 记录「新学」（去重，幂等）
-      store.addVocabLearned(word, today);
-
-      if (rating === 'fuzzy' || rating === 'forgot') {
-        // 模糊 / 不认识 → 进复习队列（间隔 [1,2,4,7]）
-        store.vocabRateWeak(word, today);
-      } else {
-        // 认识 → 已掌握，记入统计（不排队）
-        store.vocabMarkMastered(word);
-      }
-
-      // 会话内标记，防止「换一批」前重复刷到同一张卡
-      this.seen[word] = rating;
-      this.sessionIndex++;
-
-      // 翻回正面，推进到下一张
-      this.flipped = false;
-      this.renderCard();
-    },
-
-  };
-
-  /* ---------- 学习计划模块 ---------- */
-  var PLAN = {
-    view: null,
-    y: 0,        // 当前日历年
-    m: 0,        // 当前日历月 0-11
-    selDate: '', // 选中的 'YYYY-MM-DD'
-    showAdd: false,
-
-    SUBJECTS: ['政治', '英语', '数学', '专业课', '其他'],
-
-    _todayStr: function () {
-      return new Date().toISOString().slice(0, 10);
-    },
-
-    /* 计算当前选中日完成率（0-1）+ 当月完成率 */
-    rate: function () {
-      var store = global.KP_STORE;
-      var model = global.KP_MODEL;
-      var plan = store ? store.get('plan') : [];
-      var day = model.planDaySummary(plan, this.selDate);
-      var dayRate = day.accuracy;
-
-      // 当月全部任务完成率
-      var mm = this.m + 1;
-      var prefix = this.y + '-' + (mm < 10 ? '0' + mm : mm);
-      var mItems = plan.filter(function (t) { return t.date && t.date.indexOf(prefix) === 0; });
-      var mDone = mItems.filter(function (t) { return t.done; }).length;
-      var monthRate = mItems.length ? mDone / mItems.length : 0;
-
-      return {
-        dayItems: day.items,
-        dayTotal: day.total,
-        dayDone: day.done,
-        dayRate: dayRate,
-        monthRate: monthRate,
-        monthTotal: mItems.length,
-        monthDone: mDone,
-        streak: store ? store.getStreak().count : 0
-      };
-    },
-
-    render: function () {
-      var view = this.view;
-      if (!view) return;
-      var self = this;
-      var store = global.KP_STORE;
-      var model = global.KP_MODEL;
-
-      // 初始化 y/m/selDate
-      if (!this.y || !this.m) {
-        var now = new Date();
-        this.y = now.getFullYear();
-        this.m = now.getMonth();
-        this.selDate = this._todayStr();
-      }
-
-      var cal = model.calendarWeeks(this.y, this.m);
-      var completed = store ? store.completedDates() : {};
-      var today = this._todayStr();
-
-      // 日历格
-      var dowLabels = ['一', '二', '三', '四', '五', '六', '日'];
-      var calHtml = '<div class="plan-cal__dow">' +
-        dowLabels.map(function (d) { return '<span>' + d + '</span>'; }).join('') +
-      '</div>';
-      cal.weeks.forEach(function (week) {
-        calHtml += '<div class="plan-cal__week">' +
-          week.map(function (ds) {
-            if (!ds) return '<span class="plan-cal__cell plan-cal__cell--empty"></span>';
-            var isToday = ds === today;
-            var isSel = ds === self.selDate;
-            var isDone = completed[ds];
-            var dd = Number(ds.slice(8));
-            var cls = 'plan-cal__cell' + (isSel ? ' is-selected' : '') + (isToday ? ' is-today' : '') + (isDone ? ' is-done' : '');
-            return '<button class="' + cls + '" data-cal-date="' + ds + '">' +
-              '<span class="plan-cal__num">' + dd + '</span>' +
-              (isDone ? '<span class="plan-cal__tick">✓</span>' : '') +
-            '</button>';
-          }).join('') +
-        '</div>';
-      });
-
-      var r = this.rate();
-
-      view.innerHTML = '' +
-        '<div class="card plan-card">' +
-          '<div class="plan-card__head">' +
-            '<div>' +
-              '<h2 class="card__title">学习计划</h2>' +
-              '<p class="card__desc">连续打卡 <b>' + r.streak + '</b> 天 · 当月完成率 ' + Math.round(r.monthRate * 100) + '%</p>' +
-            '</div>' +
-            '<button class="btn btn--sm" data-toggle-add>' + (this.showAdd ? '收起' : '+ 添加任务') + '</button>' +
-          '</div>' +
-
-          /* 完成率进度条 */
-          '<div class="plan-progress">' +
-            '<div class="plan-progress__row">' +
-              '<span class="plan-progress__label">当日 ' + r.dayDone + '/' + r.dayTotal + '</span>' +
-              '<span class="plan-progress__pct">' + Math.round(r.dayRate * 100) + '%</span>' +
-            '</div>' +
-            '<div class="plan-progress__bar"><div class="plan-progress__fill" style="width:' + Math.round(r.dayRate * 100) + '%"></div></div>' +
-          '</div>' +
-
-          /* 快速添加表单 */
-          (this.showAdd ? this.addFormHtml() : '') +
-
-          /* 日历 + 当天任务 */
-          '<div class="plan-body">' +
-            '<div class="plan-cal">' +
-              '<div class="plan-cal__head">' +
-                '<button class="plan-cal__nav" data-cal-prev>‹</button>' +
-                '<span class="plan-cal__title">' + this.y + ' 年 ' + (this.m + 1) + ' 月</span>' +
-                '<button class="plan-cal__nav" data-cal-next>›</button>' +
-                '<button class="plan-cal__today" data-cal-today>今天</button>' +
-              '</div>' +
-              calHtml +
-            '</div>' +
-            '<div class="plan-day" data-plan-day></div>' +
-          '</div>' +
-        '</div>';
-
-      // 日历导航
-      $('[data-cal-prev]', view).addEventListener('click', function () { self.m--; if (self.m < 0) { self.m = 11; self.y--; } self.render(); });
-      $('[data-cal-next]', view).addEventListener('click', function () { self.m++; if (self.m > 11) { self.m = 0; self.y++; } self.render(); });
-      $('[data-cal-today]', view).addEventListener('click', function () {
-        var now = new Date(); self.y = now.getFullYear(); self.m = now.getMonth(); self.selDate = self._todayStr(); self.render();
-      });
-
-      // 点选日期
-      $all('[data-cal-date]', view).forEach(function (b) {
-        b.addEventListener('click', function () { self.selDate = this.getAttribute('data-cal-date'); self.render(); });
-      });
-
-      // 添加表单
-      var toggle = $('[data-toggle-add]', view);
-      if (toggle) toggle.addEventListener('click', function () { self.showAdd = !self.showAdd; self.render(); });
-      if (this.showAdd) this.bindAddForm(view);
-
-      // 当日任务列表
-      this.renderDay(view, r.dayItems);
-    },
-
-    addFormHtml: function () {
-      var self = this;
-      var subjOpts = this.SUBJECTS.map(function (s) {
-        return '<option value="' + esc(s) + '"' + (s === '政治' ? ' selected' : '') + '>' + esc(s) + '</option>';
-      }).join('');
-      return '<form class="plan-add" data-plan-add>' +
-        '<div class="plan-add__row">' +
-          '<label class="plan-add__field"><span>日期</span><input type="date" name="date" value="' + esc(this.selDate) + '" required /></label>' +
-          '<label class="plan-add__field"><span>科目</span><select name="subject">' + subjOpts + '</select></label>' +
-          '<label class="plan-add__field plan-add__field--content"><span>内容</span><input type="text" name="content" placeholder="如：刷高数 10 题" required /></label>' +
-          '<label class="plan-add__field"><span>时长(分)</span><input type="number" name="duration" min="0" step="5" value="30" /></label>' +
-          '<button type="submit" class="btn btn--primary btn--sm">添加</button>' +
-        '</div>' +
-      '</form>';
-    },
-
-    bindAddForm: function (view) {
-      var form = $('[data-plan-add]', view);
-      if (!form) return;
-      var self = this;
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var f = form;
-        var dateVal = (f.elements.date.value || '').slice(0, 10);
-        var content = (f.elements.content.value || '').trim();
-        if (!dateVal || !content) return;
-        global.KP_STORE.addPlanItem({
-          date: dateVal,
-          subject: f.elements.subject.value || '其他',
-          content: content,
-          duration: Number(f.elements.duration.value) || 0
-        });
-        self.selDate = dateVal;
-        self.showAdd = false;
-        self.render();
-      });
-    },
-
-    renderDay: function (view, items) {
-      var box = view && $('[data-plan-day]', view);
-      if (!box) return;
-      var self = this;
-
-      if (!items.length) {
-        box.innerHTML = '<h3 class="plan-day__title">' + esc(this.selDate) + ' · 无任务</h3>' +
-          '<p class="plan-day__empty">该日暂无计划，点击上方「+ 添加任务」创建。</p>';
-        return;
-      }
-
-      box.innerHTML = '<h3 class="plan-day__title">' + esc(this.selDate) + ' · ' + items.length + ' 项</h3>' +
-        '<ul class="plan-day__list">' +
-          items.map(function (t) {
-            return '<li class="plan-task ' + (t.done ? 'is-done' : '') + '" data-plan-id="' + t.id + '">' +
-              '<label class="plan-task__check"><input type="checkbox" data-plan-toggle="' + t.id + '"' + (t.done ? ' checked' : '') + '/>' +
-                '<span class="plan-task__box"></span></label>' +
-              '<span class="plan-task__subject">' + esc(t.subject || '其他') + '</span>' +
-              '<span class="plan-task__content">' + esc(t.content) + '</span>' +
-              '<span class="plan-task__dur">' + (t.duration || 0) + 'min</span>' +
-              '<button class="plan-task__del" data-plan-del="' + t.id + '" title="删除">✕</button>' +
-            '</li>';
-          }).join('') +
-        '</ul>' +
-        '<div class="plan-day__actions">' +
-          '<button class="btn btn--sm ' + (self.isSelDayDone() ? 'btn--ok' : 'btn--primary') + '" data-plan-checkin>✓ 打卡今日</button>' +
-        '</div>';
-
-      // 勾选
-      $all('[data-plan-toggle]', box).forEach(function (cb) {
-        cb.addEventListener('change', function () {
-          global.KP_STORE.togglePlanDone(this.getAttribute('data-plan-toggle'));
-          self.render();
-        });
-      });
-      // 删除
-      $all('[data-plan-del]', box).forEach(function (b) {
-        b.addEventListener('click', function () {
-          global.KP_STORE.removePlanItem(this.getAttribute('data-plan-del'));
-          self.render();
-        });
-      });
-      // 打卡
-      var ci = $('[data-plan-checkin]', box);
-      if (ci) ci.addEventListener('click', function () {
-        var s = global.KP_STORE.planCheckIn(self._todayStr());
-        self.render();
-      });
-    },
-
-    isSelDayDone: function () {
-      var store = global.KP_STORE;
-      return store ? store.isPlanDayDone(this.selDate) : false;
-    }
-  };
-
-  /* ---------- 模考分析模块 ---------- */
-  var MOCK = {
-    view: null,
-    subject: '',   // 当前查看科目（'' = 全部）
-
-    /* 6 维薄弱点（雷达维度） */
-    WEAK_DIMS: ['政治', '英语', '数学', '专业课', '时间管理', '心态'],
-
-    SUBJECTS: ['政治', '英语', '数学', '专业课'],
-
-    records: function () {
-      var store = global.KP_STORE;
-      return store ? store.get('mock.records') : [];
-    },
-
-    /* 记录列表（可按科目过滤 + 按日期降序） */
-    filtered: function () {
-      var subj = this.subject;
-      var recs = this.records().slice();
-      if (subj) {
-        recs = recs.filter(function (r) { return r.subject === subj; });
-      }
-      recs.sort(function (a, b) {
-        if (a.date === b.date) return (b.ts || 0) - (a.ts || 0);
-        return a.date < b.date ? 1 : -1;
-      });
-      return recs;
-    },
-
-    /* 趋势数据：按日期升序，{label, score, accuracy(0-1)} */
-    trendData: function () {
-      var store = global.KP_STORE;
-      var subj = this.subject;
-      var recs = store ? store.mockRecordsSorted() : [];
-      if (subj) {
-        recs = recs.filter(function (r) { return r.subject === subj; });
-      }
-      return recs.map(function (r) {
-        return { label: r.date.slice(5), score: r.score, accuracy: r.accuracy };
-      });
-    },
-
-    /* 雷达数据：科目维度（取 6 维） */
-    radarData: function () {
-      var model = global.KP_MODEL;
-      var subj = this.subject;
-      var recs = this.records();
-      if (subj) {
-        recs = recs.filter(function (r) { return r.subject === subj; });
-      }
-      return model.mockRadarData(recs, this.WEAK_DIMS);
-    },
-
-    render: function () {
-      var view = this.view;
-      if (!view) return;
-      var self = this;
-      var recs = this.records();
-
-      var subjChips = [''].concat(this.SUBJECTS).map(function (s) {
-        var label = s || '全部';
-        var on = s === self.subject;
-        return '<button class="chip' + (on ? ' is-active' : '') + '" data-mock-subject="' + esc(s) + '">' + label + '</button>';
-      }).join('');
-
-      view.innerHTML = '' +
-        '<div class="card mock-card">' +
-          '<div class="mock-card__head">' +
-            '<div>' +
-              '<h2 class="card__title">模考分析</h2>' +
-              '<p class="card__desc">记录 ' + recs.length + ' 次模考 · 趋势 + 薄弱点雷达</p>' +
-            '</div>' +
-            '<button class="btn btn--sm btn--primary" data-mock-open-add>+ 记录模考</button>' +
-          '</div>' +
-
-          /* 科目筛选 */
-          '<div class="mock-subjects">' + subjChips + '</div>' +
-
-          /* 图表区：趋势 + 雷达 */
-          '<div class="mock-charts">' +
-            '<div class="mock-chart">' +
-              '<div class="mock-chart__title">分数 / 正确率趋势</div>' +
-              '<div class="mock-chart__body" data-mock-trend></div>' +
-            '</div>' +
-            '<div class="mock-chart">' +
-              '<div class="mock-chart__title">薄弱点分布（6 维）</div>' +
-              '<div class="mock-chart__body" data-mock-radar></div>' +
-            '</div>' +
-          '</div>' +
-
-          /* 记录列表 */
-          '<div class="mock-list" data-mock-list></div>' +
-        '</div>';
-
-      // 科目筛选
-      $all('[data-mock-subject]', view).forEach(function (c) {
-        c.addEventListener('click', function () {
-          self.subject = this.getAttribute('data-mock-subject');
-          self.render();
-        });
-      });
-
-      // 添加表单
-      $('[data-mock-open-add]', view).addEventListener('click', function () { self.showAddForm(); });
-
-      // 画图表
-      var trendEl = view.querySelector('[data-mock-trend]');
-      var radarEl = view.querySelector('[data-mock-radar]');
-      if (trendEl) global.KP_CHARTS.trend(trendEl, this.trendData(), { width: 340, height: 200 });
-      if (radarEl) global.KP_CHARTS.radar(radarEl, this.radarData(), { size: 260 });
-
-      this.renderList();
-    },
-
-    /* 添加模考记录表单（弹窗） */
-    showAddForm: function () {
-      var self = this;
-      var subjOpts = this.SUBJECTS.map(function (s) {
-        return '<option value="' + esc(s) + '">' + esc(s) + '</option>';
-      }).join('');
-      var dimOpts = this.WEAK_DIMS.map(function (d) {
-        return '<label class="mock-dim"><input type="checkbox" name="weak" value="' + esc(d) + '"/><span>' + esc(d) + '</span></label>';
-      }).join('');
-
-      var overlay = document.createElement('div');
-      overlay.className = 'modal-overlay';
-      overlay.innerHTML = '' +
-        '<div class="modal mock-form">' +
-          '<div class="modal__head"><h3>记录模考</h3><button class="btn btn--sm" data-mock-close>✕</button></div>' +
-          '<form data-mock-form>' +
-            '<div class="mock-form__row">' +
-              '<label class="field"><span>科目</span><select name="subject" required>' + subjOpts + '</select></label>' +
-              '<label class="field"><span>日期</span><input type="date" name="date" value="' + new Date().toISOString().slice(0, 10) + '" required /></label>' +
-            '</div>' +
-            '<div class="mock-form__row">' +
-              '<label class="field"><span>得分</span><input type="number" name="score" min="0" step="0.5" required /></label>' +
-              '<label class="field"><span>满分</span><input type="number" name="maxScore" min="1" step="0.5" value="100" required /></label>' +
-              '<label class="field"><span>正确率(0-100)</span><input type="number" name="accuracy" min="0" max="100" step="1" value="0" /></label>' +
-            '</div>' +
-            '<div class="mock-form__row"><span class="field__label">薄弱点（可多选）</span>' +
-              '<div class="mock-form__dims">' + dimOpts + '</div>' +
-            '</div>' +
-            '<div class="modal__foot">' +
-              '<button type="button" class="btn" data-mock-close>取消</button>' +
-              '<button type="submit" class="btn btn--primary">保存</button>' +
-            '</div>' +
-          '</form>' +
-        '</div>';
-
-      document.body.appendChild(overlay);
-
-      $all('[data-mock-close]', overlay).forEach(function (b) {
-        b.addEventListener('click', function () { overlay.remove(); });
-      });
-      // 点遮罩空白处也关闭（≤768px 底部 sheet 场景下点击的是 overlay 本体；
-      // 下滑关闭通过 sw.js 注入的 delegate 处理，这里兜底纯点击遮罩）
-      overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) overlay.remove();
-      });
-
-      $('form[data-mock-form]', overlay).addEventListener('submit', function (e) {
-        e.preventDefault();
-        var f = this;
-        var score = Number(f.elements.score.value) || 0;
-        var maxScore = Number(f.elements.maxScore.value) || 100;
-        var accuracy = Math.max(0, Math.min(1, Number(f.elements.accuracy.value) || 0));
-        var weak = [];
-        $all('input[name="weak"]:checked', overlay).forEach(function (cb) { weak.push(cb.value); });
-        global.KP_STORE.addMockRecord({
-          date: f.elements.date.value,
-          subject: f.elements.subject.value,
-          score: score,
-          maxScore: maxScore,
-          accuracy: accuracy,
-          weakPoints: weak
-        });
-        overlay.remove();
-        self.render();
-      });
-    },
-
-    /* 记录列表 */
-    renderList: function () {
-      var view = this.view;
-      var box = view && view.querySelector('[data-mock-list]');
-      if (!box) return;
-      var self = this;
-      var recs = this.filtered();
-
-      if (!recs.length) {
-        box.innerHTML = '<p class="mock-list__empty">暂无模考记录，点击右上角「记录模考」添加。</p>';
-        return;
-      }
-
-      box.innerHTML = '<h3 class="mock-list__title">记录（' + recs.length + '）</h3>' +
-        '<ul class="mock-list__items">' +
-          recs.map(function (r) {
-            var pctVal = Math.round((r.accuracy || 0) * 100);
-            var weakHtml = (r.weakPoints && r.weakPoints.length)
-              ? r.weakPoints.map(function (w) { return '<span class="mock-list__weak">' + esc(w) + '</span>'; }).join('')
-              : '<span class="mock-list__weak mock-list__weak--none">无</span>';
-            return '<li class="mock-item" data-mock-id="' + r.id + '">' +
-              '<div class="mock-item__meta">' +
-                '<span class="mock-item__date">' + r.date + '</span>' +
-                '<span class="mock-item__subject">' + esc(r.subject) + '</span>' +
-              '</div>' +
-              '<div class="mock-item__score">' + r.score + '/' + r.maxScore + ' · 正确率 ' + pctVal + '%</div>' +
-              '<div class="mock-item__weak">' + weakHtml + '</div>' +
-              '<button class="mock-item__del" data-mock-del="' + r.id + '" title="删除">✕</button>' +
-            '</li>';
-          }).join('') +
-        '</ul>';
-
-      $all('[data-mock-del]', box).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          global.KP_STORE.removeMockRecord(this.getAttribute('data-mock-del'));
-          self.render();
-        });
-      });
-    }
-  };
-
-  /* ---------- 笔记模块 ---------- */
-  var NOTES = {
-    view: null,
-    editId: null,      // 正在编辑的笔记 id（null = 新建）
-    draft: { subject: '政治', tag: '', content: '' },
-
-    SUBJECTS: ['政治', '英语', '数学', '专业课', '其他'],
-
-    records: function () {
-      var store = global.KP_STORE;
-      return store ? store.get('note.list') : [];
-    },
-
-    /* 极简 Markdown → HTML（支持 # 标题、**粗体**、*斜体*、- 列表、`代码`、换行） */
-    renderMarkdown: function (src) {
-      var text = String(src || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      var lines = text.split('\n');
-      var html = '';
-      var inList = false;
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i];
-        var isItem = /^\s*[-*]\s+/.test(line);
-        if (isItem && !inList) { html += '<ul>'; inList = true; }
-        if (!isItem && inList) { html += '</ul>'; inList = false; }
-        if (isItem) {
-          var item = line.replace(/^\s*[-*]\s+/, '');
-          html += '<li>' + this.mdInline(item) + '</li>';
-        } else {
-          var m = line.match(/^(#{1,3})\s+(.*)$/);
-          if (m) {
-            var level = m[1].length;
-            html += '<h' + (level + 1) + ' class="note-md__h">' + this.mdInline(m[2]) + '</h' + (level + 1) + '>';
-          } else if (line.trim() === '') {
-            html += '<br/>';
-          } else {
-            html += '<p>' + this.mdInline(line) + '</p>';
-          }
-        }
-      }
-      if (inList) html += '</ul>';
-      return html;
-    },
-
-    /* 行内 Markdown：**粗体**、*斜体*、`代码` */
-    mdInline: function (s) {
-      return s
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*([^*]+?)\*/g, '<em>$1</em>')
-        .replace(/`([^`]+?)`/g, '<code>$1</code>');
-    },
-
-    render: function () {
-      var view = this.view;
-      if (!view) return;
-      var self = this;
-      var store = global.KP_STORE;
-
-      var bySubj = store ? store.notesBySubject() : {};
-      var subjects = Object.keys(bySubj);
-
-      var groupHtml = subjects.map(function (subj) {
-        var notes = bySubj[subj];
-        var items = notes.map(function (n) {
-          var editing = n.id === self.editId;
-          return '<div class="note-item" data-note-id="' + n.id + '">' +
-            '<div class="note-item__head">' +
-              (n.tag ? '<span class="note-item__tag">#' + esc(n.tag) + '</span>' : '') +
-              '<span class="note-item__ts">' + (n.ts ? new Date(n.ts).toLocaleDateString() : '') + '</span>' +
-            '</div>' +
-            (editing
-              ? self.editFormHtml(n)
-              : '<div class="note-item__body" data-note-view="' + n.id + '">' + self.renderMarkdown(n.content) + '</div>') +
-          '</div>';
-        }).join('');
-        return '<div class="note-group">' +
-          '<h3 class="note-group__title">' + esc(subj) + '（' + notes.length + '）</h3>' +
-          '<div class="note-group__list">' + items + '</div>' +
-        '</div>';
-      }).join('');
-
-      view.innerHTML = '' +
-        '<div class="card notes-card">' +
-          '<div class="notes-card__head">' +
-            '<div>' +
-              '<h2 class="card__title">笔记</h2>' +
-              '<p class="card__desc">Markdown 编辑 · 打标签 · 按科目分组 · 共 ' + this.records().length + ' 条</p>' +
-            '</div>' +
-            '<button class="btn btn--sm btn--primary" data-notes-new>+ 新建笔记</button>' +
-          '</div>' +
-
-          (this.editId === 'new' ? this.newFormHtml() : '') +
-
-          (subjects.length
-            ? '<div class="note-groups">' + groupHtml + '</div>'
-            : '<p class="notes-card__empty">暂无笔记，点击「新建笔记」开始记录。</p>') +
-        '</div>';
-
-      // 新建
-      $('[data-notes-new]', view).addEventListener('click', function () {
-        self.editId = 'new';
-        self.draft = { subject: self.SUBJECTS[0], tag: '', content: '' };
-        self.render();
-      });
-
-      if (this.editId === 'new') this.bindNewForm(view);
-
-      // 各条：编辑 / 预览 / 删除
-      $all('[data-note-edit]', view).forEach(function (b) {
-        b.addEventListener('click', function () {
-          var id = this.getAttribute('data-note-edit');
-          var n = self.records().filter(function (x) { return x.id === id; })[0];
-          if (n) {
-            self.editId = id;
-            self.draft = { subject: n.subject, tag: n.tag, content: n.content };
-            self.render();
-          }
-        });
-      });
-      $all('[data-note-del]', view).forEach(function (b) {
-        b.addEventListener('click', function () {
-          store.removeNote(this.getAttribute('data-note-del'));
-          self.render();
-        });
-      });
-      // 预览折叠（点 body 切换原文/渲染）
-      $all('[data-note-view]', view).forEach(function (b) {
-        b.addEventListener('click', function () {
-          this.classList.toggle('is-raw');
-        });
-      });
-
-      // 绑定各内嵌编辑表单
-      var store = global.KP_STORE;
-      if (store) {
-        this.records().forEach(function (n) {
-          if (n.id === self.editId) self.bindEditForm(view, n.id);
-        });
-      }
-    },
-
-    /* 新建表单 HTML */
-    newFormHtml: function () {
-      var self = this;
-      var subjOpts = this.SUBJECTS.map(function (s) {
-        return '<option value="' + esc(s) + '"' + (s === self.draft.subject ? ' selected' : '') + '>' + esc(s) + '</option>';
-      }).join('');
-      var tags = global.KP_STORE ? global.KP_STORE.noteTags() : [];
-      var tagOpts = '<option value="">（无标签）</option>' + tags.map(function (t) {
-        return '<option value="' + esc(t) + '"' + (t === self.draft.tag ? ' selected' : '') + '>' + esc(t) + '</option>';
-      }).join('');
-      return '<div class="note-form" data-note-form="new">' +
-        '<div class="note-form__row">' +
-          '<label class="field"><span>科目</span><select name="subject">' + subjOpts + '</select></label>' +
-          '<label class="field"><span>标签</span><select name="tag">' + tagOpts + '</select></label>' +
-        '</div>' +
-        '<div class="note-form__row">' +
-          '<div class="note-md-split">' +
-            '<textarea class="note-md__editor" name="content" placeholder="支持 Markdown：# 标题、**粗体**、*斜体*、- 列表、`代码`" rows="8">' + esc(this.draft.content) + '</textarea>' +
-            '<div class="note-md__preview" data-note-preview></div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="note-form__foot">' +
-          '<button type="button" class="btn" data-note-cancel>取消</button>' +
-          '<button type="button" class="btn btn--primary" data-note-save-new>保存</button>' +
-        '</div>' +
-      '</div>';
-    },
-
-    /* 编辑某条笔记的表单（嵌入其条目内） */
-    editFormHtml: function (n) {
-      var self = this;
-      var subjOpts = this.SUBJECTS.map(function (s) {
-        return '<option value="' + esc(s) + '"' + (s === n.subject ? ' selected' : '') + '>' + esc(s) + '</option>';
-      }).join('');
-      var tags = global.KP_STORE ? global.KP_STORE.noteTags() : [];
-      var tagOpts = '<option value="">（无标签）</option>' + tags.map(function (t) {
-        return '<option value="' + esc(t) + '"' + (t === n.tag ? ' selected' : '') + '>' + esc(t) + '</option>';
-      }).join('');
-      return '<div class="note-form note-form--inline" data-note-form="' + n.id + '">' +
-        '<div class="note-form__row">' +
-          '<label class="field"><span>科目</span><select name="subject">' + subjOpts + '</select></label>' +
-          '<label class="field"><span>标签</span><select name="tag">' + tagOpts + '</select></label>' +
-        '</div>' +
-        '<div class="note-md-split">' +
-          '<textarea class="note-md__editor" name="content" placeholder="Markdown 内容" rows="6">' + esc(n.content) + '</textarea>' +
-          '<div class="note-md__preview" data-note-preview>' + self.renderMarkdown(n.content) + '</div>' +
-        '</div>' +
-        '<div class="note-form__foot">' +
-          '<button type="button" class="btn btn--sm" data-note-cancel="' + n.id + '">取消</button>' +
-          '<button type="button" class="btn btn--sm btn--primary" data-note-save="' + n.id + '">保存</button>' +
-        '</div>' +
-      '</div>';
-    },
-
-    bindNewForm: function (view) {
-      var self = this;
-      var form = $('[data-note-form="new"]', view);
-      if (!form) return;
-      var ta = form.querySelector('textarea[name="content"]');
-      var prev = form.querySelector('[data-note-preview]');
-      if (ta && prev) {
-        ta.addEventListener('input', function () {
-          prev.innerHTML = self.renderMarkdown(ta.value);
-          self.draft.content = ta.value;
-        });
-      }
-      $all('[data-note-cancel]', form).forEach(function (b) {
-        b.addEventListener('click', function () { self.editId = null; self.render(); });
-      });
-      $('[data-note-save-new]', form).addEventListener('click', function () {
-        var subj = form.elements.subject.value;
-        var tag = form.elements.tag.value;
-        var content = ta ? ta.value : self.draft.content;
-        if (!content.trim() && !tag) return;
-        global.KP_STORE.addNote({ subject: subj, tag: tag, content: content });
-        self.editId = null;
-        self.draft = { subject: subj, tag: tag, content: '' };
-        self.render();
-      });
-    },
-
-    bindEditForm: function (view, id) {
-      var self = this;
-      var form = view.querySelector('[data-note-form="' + id + '"]');
-      if (!form) return;
-      var ta = form.querySelector('textarea[name="content"]');
-      var prev = form.querySelector('[data-note-preview]');
-      if (ta && prev) {
-        ta.addEventListener('input', function () {
-          prev.innerHTML = self.renderMarkdown(ta.value);
-        });
-      }
-      var cancel = form.querySelector('[data-note-cancel="' + id + '"]');
-      if (cancel) cancel.addEventListener('click', function () { self.editId = null; self.render(); });
-      var save = form.querySelector('[data-note-save="' + id + '"]');
-      if (save) save.addEventListener('click', function () {
-        var data = {
-          subject: form.elements.subject.value,
-          tag: form.elements.tag.value,
-          content: ta ? ta.value : ''
-        };
-        global.KP_STORE.updateNote(id, data);
-        self.editId = null;
-        self.render();
-      });
-    }
-  };
-
   /* ---------- 仪表盘 ---------- */
   var DASHBOARD = {
     view: null,
 
-    /* 固定 4 科 */
-    SUBJECTS: ['政治', '英语', '数学', '专业课'],
-    /* 每科目标题量（样题 10 道/科，用于计算进度环） */
-    PER_SUBJECT_TOTAL: 10,
-
     /* 读 store 计算仪表盘所需数据 */
     collect: function () {
       var store = global.KP_STORE;
-      var content = global.KP_CONTENT;
-      var records = store ? store.get('records') : [];
       var checkins = store ? store.get('checkins') : [];
       var model = global.KP_MODEL;
 
-      // qid → subject 映射
-      var qs = content ? content.kp_sampleQuestions : [];
-      var qmap = {};
-      qs.forEach(function (q) { qmap[q.id] = q; });
+      var todayStr = new Date().toISOString().slice(0, 10);
 
-      // 每科做题数 + 正确数
-      var perSubj = {};
-      this.SUBJECTS.forEach(function (s) { perSubj[s] = { total: 0, correct: 0 }; });
-      records.forEach(function (rec) {
-        var q = qmap[rec.qid];
-        if (!q) return;
-        perSubj[q.subject].total++;
-        if (rec.correct === true) perSubj[q.subject].correct++;
-      });
-
-      // 科目进度 0-100：做题占目标比例（capped 100）
-      var progress = store ? store.getProgressAll() : {};
-      var self = this;
-      var ringValues = this.SUBJECTS.map(function (subj) {
-        var manual = progress[subj];
-        var stored = (typeof manual === 'number' && isFinite(manual)) ? manual : null;
-        var computed = Math.min(100, Math.round((perSubj[subj].total / self.PER_SUBJECT_TOTAL) * 100));
-        // 手动进度优先；无手动则用做题进度；两者都无 = 0
-        var value = stored !== null ? stored : computed;
-        return {
-          subject: subj,
-          value: value,
-          done: perSubj[subj].total,
-          correct: perSubj[subj].correct,
-          total: self.PER_SUBJECT_TOTAL,
-          source: stored !== null ? 'manual' : 'auto'
-        };
-      });
-
-      // 总正确率
-      var accPct = Math.round((model.accuracy(records)) * 100);
-
-      // 连续打卡：优先读 kp_streak（计划打卡写入），回退到 checkins 计算
+      // 连续打卡：优先读 kp_streak，回退到 checkins 计算
       var streakDays = model.streak(checkins);
       var planStreak = store ? store.getStreak().count : 0;
       if (planStreak > streakDays) streakDays = planStreak;
 
-      // 总做题数 / 未掌握错题数
-      var totalRecords = records.length;
-      var wrongCount = store ? store.get('wrong').length : 0;
+      // 今日是否已打卡
+      var needCheckin = store ? !store.isCheckedIn(todayStr) : true;
 
-      // 今日学习时长（累加 kp_records.seconds，仅今日）
-      var todayStr = new Date().toISOString().slice(0, 10);
-      var todaySecs = 0;
-      records.forEach(function (rec) {
-        var t = rec.ts ? new Date(rec.ts).toISOString().slice(0, 10) : null;
-        if (t === todayStr && rec.seconds > 0) todaySecs += rec.seconds;
-      });
-      // 今日目标时长 4h = 14400s（用于进度环 0-100）
-      var todayTargetSecs = 4 * 3600;
-      var timePct = Math.min(100, Math.round((todaySecs / todayTargetSecs) * 100));
+      // 模考记录数 / 成绩提交数 / 笔记数
+      var mockCount = store ? (store.get('mock.records') || []).length : 0;
+      var scoreCount = store ? (store.get('score.submissions') || []).length : 0;
+      var noteCount = store ? (store.get('note.list') || []).length : 0;
+      var signup = store ? (store.get('signup.state') || {}) : {};
+      var signupDone = 0;
+      if (signup.nodes) {
+        for (var k in signup.nodes) if (signup.nodes[k] && signup.nodes[k].done) signupDone++;
+      }
 
-      // 今日待复习 / 待打卡
-      var dueToday = store ? store.dueToday().length : 0;
-      var needCheckin = !store.isCheckedIn(todayStr);
+      // 计划：今日任务完成率
+      var planByDay = store ? store.planByDate(todayStr) : [];
+      var planDone = planByDay.filter(function (t) { return t.done; }).length;
+      var planPct = planByDay.length ? Math.round((planDone / planByDay.length) * 100) : 0;
+
+      // 择校收藏
+      var favSchools = store ? (store.get('school.list') || []).length : 0;
 
       return {
-        ringValues: ringValues,
-        totalRecords: totalRecords,
-        accPct: accPct,
         streakDays: streakDays,
-        wrongCount: wrongCount,
-        todaySecs: todaySecs,
-        todayMinutes: Math.round(todaySecs / 60),
-        todayHours: Math.floor(todaySecs / 3600),
-        todayRemainMin: Math.round((todaySecs % 3600) / 60),
-        timePct: timePct,
-        dueToday: dueToday,
-        needCheckin: needCheckin
+        needCheckin: needCheckin,
+        mockCount: mockCount,
+        scoreCount: scoreCount,
+        noteCount: noteCount,
+        signupDone: signupDone,
+        signupTotal: 5,
+        planPct: planPct,
+        planDone: planDone,
+        planTotal: planByDay.length,
+        favSchools: favSchools,
+        todayStr: todayStr
       };
-    },
-
-    formatDuration: function (secs) {
-      var h = Math.floor(secs / 3600);
-      var m = Math.round((secs % 3600) / 60);
-      if (h > 0) return h + ' 小时 ' + m + ' 分';
-      return m + ' 分钟';
     },
 
     render: function () {
       var view = this.view;
       if (!view) return;
-      var self = this;
       var d = this.collect();
 
-      // 4 个科目进度环
-      var ringsHtml = d.ringValues.map(function (r) {
-        return '' +
-          '<div class="dash-ring" data-subj="' + esc(r.subject) + '">' +
-            '<div class="dash-ring__svg" data-ring-svg="' + esc(r.subject) + '"></div>' +
-            '<div class="dash-ring__label">' + esc(r.subject) + '</div>' +
-            '<div class="dash-ring__meta">已完成 ' + r.done + '/' + r.total + ' · 正确 ' + r.correct + '</div>' +
-          '</div>';
-      }).join('');
+      // 统计卡（4 张）
+      var statsHtml =
+        '<div class="dash-stats">' +
+          '<a class="stat" href="#mock">' +
+            '<div class="stat__num">' + d.mockCount + '</div>' +
+            '<div class="stat__label">模考记录</div>' +
+            '<div class="stat__hint">累计次</div>' +
+          '</a>' +
+          '<a class="stat" href="#score-analysis">' +
+            '<div class="stat__num">' + d.scoreCount + '</div>' +
+            '<div class="stat__label">成绩提交</div>' +
+            '<div class="stat__hint">累计次</div>' +
+          '</a>' +
+          '<a class="stat" href="#notes">' +
+            '<div class="stat__num">' + d.noteCount + '</div>' +
+            '<div class="stat__label">笔记</div>' +
+            '<div class="stat__hint">累计条</div>' +
+          '</a>' +
+          '<div class="stat">' +
+            '<div class="stat__num">' + d.streakDays + '</div>' +
+            '<div class="stat__label">连续打卡</div>' +
+            '<div class="stat__hint">天</div>' +
+          '</div>' +
+        '</div>';
 
-      // 时间环
-      var timeRingHtml = '<div class="dash-ring dash-ring--time" data-time-ring>' +
-        '<div class="dash-ring__svg" data-ring-svg="time"></div>' +
-        '<div class="dash-ring__label">今日学习</div>' +
-        '<div class="dash-ring__meta">' + self.formatDuration(d.todaySecs) + ' / 4h</div>' +
-      '</div>';
+      // 今日任务
+      var tasks = [];
+      if (d.needCheckin) {
+        tasks.push('<a class="dash-task dash-task--checkin" href="#dashboard" data-open-checkin>' +
+          '<span class="dash-task__icon">✓</span>' +
+          '<span class="dash-task__text">今日尚未打卡</span>' +
+          '<span class="dash-task__go">去打卡</span></a>');
+      }
+      if (d.planTotal === 0) {
+        tasks.push('<a class="dash-task" href="#plan"><span class="dash-task__icon">🗓</span>' +
+          '<span class="dash-task__text">今日还没有计划任务</span>' +
+          '<span class="dash-task__go">去添加</span></a>');
+      } else if (d.planPct < 100) {
+        tasks.push('<a class="dash-task" href="#plan"><span class="dash-task__icon">📋</span>' +
+          '<span class="dash-task__text">今日计划 <b>' + d.planDone + '/' + d.planTotal + '</b> 完成</span>' +
+          '<span class="dash-task__go">继续</span></a>');
+      }
+      if (d.signupDone < d.signupTotal) {
+        tasks.push('<a class="dash-task" href="#signup"><span class="dash-task__icon">📑</span>' +
+          '<span class="dash-task__text">报名流程 <b>' + d.signupDone + '/' + d.signupTotal + '</b></span>' +
+          '<span class="dash-task__go">去完成</span></a>');
+      }
+      var todayHtml = tasks.length
+        ? '<h3 class="dashboard-today__title">今日待办</h3><div class="dash-tasks">' + tasks.join('') + '</div>'
+        : '<p class="dashboard-today__empty">今日待办全部完成，保持节奏！</p>';
+
+      // 功能入口卡
+      var entriesHtml =
+        '<div class="dash-entries">' +
+          '<a class="dash-entry" href="#school"><span class="dash-entry__icon">🏫</span> 择校</a>' +
+          '<a class="dash-entry" href="#apply"><span class="dash-entry__icon">📝</span> 志愿</a>' +
+          '<a class="dash-entry" href="#signup"><span class="dash-entry__icon">📑</span> 报名</a>' +
+          '<a class="dash-entry" href="#score-analysis"><span class="dash-entry__icon">📊</span> 成绩</a>' +
+        '</div>';
 
       view.innerHTML = '' +
         '<div class="card dashboard-card">' +
           '<div class="dashboard-card__head">' +
             '<div>' +
               '<h2 class="card__title">仪表盘</h2>' +
-              '<p class="card__desc">学习概况 · 进度追踪 · 今日任务</p>' +
+              '<p class="card__desc">学习概况 · 今日待办 · 快捷入口</p>' +
             '</div>' +
           '</div>' +
-
-          /* 4 个进度环 + 时间环 */
-          '<div class="dash-rings">' +
-            ringsHtml +
-            timeRingHtml +
-          '</div>' +
-
-          /* 统计卡 */
-          '<div class="dash-stats">' +
-            '<a class="stat" href="#questions">' +
-              '<div class="stat__num">' + d.totalRecords + '</div>' +
-              '<div class="stat__label">总做题数</div>' +
-              '<div class="stat__hint">累计作答记录</div>' +
-            '</a>' +
-            '<div class="stat">' +
-              '<div class="stat__num">' + d.accPct + '%</div>' +
-              '<div class="stat__label">总正确率</div>' +
-              '<div class="stat__hint">全部记录</div>' +
-            '</div>' +
-            '<div class="stat">' +
-              '<div class="stat__num">' + d.streakDays + '</div>' +
-              '<div class="stat__label">连续打卡</div>' +
-              '<div class="stat__hint">天</div>' +
-            '</div>' +
-            '<a class="stat" href="#mistakes">' +
-              '<div class="stat__num">' + d.wrongCount + '</div>' +
-              '<div class="stat__label">未掌握错题</div>' +
-              '<div class="stat__hint">题 · 错题本</div>' +
-            '</a>' +
-          '</div>' +
-
-          /* 今日任务摘要 */
-          '<div class="dashboard-today" data-dash-today></div>' +
+          statsHtml +
+          '<div class="dashboard-today">' + todayHtml + '</div>' +
+          entriesHtml +
         '</div>';
-
-      // 用 KP_CHARTS 渲染 SVG 环形进度
-      d.ringValues.forEach(function (r) {
-        var el = view.querySelector('[data-ring-svg="' + r.subject + '"]');
-        if (el) global.KP_CHARTS.ring(el, r.value, {
-          size: 84,
-          stroke: 7,
-          color: 'var(--brand-500)',
-          trackColor: 'var(--ring-track, var(--gray-100))',
-          showLabel: true
-        });
-      });
-      var timeEl = view.querySelector('[data-ring-svg="time"]');
-      if (timeEl) global.KP_CHARTS.ring(timeEl, d.timePct, {
-        size: 84,
-        stroke: 7,
-        color: 'var(--ok)',
-        trackColor: 'var(--ring-track, var(--gray-100))',
-        showLabel: true
-      });
-
-      this.renderToday(d);
-    },
-
-    /* 今日任务摘要：待复习 / 待打卡 */
-    renderToday: function (d) {
-      var view = this.view;
-      var box = view && view.querySelector('[data-dash-today]');
-      if (!box) return;
-      d = d || this.collect();
-
-      var tasks = [];
-      if (d.dueToday > 0) {
-        tasks.push('<a class="dash-task dash-task--review" href="#review"><span class="dash-task__icon">🔁</span><span class="dash-task__text">今日待复习 <b>' + d.dueToday + ' 题</b></span><span class="dash-task__go">→</span></a>');
-      }
-      if (d.needCheckin) {
-        tasks.push('<a class="dash-task dash-task--checkin" href="#dashboard" data-open-checkin><span class="dash-task__icon">✓</span><span class="dash-task__text">今日尚未打卡</span><span class="dash-task__go">去打卡</span></a>');
-      }
-      if (!tasks.length) {
-        box.innerHTML = '<p class="dashboard-today__empty">今日任务已全部完成，保持节奏！</p>';
-        return;
-      }
-      box.innerHTML = '<h3 class="dashboard-today__title">今日任务</h3><div class="dash-tasks">' + tasks.join('') + '</div>';
     }
   };
 
@@ -7171,53 +6157,42 @@ html, body {
     $all('.view').forEach(function (v) {
       var active = v.getAttribute('data-view') === moduleId;
       v.classList.toggle('is-active', active);
-      if (active) {
-        if (moduleId === 'questions') {
-          // 题库视图：渲染列表
-          if (!v.children.length || !v.querySelector('[data-quiz-list]')) {
-            renderPlaceholder(v, moduleId); // 首先进入占位以挂载容器
-          }
-          renderQuizView(v);
-        } else if (moduleId === 'mistakes') {
-          // 错题本聚合页：每次进入都重渲染（重做结算后状态会变）
-          MISTAKES.view = v;
-          MISTAKES.activeSubject = 'all';
-          if (global.KP_APP) global.KP_APP._mistakesViewActive = true;
-          MISTAKES.render();
-        } else if (moduleId === 'review') {
-          // 间隔复习：每次进入重渲染（复习/忘记会改变到期集合）
-          REVIEW.view = v;
-          REVIEW.render();
-        } else if (moduleId === 'exam-past') {
-          // 真题：每次进入重渲染（筛选/打开卷会改变状态）
-          PAST.view = v;
-          PAST.render();
-        } else if (moduleId === 'vocab') {
-          // 单词记忆：每次进入重渲染（评级/掌握会改变卡片流与统计）
-          VOCAB.view = v;
-          VOCAB.flipped = false;
-          VOCAB.render();
-        } else if (moduleId === 'plan') {
-          // 学习计划：每次进入重渲染（任务勾选/添加会改变状态）
-          PLAN.view = v;
-          PLAN.render();
-        } else if (moduleId === 'mock') {
-          // 模考分析：每次进入重渲染（图表随记录变化）
-          MOCK.view = v;
-          MOCK.render();
-        } else if (moduleId === 'notes') {
-          // 笔记：每次进入重渲染（增删改标签会改变分组）
-          NOTES.view = v;
-          NOTES.render();
-        } else if (moduleId === 'dashboard') {
-          // 仪表盘：联动复习 + 错题统计
+      if (!active) return;
+      switch (moduleId) {
+        case 'dashboard':
           DASHBOARD.view = v;
           DASHBOARD.render();
-        } else {
-          // 切离错题本时复位刷新标记
-          if (global.KP_APP) global.KP_APP._mistakesViewActive = false;
-          if (v.children.length === 0) renderPlaceholder(v, moduleId);
-        }
+          break;
+        case 'school':
+          if (global.KP_SCHOOL) global.KP_SCHOOL.render(v);
+          else renderPlaceholder(v, moduleId);
+          break;
+        case 'apply':
+          if (global.KP_APPLY) global.KP_APPLY.render(v);
+          else renderPlaceholder(v, moduleId);
+          break;
+        case 'signup':
+          if (global.KP_SIGNUP) global.KP_SIGNUP.render(v);
+          else renderPlaceholder(v, moduleId);
+          break;
+        case 'score-analysis':
+          if (global.KP_SCORE) global.KP_SCORE.render(v);
+          else renderPlaceholder(v, moduleId);
+          break;
+        case 'plan':
+          PLAN.view = v;
+          PLAN.render();
+          break;
+        case 'mock':
+          MOCK.view = v;
+          MOCK.render();
+          break;
+        case 'notes':
+          NOTES.view = v;
+          NOTES.render();
+          break;
+        default:
+          renderPlaceholder(v, moduleId);
       }
     });
 
@@ -7237,65 +6212,9 @@ html, body {
     }
   }
 
-  /* 题库视图：占位 + 列表容器 */
-  function renderQuizView(view) {
-    // 替换占位卡为列表
-    view.innerHTML = '';
-    var card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = '' +
-      '<h2 class="card__title">题库练习</h2>' +
-      '<p class="card__desc">共 ' + (global.KP_CONTENT ? global.KP_CONTENT.kp_sampleQuestions.length : 0) + ' 道样题 · 支持筛选、限时练习、收藏、错题本</p>' +
-      '<div data-quiz-list-root></div>';
-    view.appendChild(card);
 
-    var root = card.querySelector('[data-quiz-list-root]');
-    var filterHtml = buildFilterHtml();
-    root.innerHTML = filterHtml + '<div class="quiz-list" data-quiz-list></div>';
 
-    // 设置 quiz.view 为题库 section
-    QUIZ.view = view;
-    QUIZ.state = { subj: [], chap: [], type: [], diff: [], search: '', limit: 0 };
-    bindFilters(view, QUIZ);
-    QUIZ.renderListItems();
-  }
 
-  function buildFilterHtml() {
-    var qs = global.KP_CONTENT ? global.KP_CONTENT.kp_sampleQuestions : [];
-    var subjects = uniq(qs.map(function (q) { return q.subject; }));
-    var chapters = uniq(qs.map(function (q) { return q.chapter; }));
-    var types = uniq(qs.map(function (q) { return q.type; }));
-    var diffs = uniq(qs.map(function (q) { return q.difficulty; })).sort();
-
-    function group(label, items, key) {
-      var chips = items.map(function (v) {
-        var lbl = v;
-        if (key === 'type') lbl = TYPE_LABELS[v] || v;
-        if (key === 'diff') lbl = '★'.repeat(v) + '☆'.repeat(5 - v);
-        return '<button class="chip' + (key === 'diff' ? '' : '') + '" data-filter-key="' + key + '" data-filter-val="' + esc(String(v)) + '">' + esc(lbl) + '</button>';
-      }).join('');
-      var all = '<button class="chip is-active" data-filter-key="' + key + '" data-filter-val="*">全部</button>';
-      return '<div class="quiz-filters__group"><span class="quiz-filters__label">' + label + '</span>' + all + chips + '</div>';
-    }
-
-    // 移动端：搜索 + 折叠开关常显；4 个分组收进可折叠区（默认收起）
-    return '<div class="quiz-filters" data-quiz-filters>' +
-      '<div class="quiz-filters__quick">' +
-        '<input class="quiz-filters__search" type="search" placeholder="搜索题干 / 关键词…" data-quiz-search />' +
-        '<button class="quiz-filters__toggle" data-filters-toggle type="button" aria-expanded="false">筛选 <span class="quiz-filters__toggle__badge" data-filter-badge hidden>0</span></button>' +
-      '</div>' +
-      '<div class="quiz-filters__active" data-filter-active></div>' +
-      '<div class="quiz-filters__collapsible" data-filters-collapse>' +
-        group('科目', subjects, 'subj') +
-        group('章节', chapters, 'chap') +
-        group('题型', types, 'type') +
-        group('难度', diffs, 'diff') +
-        '<div class="quiz-filters__limit"><span class="quiz-filters__label">限时</span>' +
-          '<input type="number" min="0" max="300" placeholder="分" data-quiz-limit value="" />' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }
 
   /* ---------- 倒计时 ---------- */
   function updateCountdown() {
@@ -7349,18 +6268,6 @@ html, body {
         activate(el.getAttribute('data-nav'));
       });
     });
-
-    // 答题面板引用
-    QUIZ.panel = $('#quiz-panel');
-    QUIZ.panelInner = $('#quiz-panel-inner');
-
-    // 暴露引用供跨模块调用（错题本重做 / 刷新）
-    KP_APP._quiz = QUIZ;
-    KP_APP._mistakesViewActive = false;
-    KP_APP._renderMistakes = function () {
-      // 重查当前错题本 section（activate 切换时已写入 MISTAKES.view）
-      MISTAKES.render();
-    };
   }
 
   /* ---------- 初始化 ---------- */

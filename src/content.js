@@ -441,20 +441,152 @@
     }
   ];
 
+  /* 院校库（用于择校 / 志愿模拟填报） */
+  var kp_schoolsMeta = {
+    /* 985 */
+    'tsinghua': { id: 'tsinghua', name: '清华大学', level: '985', type: '综合', city: '北京',
+      base25: 1.9, fee: 8000, duration: 3, ratio2025: '1:18', line2025: '385',
+      majors: '计算机 / 软件 / 经管 / 机械 / 自动化',
+      tags: ['自划线', '推免生优先', '顶尖'], website: 'https://www.tsinghua.edu.cn' },
+    'pku':      { id: 'pku', name: '北京大学', level: '985', type: '综合', city: '北京',
+      base25: 1.9, fee: 8000, duration: 3, ratio2025: '1:16', line2025: '385',
+      majors: '文学 / 经管 / 医 / 法 / 理学',
+      tags: ['自划线', '顶尖'], website: 'https://www.pku.edu.cn' },
+    'fudan':    { id: 'fudan', name: '复旦大学', level: '985', type: '综合', city: '上海',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:15', line2025: '375',
+      majors: '经管 / 医学 / 法学 / 数学',
+      tags: ['自划线'], website: 'https://www.fudan.edu.cn' },
+    'shu':      { id: 'shu', name: '上海交通大学', level: '985', type: '理工', city: '上海',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:14', line2025: '375',
+      majors: '机械 / 经管 / 电气 / 计算机',
+      tags: ['自划线'], website: 'https://www.sjtu.edu.cn' },
+    'njust':    { id: 'njust', name: '南京大学', level: '985', type: '综合', city: '南京',
+      base25: 1.4, fee: 7000, duration: 3, ratio2025: '1:12', line2025: '365',
+      majors: '物理 / 天文学 / 计算机 / 经管',
+      tags: ['自划线'], website: 'https://www.nju.edu.cn' },
+    'rcces':    { id: 'rcces', name: '中国人民大学', level: '985', type: '文科', city: '北京',
+      base25: 1.6, fee: 8000, duration: 3, ratio2025: '1:13', line2025: '375',
+      majors: '经济 / 管理 / 法学 / 新闻',
+      tags: ['自划线', '经管强校'], website: 'https://www.ruc.edu.cn' },
+    /* 211 */
+    'buaa':     { id: 'buaa', name: '北京航空航天大学', level: '211', type: '理工', city: '北京',
+      base25: 1.3, fee: 7000, duration: 3, ratio2025: '1:10', line2025: '355',
+      majors: '航空 / 计算机 / 经管 / 机械',
+      tags: ['国防七子'], website: 'https://www.buaa.edu.cn' },
+    'hit':      { id: 'hit', name: '哈尔滨工业大学', level: '211', type: '理工', city: '哈尔滨',
+      base25: 1.2, fee: 7000, duration: 3, ratio2025: '1:9', line2025: '350',
+      majors: '计算机 / 机械 / 土木 / 电气',
+      tags: ['C9', '工科强'], website: 'https://www.hit.edu.cn' },
+    'hust':     { id: 'hust', name: '华中科技大学', level: '211', type: '理工', city: '武汉',
+      base25: 1.2, fee: 7000, duration: 3, ratio2025: '1:11', line2025: '350',
+      majors: '机械 / 光电 / 计算机 / 经管',
+      tags: ['工科强'], website: 'https://www.hust.edu.cn' },
+    'sdsu':     { id: 'sdsu', name: '山东大学', level: '211', type: '综合', city: '济南',
+      base25: 0.9, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '数学 / 物理 / 文学 / 经管',
+      tags: ['老牌 985'], website: 'https://www.sdu.edu.cn' },
+    'sysu':     { id: 'sysu', name: '中山大学', level: '211', type: '综合', city: '广州',
+      base25: 1.1, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '345',
+      majors: '医学 / 经管 / 数学 / 法',
+      tags: ['华南强校'], website: 'https://www.sysu.edu.cn' },
+    'scut':     { id: 'scut', name: '华南理工大学', level: '211', type: '理工', city: '广州',
+      base25: 1.0, fee: 6500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '建筑 / 计算机 / 食品 / 机械',
+      tags: ['工科强'], website: 'https://www.scut.edu.cn' },
+    'swu':      { id: 'swu', name: '西南大学', level: '211', type: '师范', city: '重庆',
+      base25: 0.7, fee: 6000, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '教育 / 心理 / 食品 / 农学',
+      tags: ['师范'], website: 'https://www.swu.edu.cn' },
+    'xjtu':     { id: 'xjtu', name: '西安交通大学', level: '211', type: '理工', city: '西安',
+      base25: 1.2, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '345',
+      majors: '电气 / 机械 / 能源 / 经管',
+      tags: ['老牌 985'], website: 'https://www.xjtu.edu.cn' },
+    'xidian':   { id: 'xidian', name: '西安电子科技大学', level: '211', type: '理工', city: '西安',
+      base25: 0.9, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '335',
+      majors: '计算机 / 电子 / 通信 / 密码',
+      tags: ['电子强校'], website: 'https://www.xidian.edu.cn' },
+    'nankai':   { id: 'nankai', name: '南开大学', level: '211', type: '综合', city: '天津',
+      base25: 1.0, fee: 6500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '数学 / 化学 / 经管 / 历史',
+      tags: ['老牌 985'], website: 'https://www.nankai.edu.cn' },
+    /* 双非（双一流/省重点） */
+    'zju':      { id: 'zju', name: '浙江大学', level: '985', type: '综合', city: '杭州',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:14', line2025: '375',
+      majors: '计算机 / 机械 / 经管 / 法学',
+      tags: ['自划线', '顶尖'], website: 'https://www.zju.edu.cn' },
+    'ustc':     { id: 'ustc', name: '中国科学技术大学', level: '985', type: '理工', city: '合肥',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:15', line2025: '375',
+      majors: '物理 / 数学 / 计算机 / 核能',
+      tags: ['顶尖', '基础学科'], website: 'https://www.ustc.edu.cn' },
+    'tongji':   { id: 'tongji', name: '同济大学', level: '985', type: '理工', city: '上海',
+      base25: 1.5, fee: 8000, duration: 3, ratio2025: '1:13', line2025: '365',
+      majors: '建筑 / 土木 / 设计 / 经管',
+      tags: ['建筑强校'], website: 'https://www.tongji.edu.cn' },
+    'hu':       { id: 'hu', name: '华中科技大学（985）', level: '985', type: '理工', city: '武汉',
+      base25: 1.4, fee: 7000, duration: 3, ratio2025: '1:11', line2025: '355',
+      majors: '机械 / 光电 / 计算机',
+      tags: ['自划线'], website: 'https://www.hust.edu.cn' }
+  };
+
+  /* 推荐分组（冲/稳/保） */
+  var kp_suggestSchools = [
+    { id: 'tsinghua', group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'pku',      group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'fudan',    group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'shu',      group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'zju',      group: '冲刺（顶尖 985）', tier: 'hot' },
+    { id: 'ustc',     group: '冲刺（顶尖 985）', tier: 'hot' },
+
+    { id: 'rcces',    group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'njust',    group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'tongji',   group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'buaa',     group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'hust',     group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'xjtu',     group: '匹配（强 211 / 985）', tier: 'match' },
+    { id: 'xidian',   group: '匹配（强 211 / 985）', tier: 'match' },
+
+    { id: 'hit',      group: '保底（稳 211）', tier: 'safe' },
+    { id: 'nankai',   group: '保底（稳 211）', tier: 'safe' },
+    { id: 'sysu',     group: '保底（稳 211）', tier: 'safe' },
+    { id: 'sdsu',     group: '保底（稳 211）', tier: 'safe' },
+    { id: 'scut',     group: '保底（稳 211）', tier: 'safe' },
+    { id: 'swu',      group: '保底（稳 211）', tier: 'safe' }
+  ];
+  /* 估算成功率（默认 target=380）：基于目标分与 2025 参考线的差距 */
+  (function () {
+    var target = 380;
+    kp_suggestSchools.forEach(function (s) {
+      var m = kp_schoolsMeta[s.id];
+      if (!m) return;
+      var line = Number(m.line2025) || 340;
+      var diff = target - line;
+      var p;
+      if (diff >= 40) p = 0.92;
+      else if (diff >= 25) p = 0.85;
+      else if (diff >= 10) p = 0.72;
+      else if (diff >= 0) p = 0.58;
+      else if (diff >= -10) p = 0.45;
+      else if (diff >= -25) p = 0.30;
+      else p = 0.18;
+      m.estChance = p;
+      m.line25 = line;
+    });
+  })();
+
   var KP_CONTENT = {
-    /** 导航模块配置 */
+    /** 导航模块配置（新结构：移除题库/真题/单词/错题，新增 4 个新模块） */
     modules: [
-      { id: 'dashboard',  label: '仪表盘' },
-      { id: 'questions',  label: '题库' },
-      { id: 'exam-past',  label: '真题' },
-      { id: 'plan',       label: '计划' },
-      { id: 'vocab',      label: '单词' },
-      { id: 'mistakes',   label: '错题本' },
-      { id: 'mock',       label: '模考' },
-      { id: 'notes',      label: '笔记' }
+      { id: 'dashboard',     label: '仪表盘' },
+      { id: 'school',        label: '考研择校' },
+      { id: 'apply',        label: '志愿模拟' },
+      { id: 'signup',       label: '报名模拟' },
+      { id: 'plan',         label: '备考计划' },
+      { id: 'score-analysis', label: '成绩分析' },
+      { id: 'mock',         label: '模考' },
+      { id: 'notes',        label: '笔记' }
     ],
 
-    /** 题库样题（4 科各 10 道） */
+    /** 题库样题（保留用于模考/成绩分析引用） */
     kp_sampleQuestions: kp_sampleQuestions,
 
     /** 单词样例（100+）：{word, phonetic, meaning, example} */
@@ -476,7 +608,13 @@
     planTemplates: [],
 
     /** 模考卷（占位） */
-    mockPapers: []
+    mockPapers: [],
+
+    /** 院校元数据（择校 / 志愿 / 成绩分析引用） */
+    kp_schoolsMeta: kp_schoolsMeta,
+
+    /** 推荐院校分组（冲/稳/保） */
+    kp_suggestSchools: kp_suggestSchools
   };
 
   global.KP_CONTENT = KP_CONTENT;

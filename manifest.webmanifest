@@ -1,7 +1,7 @@
 {
   "name": "考研备考",
   "short_name": "考研",
-  "description": "考研备考 · 题库 / 真题 / 计划 / 单词 / 模考 / 笔记，数据仅存本机，可离线使用",
+  "description": "考研备考 · 择校 / 志愿模拟 / 报名模拟 / 计划 / 成绩分析 / 模考 / 笔记，数据仅存本机，可离线使用",
   "id": "https://zhouks-byte.github.io/graduate-aptitude-test/",
   "start_url": "./index.html",
   "scope": "./",

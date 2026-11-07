@@ -33,14 +33,18 @@
     /* 计划模块 */
     streak: { count: 0, lastDate: null }, /* 连续打卡 {count, lastDate} */
 
-    /* 真题模块 */
-    'past.records': [],  /* 真题作答记录 {paperId, qid, answer, correct, score, reason, seconds, ts} */
-
     /* 模考模块 */
     'mock.records': [],  /* 模考记录 {id, date, subject, score, maxScore, accuracy, weakPoints[], ts} */
 
     /* 笔记模块 */
-    'note.list': [] /* 笔记 {id, subject, tag, content, ts} */
+    'note.list': [],     /* 笔记 {id, subject, tag, content, ts} */
+
+    /* ---------- 择校 / 志愿 / 报名 / 成绩 4 个新模块 ---------- */
+    'school.list': [],          /* 收藏院校 [{id, ts}] */
+    'apply.draft': {},          /* 志愿草稿 {hot, match, safe} */
+    'apply.submissions': [],    /* 志愿提交记录 [{id, chance, draft, score, ts, date}] */
+    'signup.state': {},         /* 报名状态 {nodes:{}, info:{}} */
+    'score.submissions': []     /* 成绩记录 [{id, label, scores, total, pct, ts, date}] */
   };
 
   /* 内存态：init() 前为空，init() 后与 localStorage 同步 */
