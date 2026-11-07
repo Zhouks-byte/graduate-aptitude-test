@@ -13,6 +13,7 @@ console.log('内联 <style> 数量:', (s.match(/<style>/g) || []).length);
 console.log('内联 <script> 数量:', (s.match(/<script>/g) || []).length);
 console.log('包含 KP_APP:', s.includes('KP_APP'), '| KP_STORE:', s.includes('KP_STORE'), '| KP_CONTENT:', s.includes('KP_CONTENT'));
 console.log('包含 KP_MODEL:', s.includes('KP_MODEL'), '| KP_CHARTS:', s.includes('KP_CHARTS'));
+console.log('包含 KP_SCHOOL:', s.includes('KP_SCHOOL'), '| KP_APPLY:', s.includes('KP_APPLY'), '| KP_SIGNUP:', s.includes('KP_SIGNUP'), '| KP_SCORE:', s.includes('KP_SCORE'));
 console.log('包含 serviceWorker.register:', s.includes('serviceWorker.register'));
 console.log('首字符:', JSON.stringify(s[0]), '(应为 "<")');
 console.log('总大小:', (Buffer.byteLength(s, 'utf8') / 1024).toFixed(1), 'KB');
