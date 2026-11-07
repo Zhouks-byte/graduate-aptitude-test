@@ -580,6 +580,65 @@
         quiz.state.limit = v;
       });
     }
+
+    // 移动端：筛选折叠开关 + 已选摘要 + 角标
+    var toggle = $('[data-filters-toggle]', filterRoot);
+    var collapse = $('[data-filters-collapse]', filterRoot);
+    var activeRow = $('[data-filter-active]', filterRoot);
+    var badge = toggle && $('[data-filter-badge]', toggle);
+
+    function activeCount() {
+      var n = 0;
+      ['subj', 'chap', 'type', 'diff'].forEach(function (k) {
+        n += (quiz.state[k] || []).length;
+      });
+      return n;
+    }
+    function refreshSummary() {
+      if (!activeRow) return;
+      var parts = [];
+      ['subj', 'chap', 'type', 'diff'].forEach(function (k) {
+        var sel = quiz.state[k] || [];
+        if (sel.length) parts.push(sel.map(function (v) { return esc(k === 'diff' ? v + '★' : String(v)); }).join('、'));
+      });
+      if (parts.length) {
+        activeRow.innerHTML = parts.map(function (p) {
+          return '<button class="chip is-active" data-summary-chip>' + p + '</button>';
+        }).join('');
+        activeRow.classList.add('is-shown');
+      } else {
+        activeRow.classList.remove('is-shown');
+      }
+      if (badge) {
+        var n = activeCount();
+        badge.hidden = n === 0;
+        badge.textContent = n;
+      }
+    }
+    if (toggle && collapse) {
+      toggle.addEventListener('click', function () {
+        var open = collapse.classList.toggle('is-open');
+        toggle.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      // 点已选摘要 chip = 展开筛选区查看/取消
+      if (activeRow) {
+        activeRow.addEventListener('click', function (e) {
+          var c = e.target.closest('[data-summary-chip]');
+          if (!c) return;
+          collapse.classList.add('is-open');
+          toggle.classList.add('is-open');
+          toggle.setAttribute('aria-expanded', 'true');
+        });
+      }
+      // 初次 + 每次筛选变化后刷新摘要
+      refreshSummary();
+      var origRender = quiz.renderListItems;
+      quiz.renderListItems = function () {
+        origRender.apply(this, arguments);
+        refreshSummary();
+      };
+    }
   }
 
   function uniq(arr) {
@@ -2652,16 +2711,21 @@
       return '<div class="quiz-filters__group"><span class="quiz-filters__label">' + label + '</span>' + all + chips + '</div>';
     }
 
+    // 移动端：搜索 + 折叠开关常显；4 个分组收进可折叠区（默认收起）
     return '<div class="quiz-filters" data-quiz-filters>' +
-      group('科目', subjects, 'subj') +
-      group('章节', chapters, 'chap') +
-      group('题型', types, 'type') +
-      group('难度', diffs, 'diff') +
-      '<div class="quiz-filters__search-wrap" style="flex:1;min-width:140px;display:flex;align-items:center;">' +
-        '<input class="quiz-filters__search" type="search" placeholder="搜索题干…" data-quiz-search />' +
+      '<div class="quiz-filters__quick">' +
+        '<input class="quiz-filters__search" type="search" placeholder="搜索题干 / 关键词…" data-quiz-search />' +
+        '<button class="quiz-filters__toggle" data-filters-toggle type="button" aria-expanded="false">筛选 <span class="quiz-filters__toggle__badge" data-filter-badge hidden>0</span></button>' +
       '</div>' +
-      '<div class="quiz-filters__limit"><span class="quiz-filters__label">限时</span>' +
-        '<input type="number" min="0" max="300" placeholder="分" data-quiz-limit value="" />' +
+      '<div class="quiz-filters__active" data-filter-active></div>' +
+      '<div class="quiz-filters__collapsible" data-filters-collapse>' +
+        group('科目', subjects, 'subj') +
+        group('章节', chapters, 'chap') +
+        group('题型', types, 'type') +
+        group('难度', diffs, 'diff') +
+        '<div class="quiz-filters__limit"><span class="quiz-filters__label">限时</span>' +
+          '<input type="number" min="0" max="300" placeholder="分" data-quiz-limit value="" />' +
+        '</div>' +
       '</div>' +
     '</div>';
   }

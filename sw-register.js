@@ -132,14 +132,79 @@
   }
 
   function bindImportExport() {
-    var expBtn = document.querySelector('[data-export]');
-    var impInput = document.querySelector('[data-import]');
+    /* 兼容：顶部旧按钮 [data-export] 与 "更多" sheet 新入口 [data-export-data] */
+    var expBtn = document.querySelector('[data-export]') || document.querySelector('[data-export-data]');
     if (expBtn) expBtn.addEventListener('click', exportData);
+    var impInput = document.querySelector('[data-import]');
     if (impInput) impInput.addEventListener('change', function () {
       var f = this.files && this.files[0];
       if (f) importData(f);
       this.value = '';
     });
+  }
+
+  /* ---------------- "更多" sheet：开/关/模块切换 ---------------- */
+  function bindMoreSheet() {
+    var overlay = document.getElementById('sheet-overlay');
+    if (!overlay) return;
+    var sheet = overlay.querySelector('.sheet') || overlay;
+    var closeBtn = overlay.querySelector('[data-sheet-close]');
+
+    function open() {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    /* 顶部"更多"按钮（#more-menu）+ tabbar"更多"项（data-more-nav） */
+    var topBtn = document.getElementById('more-menu');
+    var tabMore = document.querySelector('[data-more-nav]');
+    if (topBtn) topBtn.addEventListener('click', open);
+    if (tabMore) tabMore.addEventListener('click', open);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+
+    /* 点遮罩（非 sheet 本体）关闭 —— 注意 sheet 与 overlay 可能同层 */
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) close();
+    });
+
+    /* 模块切换项：KP_APP.activate 后关闭（sheet 内所有 [data-nav]，排除"更多"自身） */
+    $allSafe('[data-nav]', sheet).forEach(function (item) {
+      var mod = item.getAttribute('data-nav');
+      if (!mod || mod === 'more') return;
+      item.addEventListener('click', function () {
+        var app = (globalThis.KP_APP);
+        if (app && app.activate) app.activate(mod);
+        close();
+      });
+    });
+
+    /* 导出 / 导入（sheet 内新入口） */
+    var exp = sheet.querySelector('[data-export-data]');
+    if (exp) exp.addEventListener('click', function () { exportData(); close(); });
+    var impInput = sheet.querySelector('[data-import]');
+    if (impInput) impInput.addEventListener('change', function () {
+      var f = this.files && this.files[0];
+      if (f) importData(f);
+      this.value = '';
+      close();
+    });
+
+    /* Esc 关闭（桌面） */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('is-open')) close();
+    });
+  }
+
+  /* 安全 querySelectorAll（root 可能不是 Element） */
+  function $allSafe(sel, root) {
+    var el = (root && root.querySelectorAll) ? root : document;
+    return Array.prototype.slice.call(el.querySelectorAll(sel));
   }
 
   /* ---------------- 初始化 ---------------- */
@@ -148,6 +213,7 @@
     setupOnlineUI();
     bindImportExport();
     bindPlanScroll();
+    bindMoreSheet();
   }
 
   if (document.readyState === 'loading') {

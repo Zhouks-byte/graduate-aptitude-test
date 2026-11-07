@@ -30,12 +30,13 @@ var PLAN_SCROLL_INJECT = '' +
   '})();' +
   '</script>';
 
-var VERSION = 'kp-v2';
+var VERSION = 'kp-v3';
 var APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './styles.css',
+  './styles-mobile-ux.css',
   './src/content.js',
   './src/model.js',
   './src/store.js',

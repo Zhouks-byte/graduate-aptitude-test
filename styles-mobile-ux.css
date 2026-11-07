@@ -1,0 +1,309 @@
+/* ============ 移动端体验增强（2026-11） ============ */
+/* 目标：更简洁 / 更流畅 / 更美观；保留设计系统变量，只新增不改已有。 */
+
+/* ---------- tabbar：单行水平可滚（替代双行 5+4） ---------- */
+/* 移动端：6 项（5 核心 + 1 更多），单行 56px，每格 ≈1/6 屏宽，横向不溢出无需滚动 */
+@media (max-width: 768px) {
+  :root {
+    --tabbar-h: 56px;
+    --tabbar-rows: 1;
+  }
+  .tabbar {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;          /* Firefox 隐藏滚动条 */
+    padding: 0 var(--sp-2);
+    box-sizing: border-box;
+  }
+  .tabbar::-webkit-scrollbar { display: none; }
+  .tabbar__item {
+    flex: 1 1 0;
+    min-width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    line-height: 1.2;
+    cursor: pointer;
+    padding: var(--sp-2) 0;
+    min-height: var(--tabbar-h);
+    position: relative;
+    transition: color 0.15s;
+  }
+  .tabbar__icon {
+    font-size: 18px;
+    line-height: 1;
+    /* 图标区高度 20px，触达目标整格 ≥ 56px */
+  }
+  .tabbar__text {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .tabbar__item.is-active {
+    color: var(--brand-600);
+    font-weight: 600;
+  }
+  /* 选中指示：顶部一条短横条（比仅变色更清晰，流畅无动画成本） */
+  .tabbar__item.is-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--brand-600);
+  }
+  /* "更多" 项图标弱化 */
+  .tabbar__item--more .tabbar__icon { font-size: 16px; }
+  .tabbar__item--more.is-active { color: var(--brand-600); }
+}
+
+/* ---------- "更多" 底部 sheet（移动端） ---------- */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 40;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.sheet-overlay.is-open { display: flex; }
+.sheet {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  padding: 0 var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.25);
+  animation: kp-sheet-up 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+@keyframes kp-sheet-up {
+  from { transform: translateY(100%); opacity: 0.6; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-4) 0 var(--sp-3);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+.sheet__title { font-size: 15px; font-weight: 600; color: var(--text); }
+.sheet__close {
+  width: 32px; height: 32px;
+  border: none;
+  background: var(--surface-alt);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.sheet__body { display: flex; flex-direction: column; gap: 2px; }
+.sheet__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+  padding: var(--sp-3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  min-height: 48px;
+}
+.sheet__item > span { font-size: 18px; width: 24px; text-align: center; }
+.sheet__item:hover { background: var(--surface-alt); }
+.sheet__item--muted { color: var(--text-secondary); font-size: 14px; }
+.sheet__hr { border: none; height: 1px; background: var(--border); margin: var(--sp-2) 0; }
+
+/* 桌面（>768px）：sheet 居中卡片而非底部抽屉 */
+@media (min-width: 769px) {
+  .sheet-overlay { align-items: center; }
+  .sheet {
+    border-radius: var(--radius-xl);
+    animation: kp-sheet-pop 0.2s ease;
+    max-width: 360px;
+  }
+  @keyframes kp-sheet-pop {
+    from { transform: scale(0.96); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+}
+
+/* ---------- 题库筛选：移动端可折叠，默认收起 ---------- */
+/* 桌面保留完整；移动端把 科目/章节/题型/难度 4 组收进"筛选"开关，
+   露出搜索 + 已选摘要，减少首屏杂乱。
+   注意：主 styles.css 把 .quiz-filters__group 设为 display:flex（非 @media），
+   因此移动端需用子选择器 [data-filters-collapse] .quiz-filters__group 强制覆盖。 */
+.quiz-filters__toggle {
+  display: none; /* 桌面隐藏 */
+}
+@media (max-width: 768px) {
+  .quiz-filters {
+    display: flex;        /* 覆盖主 CSS 的 flex-wrap 布局 */
+    flex-direction: column;
+    gap: var(--sp-2);
+    flex-wrap: nowrap;
+  }
+  /* 快速行：搜索 + 筛选开关，横向 */
+  .quiz-filters__quick {
+    display: flex;
+    gap: var(--sp-2);
+    align-items: center;
+  }
+  .quiz-filters__search { flex: 1; min-width: 0; }
+  .quiz-filters__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    padding: 0 var(--sp-3);
+    font-size: 13px;
+    cursor: pointer;
+    min-height: 36px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .quiz-filters__toggle.is-open { color: var(--brand-600); border-color: var(--brand-400); }
+  .quiz-filters__toggle__badge {
+    font-size: 11px;
+    background: var(--brand-600);
+    color: #fff;
+    border-radius: 999px;
+    min-width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    padding: 0 4px;
+  }
+  /* 已选摘要（默认隐藏，有筛选时 JS 加 .is-shown） */
+  .quiz-filters__active { display: none; }
+  .quiz-filters__active.is-shown {
+    display: flex;
+    gap: var(--sp-2);
+    flex-wrap: wrap;
+  }
+  /* 4 个分组 + 限时默认收起（需子选择器覆盖主 CSS 的 display:flex） */
+  .quiz-filters__collapsible {
+    display: none;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding-top: var(--sp-2);
+    border-top: 1px dashed var(--border);
+    margin-top: var(--sp-1);
+  }
+  .quiz-filters__collapsible.is-open { display: flex; }
+  .quiz-filters__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    align-items: center;
+  }
+  .quiz-filters__group .quiz-filters__label {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  .quiz-filters__limit {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    width: 100%;
+  }
+}
+
+/* 已选筛选摘要（露出在折叠区外，让用户知道当前筛选） */
+.quiz-filters__active {
+  display: none;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+}
+.quiz-filters__active.is-shown { display: flex; }
+.quiz-filters__active .chip {
+  position: relative;
+  padding-right: 24px;
+}
+.quiz-filters__active .chip::after {
+  content: '×';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* ---------- 空状态美化 ---------- */
+.empty-state {
+  text-align: center;
+  padding: var(--sp-12) var(--sp-4);
+  color: var(--text-muted);
+}
+.empty-state__icon {
+  font-size: 40px;
+  margin-bottom: var(--sp-3);
+  opacity: 0.7;
+}
+.empty-state__title {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--sp-1);
+}
+.empty-state__hint {
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ---------- 仪表盘：环形卡片紧凑 + 进度条更粗 ---------- */
+@media (max-width: 480px) {
+  .dash-rings {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sp-2);
+  }
+  .dash-ring {
+    padding: var(--sp-3) var(--sp-2);
+    gap: 2px;
+  }
+  .dash-ring__svg { width: 72px; height: 72px; }
+  .dash-ring__label { font-size: 12px; }
+  .dash-ring__meta { font-size: 11px; }
+  /* 今日学习卡片（高亮）尺寸收小 */
+  .dash-ring--time .dash-ring__svg { width: 72px; height: 72px; }
+}
+
+/* ---------- 流畅性：减少非必要动画，统一缓动 ---------- */
+.btn, .chip, .tabbar__item, .quiz-card, .dash-ring, .sheet__item {
+  /* 统一 150ms ease-out，符合 Material 动效标准，触感更"跟手" */
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out,
+              background-color 0.15s ease-out, color 0.15s ease-out,
+              border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+/* 按钮按压缩放（移动端手感） */
+@media (hover: none) {
+  .btn:active, .chip:active, .tabbar__item:active, .sheet__item:active {
+    transform: scale(0.97);
+  }
+}

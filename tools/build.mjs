@@ -23,7 +23,7 @@ function read(rel) {
   return readFileSync(p, 'utf8').replace(/^\uFEFF/, '');
 }
 
-const css = read('styles.css');
+const css = read('styles.css') + '\n' + read('styles-mobile-ux.css');
 
 const jsFiles = [
   'src/content.js',
@@ -44,7 +44,8 @@ const html = read('index.html')
   .replace(/\s*<link[^>]*rel="manifest"[^>]*>/, '')
   .replace(/\s*<link[^>]*rel="icon"[^>]*>/, '')
   .replace(/\s*<link[^>]*rel="apple-touch-icon"[^>]*>/, '')
-  .replace(/<link rel="stylesheet" href="styles.css" \/>/g, '')
+  .replace(/<link rel="stylesheet" href="styles\.css" \/>/g, '')
+  .replace(/<link rel="stylesheet" href="styles-mobile-ux\.css" \/>/g, '')
   .replace(/<script src="src\/content\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/model\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/store\.js"><\/script>\s*/g, '')
