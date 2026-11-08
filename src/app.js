@@ -5,7 +5,7 @@
   var KP_APP = {};
 
   var MODULES = [
-    'dashboard', 'school', 'apply', 'signup',
+    'dashboard', 'school', 'apply', 'signup', 'exam',
     'plan', 'score-analysis', 'mock', 'notes'
   ];
 
@@ -14,6 +14,7 @@
     school:         '考研择校',
     apply:          '志愿模拟',
     signup:         '报名模拟',
+    exam:           '科目识别',
     plan:           '备考计划',
     'score-analysis': '成绩分析',
     mock:           '模考',
@@ -159,6 +160,7 @@
           '<a class="dash-entry" href="#school"><span class="dash-entry__icon">🏫</span> 择校</a>' +
           '<a class="dash-entry" href="#apply"><span class="dash-entry__icon">📝</span> 志愿</a>' +
           '<a class="dash-entry" href="#signup"><span class="dash-entry__icon">📑</span> 报名</a>' +
+          '<a class="dash-entry" href="#exam"><span class="dash-entry__icon">🎯</span> 科目</a>' +
           '<a class="dash-entry" href="#score-analysis"><span class="dash-entry__icon">📊</span> 成绩</a>' +
         '</div>';
 
@@ -201,6 +203,10 @@
           break;
         case 'signup':
           if (global.KP_SIGNUP) global.KP_SIGNUP.render(v);
+          else renderPlaceholder(v, moduleId);
+          break;
+        case 'exam':
+          if (global.KP_EXAM) global.KP_EXAM.render(v);
           else renderPlaceholder(v, moduleId);
           break;
         case 'score-analysis':

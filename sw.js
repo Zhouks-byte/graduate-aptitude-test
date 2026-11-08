@@ -30,7 +30,7 @@ var PLAN_SCROLL_INJECT = '' +
   '})();' +
   '</script>';
 
-var VERSION = 'kp-v4';
+var VERSION = 'kp-v5';
 var APP_SHELL = [
   './',
   './index.html',
@@ -44,6 +44,7 @@ var APP_SHELL = [
   './src/school.js',
   './src/apply.js',
   './src/signup.js',
+  './src/exam.js',
   './src/score.js',
   './src/app.js',
   './sw-register.js',

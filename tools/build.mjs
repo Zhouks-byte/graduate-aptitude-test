@@ -33,6 +33,7 @@ const jsFiles = [
   'src/school.js',
   'src/apply.js',
   'src/signup.js',
+  'src/exam.js',
   'src/score.js',
   'src/app.js',
   'sw-register.js'
@@ -57,6 +58,7 @@ const html = read('index.html')
   .replace(/<script src="src\/school\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/apply\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/signup\.js"><\/script>\s*/g, '')
+  .replace(/<script src="src\/exam\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/score\.js"><\/script>\s*/g, '')
   .replace(/<script src="src\/app\.js"><\/script>\s*/g, '')
   .replace(/<script src="sw-register\.js"><\/script>\s*/g, '')

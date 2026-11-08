@@ -41,7 +41,7 @@
     return Math.max(0, Math.min(1, 0.5 + integral / 2.5066282746));
   }
 
-  C.addRecord = function (scores, label, view) {
+  C.addRecord = function (scores, label, view, noMath) {
     var store = global.KP_STORE;
     if (!store) return;
     var subs = store.get('score.submissions') || [];
@@ -49,20 +49,28 @@
     SUBJECTS.forEach(function (s) {
       var v = Number(scores[s]) || 0;
       total += v;
-      maxTotal += FULL[s];
+      /* 不考数学：数学不计入满分（总分按 3 科计） */
+      if (noMath && s === '数学') { /* skip */ }
+      else maxTotal += FULL[s];
     });
-    /* 位次估算：各科分别估算后取平均 */
+    /* 位次估算：各科分别估算后取平均（不考数学则 3 科平均） */
     var pctAvg = 0;
+    var cnt = 0;
     SUBJECTS.forEach(function (s) {
+      if (noMath && s === '数学') return;
       var v = Number(scores[s]) || 0;
       var n = NORM[s];
-      pctAvg += estPercentile(v, n.avg, n.sd) / SUBJECTS.length;
+      pctAvg += estPercentile(v, n.avg, n.sd);
+      cnt++;
     });
+    pctAvg = cnt ? pctAvg / cnt : 0;
     var sub = {
       id: 'sc' + Date.now().toString(36),
       label: label || ('第 ' + (subs.length + 1) + ' 次'),
       scores: scores,
       total: total,
+      maxTotal: maxTotal,
+      noMath: !!noMath,
       pct: Math.round(pctAvg * 10000) / 100,
       ts: new Date().toISOString(),
       date: new Date().toISOString().slice(0, 10)
@@ -77,6 +85,21 @@
     var store = global.KP_STORE;
     var subs = store ? (store.get('score.submissions') || []) : [];
     var self = this;
+
+    /* 读上次科目识别结果（来自 KP_EXAM / store） */
+    var lastExam = store ? (store.get('exam.recognized') || [])[0] : null;
+    var examResult = lastExam && lastExam.result ? lastExam.result : null;
+    var noMath = !!(examResult && examResult.matched && !examResult.math);
+    noMath = noMath || !!(store && store.get('score.nomath'));
+    var examHintHtml = examResult
+      ? '<div class="score-form__exam-hint" data-score-exam-hint>' +
+          '<span class="score-form__exam-tag">📌 已识别科目（' + esc(examResult.school || '未填院校') + ' · ' + esc(examResult.majorInput || '未填专业') + '）</span>' +
+          '<span class="score-form__exam-subj">政治 ' + esc(examResult.politics || '') + ' · 英语 ' + esc(examResult.english || '') + ' · ' +
+            (examResult.math ? esc(examResult.math) : '不考数学') + ' · ' + esc(examResult.major || '') + '</span>' +
+          (noMath ? '<label class="score-form__exam-nomath"><input type="checkbox" data-score-nomath ' + (noMath ? 'checked' : '') + ' /> 本批次不考数学（总分按 3 科计）</label>' : '') +
+          '<button class="score-form__exam-edit" data-score-exam-edit>改</button>' +
+        '</div>'
+      : '<div class="score-form__exam-hint" data-score-exam-hint><button class="btn btn--ghost" data-score-exam-open>🎯 识别考试科目</button></div>';
 
     var latest = subs[0] || null;
 
@@ -122,6 +145,7 @@
       listHtml = '<h3 class="card__title" style="margin-top:var(--sp-4)">提交记录</h3><div class="score-list">' +
         subs.slice(0, 10).map(function (s) {
           var scores = SUBJECTS.map(function (k) {
+            if (s.noMath && k === '数学') return '<span class="score-chip score-chip--muted">数学 不考</span>';
             return '<span class="score-chip">' + k + ' ' + esc(String(s.scores[k] || 0)) + '</span>';
           }).join('');
           return '<div class="score-item">' +
@@ -148,6 +172,7 @@
             '<input class="score-form__label-input" type="text" data-score-label ' +
               'placeholder="如：第 3 次模考" value="" />' +
           '</div>' +
+          examHintHtml +
           '<div class="score-form__grid">' +
             SUBJECTS.map(function (s) {
               return '<div class="score-input" data-score-input="' + s + '">' +
@@ -176,6 +201,16 @@
     }
 
     view.addEventListener('click', function (e) {
+      var openExam = e.target.closest('[data-score-exam-open]');
+      if (openExam) {
+        if (global.KP_APP && global.KP_APP.activate) global.KP_APP.activate('exam');
+        return;
+      }
+      var editExam = e.target.closest('[data-score-exam-edit]');
+      if (editExam) {
+        if (global.KP_APP && global.KP_APP.activate) global.KP_APP.activate('exam');
+        return;
+      }
       var sub = e.target.closest('[data-score-submit]');
       if (!sub) return;
       var form = view.querySelector('[data-score-form]');
@@ -184,9 +219,14 @@
         var el = form.querySelector('[data-score-input="' + s + '"] input');
         scores[s] = el ? (Number(el.value) || 0) : 0;
       });
+      /* 不考数学：数学记 0 且不计入满分（总分按 3 科计） */
+      var noMathChk = form.querySelector('[data-score-nomath]');
+      var noMath = !!(noMathChk && noMathChk.checked);
+      if (noMath) scores['数学'] = 0;
       var labelEl = form.querySelector('[data-score-label]');
       var label = labelEl ? labelEl.value.trim() : '';
-      self.addRecord(scores, label || undefined, view);
+      if (store) store.set('score.nomath', noMath);
+      self.addRecord(scores, label || undefined, view, noMath);
     }, true);
   };
 

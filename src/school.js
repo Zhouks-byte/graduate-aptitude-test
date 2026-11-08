@@ -82,12 +82,40 @@
     return 0.18;
   }
 
+  /* ---------- 用户自定义院校（输入校名+专业 → 自动识别科目） ---------- */
+  S.addCustomSchool = function (name, major, line) {
+    var store = global.KP_STORE;
+    if (!store) return;
+    var list = store.get('school.custom') || [];
+    var id = 'custom_' + name.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '');
+    var exists = list.some(function (s) { return s.id === id; });
+    if (!exists) {
+      list.unshift({
+        id: id,
+        name: name,
+        major: major || '',
+        line: line ? Number(line) : 340,
+        addedAt: new Date().toISOString()
+      });
+      store.set('school.custom', list);
+    }
+    /* 若识别了科目，保存识别记录 */
+    if (global.KP_EXAM && name && major) {
+      var result = global.KP_EXAM.identify(name, major);
+      var recs = store.get('exam.recognized') || [];
+      recs.unshift({ result: result, ts: new Date().toISOString() });
+      if (recs.length > 20) recs.length = 20;
+      store.set('exam.recognized', recs);
+    }
+  };
+
   /* ---------- 视图 ---------- */
   S.render = function (view) {
     var content = global.KP_CONTENT ? global.KP_CONTENT.kp_suggestSchools : [];
     var meta = global.KP_CONTENT ? global.KP_CONTENT.kp_schoolsMeta : {};
     var store = global.KP_STORE;
     var storeFavs = store ? store.get('school.list') || [] : [];
+    var customList = store ? store.get('school.custom') || [] : [];
     var favSet = {};
     storeFavs.forEach(function (f) { favSet[f.id] = true; });
 
@@ -103,6 +131,52 @@
 
     var tierLabel = { hot: '热门', match: '匹配', safe: '保底' };
     var tierColor = { hot: 'var(--bad)', match: 'var(--brand-500)', safe: 'var(--ok)' };
+
+    /* 自定义院校区块 */
+    var customHtml = '';
+    if (customList.length) {
+      customHtml = '<div class="sugg-card" data-sugg-tier="custom">' +
+        '<div class="sugg-card__head">' +
+          '<span class="sugg-card__group">我的院校</span>' +
+          '<span class="sugg-card__tier" style="color:var(--brand-600, #4f46e5)">' +
+            customList.length + ' 所</span>' +
+        '</div>' +
+        '<div class="sugg-card__list">' +
+        customList.map(function (cs) {
+          var ch = estChance(score, cs.line);
+          var exam = global.KP_EXAM && cs.major ? global.KP_EXAM.identify(cs.name, cs.major) : null;
+          var examTag = exam && exam.matched
+            ? '<div class="sugg-row__exam">' + esc(exam.english) + (exam.math ? ' · ' + esc(exam.math) : '') + '</div>'
+            : '';
+          return '<div class="sugg-row sugg-row--custom">' +
+            '<span class="sugg-row__name">' + esc(cs.name) +
+              (cs.major ? ' <span class="sugg-row__major">' + esc(cs.major) + '</span>' : '') +
+            '</span>' +
+            '<span class="sugg-row__tag">' + esc(cs.line) + ' 分</span>' +
+            '<span class="sugg-row__prob" style="color:var(--brand-500, #4f46e5)">' +
+              Math.round(ch * 100) + '%</span>' +
+            examTag +
+            '<button class="sugg-row__del" data-del-custom="' + esc(cs.id) + '">✕</button>' +
+          '</div>';
+        }).join('') +
+        '</div>' +
+      '</div>';
+    }
+
+    /* 自定义院校输入表单 */
+    var addFormHtml =
+      '<div class="school-custom-form">' +
+        '<div class="school-custom-form__title">添加我的报考院校</div>' +
+        '<div class="school-custom-form__row">' +
+          '<input class="school-custom-form__input" type="text" data-custom-name ' +
+            'placeholder="院校名称（如：复旦大学）" />' +
+          '<input class="school-custom-form__input" type="text" data-custom-major ' +
+            'placeholder="专业（如：计算机科学与技术）" />' +
+          '<input class="school-custom-form__input school-custom-form__input--line" type="number" data-custom-line ' +
+            'placeholder="参考线" min="200" max="500" />' +
+        '</div>' +
+        '<button class="btn btn--primary school-custom-form__btn" data-custom-add>+ 添加并识别科目</button>' +
+      '</div>';
 
     var rows = '';
     Object.keys(groups).forEach(function (g) {
@@ -134,7 +208,9 @@
     viewEl.innerHTML =
       '<div class="card school-card">' +
         '<h2 class="card__title">考研择校</h2>' +
-        '<p class="card__desc">按「目标分 ' + score + ' 分」匹配推荐 · 点击行查看详情</p>' +
+        '<p class="card__desc">共 ' + (Object.keys(meta).length) + ' 所院校 · 按「目标分 ' + score + ' 分」匹配推荐</p>' +
+        addFormHtml +
+        customHtml +
         rows +
         '<div class="sugg-actions">' +
           '<button class="btn btn--primary" data-open-suggest>模拟报考</button>' +
@@ -155,8 +231,47 @@
           var target = content[0] && meta[content[0].id];
           if (target && global.KP_APP.activate) global.KP_APP.activate('apply');
         }
+        return;
+      }
+      /* 添加自定义院校 */
+      var addBtn = e.target.closest('[data-custom-add]');
+      if (addBtn) {
+        var nameEl = viewEl.querySelector('[data-custom-name]');
+        var majorEl = viewEl.querySelector('[data-custom-major]');
+        var lineEl = viewEl.querySelector('[data-custom-line]');
+        var name = nameEl ? nameEl.value.trim() : '';
+        var major = majorEl ? majorEl.value.trim() : '';
+        var line = lineEl ? lineEl.value.trim() : '';
+        if (!name) { flash('请输入院校名称'); return; }
+        S.addCustomSchool(name, major, line || undefined);
+        if (nameEl) nameEl.value = '';
+        if (majorEl) majorEl.value = '';
+        if (lineEl) lineEl.value = '';
+        flash(major ? '已添加并识别科目' : '已添加（未填专业，跳过科目识别）');
+        S.render(viewEl);
+        return;
+      }
+      /* 删除自定义院校 */
+      var delBtn = e.target.closest('[data-del-custom]');
+      if (delBtn) {
+        var delId = delBtn.getAttribute('data-del-custom');
+        var store = global.KP_STORE;
+        if (store) {
+          var list = store.get('school.custom') || [];
+          list = list.filter(function (s) { return s.id !== delId; });
+          store.set('school.custom', list);
+        }
+        S.render(viewEl);
       }
     }, true);
+
+    function flash(msg) {
+      var hint = document.getElementById('offline-hint');
+      if (!hint) return;
+      hint.textContent = msg;
+      hint.classList.add('show');
+      setTimeout(function () { hint.classList.remove('show'); }, 2200);
+    }
   };
 
   function esc(s) {

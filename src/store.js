@@ -44,7 +44,10 @@
     'apply.draft': {},          /* 志愿草稿 {hot, match, safe} */
     'apply.submissions': [],    /* 志愿提交记录 [{id, chance, draft, score, ts, date}] */
     'signup.state': {},         /* 报名状态 {nodes:{}, info:{}} */
-    'score.submissions': []     /* 成绩记录 [{id, label, scores, total, pct, ts, date}] */
+    'score.submissions': [],    /* 成绩记录 [{id, label, scores, total, pct, ts, date}] */
+    'exam.recognized': [],      /* 科目识别记录 [{result, ts}] */
+    'score.nomath': false,      /* 成绩分析：当前是否不考数学（3 科计） */
+    'school.custom': []         /* 用户自定义院校 [{id, name, major, line, addedAt}] */
   };
 
   /* 内存态：init() 前为空，init() 后与 localStorage 同步 */

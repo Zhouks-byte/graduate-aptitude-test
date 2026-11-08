@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="考研择校 · 志愿模拟 · 报名模拟 · 成绩分析 · 计划 · 模考 · 笔记，数据仅存本机，可离线使用" />
+  <meta name="description" content="考研择校 · 志愿模拟 · 报名模拟 · 科目识别 · 成绩分析 · 计划 · 模考 · 笔记，数据仅存本机，可离线使用" />
   <meta name="theme-color" content="#4f46e5" />
   <meta name="color-scheme" content="light dark" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -3090,10 +3090,210 @@ html, body {
   border-color: var(--brand-500);
 }
 
+/* ---------- 科目识别（exam） ---------- */
+.exam-card { margin-top: var(--sp-3); }
+.exam-form {
+  margin: var(--sp-4) 0;
+  padding: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2, var(--gray-50));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.exam-field { display: flex; flex-direction: column; gap: 4px; }
+.exam-field__label { font-size: 13px; color: var(--text-secondary); }
+.exam-field__input,
+.exam-field__select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 15px;
+}
+.exam-field__input:focus,
+.exam-field__select:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-500) 15%, transparent);
+}
+.exam-form__actions { text-align: right; }
+.exam-last {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.exam-last__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+}
+.exam-last__head b { font-size: 14px; color: var(--text); }
+.exam-last__school { font-size: 13px; color: var(--text-secondary); }
+.exam-subjects {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-2);
+}
+@media (min-width: 769px) {
+  .exam-subjects { grid-template-columns: repeat(4, 1fr); }
+}
+.exam-subject {
+  padding: var(--sp-3);
+  border-radius: 10px;
+  background: var(--surface-2, var(--gray-50));
+  border: 1px solid var(--border);
+}
+.exam-subject__label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.exam-subject__text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+.exam-tip {
+  margin-top: var(--sp-3);
+  font-size: 12px;
+  color: var(--text-tertiary, var(--gray-400));
+  line-height: 1.5;
+}
+
+/* ---------- 成绩分析：科目识别提示 ---------- */
+.score-form__exam-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--brand-500) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-500) 20%, transparent);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.score-form__exam-tag { font-weight: 600; color: var(--brand-600, #4f46e5); }
+.score-form__exam-subj { color: var(--text); }
+.score-form__exam-nomath {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+}
+.score-form__exam-edit {
+  border: none;
+  background: var(--brand-500);
+  color: #fff;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.score-chip--muted {
+  background: var(--gray-100);
+  color: var(--text-tertiary, var(--gray-400));
+  text-decoration: line-through;
+}
+
+/* ---------- 择校：用户自定义院校 ---------- */
+.school-custom-form {
+  margin: var(--sp-4) 0;
+  padding: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2, var(--gray-50));
+}
+.school-custom-form__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--sp-3);
+}
+.school-custom-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+@media (min-width: 769px) {
+  .school-custom-form__row { grid-template-columns: 2fr 2fr 1fr; }
+}
+.school-custom-form__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+}
+.school-custom-form__input--line {
+  grid-column: span 2;
+}
+@media (min-width: 769px) {
+  .school-custom-form__input--line { grid-column: auto; }
+}
+.school-custom-form__input:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-500) 15%, transparent);
+}
+.school-custom-form__btn { width: 100%; }
+.sugg-row--custom {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: start;
+  gap: var(--sp-2);
+}
+.sugg-row__major {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: block;
+}
+.sugg-row__exam {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--brand-500) 8%, transparent);
+}
+.sugg-row__del {
+  border: none;
+  background: var(--gray-100);
+  color: var(--text-secondary);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sugg-row__del:hover, .sugg-row__del:active { background: var(--bad); color: #fff; }
+
 /* ---------- 按钮按压缩放（移动端手感） ---------- */
 @media (hover: none) {
   .btn:active, .chip:active, .tabbar__item:active, .sheet__item:active,
-  .sugg-row:active, .dash-entry:active, .dash-task:active {
+  .sugg-row:active, .dash-entry:active, .dash-task:active,
+  .score-form__exam-edit:active, .sugg-row__del:active {
     transform: scale(0.97);
   }
 }
@@ -3130,6 +3330,7 @@ html, body {
         <li class="nav-item" data-nav="school"><span class="nav-item__icon">🏫</span><span class="nav-item__text">考研择校</span></li>
         <li class="nav-item" data-nav="apply"><span class="nav-item__icon">📝</span><span class="nav-item__text">志愿模拟</span></li>
         <li class="nav-item" data-nav="signup"><span class="nav-item__icon">📑</span><span class="nav-item__text">报名模拟</span></li>
+        <li class="nav-item" data-nav="exam"><span class="nav-item__icon">🎯</span><span class="nav-item__text">科目识别</span></li>
         <li class="nav-item" data-nav="plan"><span class="nav-item__icon">🗓</span><span class="nav-item__text">备考计划</span></li>
         <li class="nav-item" data-nav="score-analysis"><span class="nav-item__icon">📊</span><span class="nav-item__text">成绩分析</span></li>
         <li class="nav-item" data-nav="mock"><span class="nav-item__icon">🎯</span><span class="nav-item__text">模考</span></li>
@@ -3143,6 +3344,7 @@ html, body {
       <section class="view" data-view="school"></section>
       <section class="view" data-view="apply"></section>
       <section class="view" data-view="signup"></section>
+      <section class="view" data-view="exam"></section>
       <section class="view" data-view="plan"></section>
       <section class="view" data-view="score-analysis"></section>
       <section class="view" data-view="mock"></section>
@@ -3167,6 +3369,7 @@ html, body {
           <button class="sheet__close" data-sheet-close aria-label="关闭">✕</button>
         </div>
         <div class="sheet__body">
+          <button class="sheet__item" data-nav="exam"><span>🎯</span> 科目识别</button>
           <button class="sheet__item" data-nav="score-analysis"><span>📊</span> 成绩分析</button>
           <button class="sheet__item" data-nav="mock"><span>🎯</span> 模考记录</button>
           <button class="sheet__item" data-nav="notes"><span>📓</span> 学习笔记</button>
@@ -3714,7 +3917,211 @@ html, body {
     'hu':       { id: 'hu', name: '华中科技大学（985）', level: '985', type: '理工', city: '武汉',
       base25: 1.4, fee: 7000, duration: 3, ratio2025: '1:11', line2025: '355',
       majors: '机械 / 光电 / 计算机',
-      tags: ['自划线'], website: 'https://www.hust.edu.cn' }
+      tags: ['自划线'], website: 'https://www.hust.edu.cn' },
+
+    /* ===== 985 补充 ===== */
+    'njust2':   { id: 'njust2', name: '东南大学', level: '985', type: '理工', city: '南京',
+      base25: 1.3, fee: 7000, duration: 3, ratio2025: '1:10', line2025: '355',
+      majors: '建筑 / 电子 / 土木 / 生物',
+      tags: ['建筑强校'], website: 'https://www.seu.edu.cn' },
+    'sjtu':     { id: 'sjtu', name: '同济大学（985）', level: '985', type: '理工', city: '上海',
+      base25: 1.5, fee: 8000, duration: 3, ratio2025: '1:13', line2025: '365',
+      majors: '建筑 / 土木 / 设计',
+      tags: ['建筑强校'], website: 'https://www.tongji.edu.cn' },
+    'zju2':     { id: 'zju2', name: '浙江大学（985）', level: '985', type: '综合', city: '杭州',
+      base25: 1.7, fee: 8000, duration: 3, ratio2025: '1:14', line2025: '375',
+      majors: '计算机 / 机械',
+      tags: ['自划线'], website: 'https://www.zju.edu.cn' },
+    'whu':      { id: 'whu', name: '武汉大学', level: '985', type: '综合', city: '武汉',
+      base25: 1.4, fee: 7000, duration: 3, ratio2025: '1:12', line2025: '355',
+      majors: '法学 / 测绘 / 计算机 / 经管',
+      tags: ['自划线'], website: 'https://www.whu.edu.cn' },
+    'sjt':      { id: 'sjt', name: '四川大学', level: '985', type: '综合', city: '成都',
+      base25: 1.2, fee: 7000, duration: 3, ratio2025: '1:10', line2025: '350',
+      majors: '医学 / 文学 / 电子 / 化学',
+      tags: ['自划线'], website: 'https://www.scu.edu.cn' },
+    'xcum':     { id: 'xcum', name: '西北工业大学', level: '985', type: '理工', city: '西安',
+      base25: 1.2, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '350',
+      majors: '航空 / 机械 / 计算机 / 材料',
+      tags: ['国防七子'], website: 'https://www.nwpu.edu.cn' },
+    'npu':      { id: 'npu', name: '西北农林科技大学', level: '985', type: '农林', city: '咸阳',
+      base25: 0.8, fee: 5000, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '农学 / 林学 / 食品',
+      tags: ['农林'], website: 'https://www.nwafu.edu.cn' },
+    'dlu':      { id: 'dlu', name: '大连理工大学', level: '985', type: '理工', city: '大连',
+      base25: 1.3, fee: 7000, duration: 3, ratio2025: '1:11', line2025: '355',
+      majors: '化工 / 机械 / 计算机 / 经管',
+      tags: ['工科强'], website: 'https://www.dlut.edu.cn' },
+    'jlu':      { id: 'jlu', name: '吉林大学', level: '985', type: '综合', city: '长春',
+      base25: 1.0, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '法学 / 化学 / 医学 / 经管',
+      tags: ['综合'], website: 'https://www.jlu.edu.cn' },
+    'neau':     { id: 'neau', name: '东北大学', level: '985', type: '理工', city: '沈阳',
+      base25: 0.9, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '335',
+      majors: '计算机 / 自动化 / 冶金',
+      tags: ['工科强'], website: 'https://www.neu.edu.cn' },
+    'hebu':     { id: 'hebu', name: '中央民族大学', level: '985', type: '民族', city: '北京',
+      base25: 0.9, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '民族学 / 汉语言 / 艺术',
+      tags: ['民族'], website: 'https://www.muc.edu.cn' },
+    'scut2':    { id: 'scut2', name: '华南理工大学（985）', level: '985', type: '理工', city: '广州',
+      base25: 1.1, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '345',
+      majors: '建筑 / 食品',
+      tags: ['工科强'], website: 'https://www.scut.edu.cn' },
+    'zju3':     { id: 'zju3', name: '中南大学', level: '985', type: '综合', city: '长沙',
+      base25: 1.1, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '345',
+      majors: '材料 / 医学 / 金融',
+      tags: ['综合'], website: 'https://www.csu.edu.cn' },
+    'hnu':      { id: 'hnu', name: '湖南大学', level: '985', type: '综合', city: '长沙',
+      base25: 1.0, fee: 6500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '建筑 / 机械 / 设计',
+      tags: ['建筑强校'], website: 'https://www.hnu.edu.cn' },
+    'suda':     { id: 'suda', name: '苏州大学', level: '211', type: '综合', city: '苏州',
+      base25: 0.8, fee: 5500, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '医学 / 纺织 / 法学',
+      tags: ['江苏'], website: 'https://www.suda.edu.cn' },
+    'jlu2':     { id: 'jlu2', name: '吉林大学（211）', level: '211', type: '综合', city: '长春',
+      base25: 0.9, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '法学 / 化学',
+      tags: ['老牌'], website: 'https://www.jlu.edu.cn' },
+    'nankai2':  { id: 'nankai2', name: '南开大学（211）', level: '211', type: '综合', city: '天津',
+      base25: 1.0, fee: 6500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '数学 / 化学 / 历史',
+      tags: ['老牌'], website: 'https://www.nankai.edu.cn' },
+
+    /* ===== 211 补充 ===== */
+    'beijing':  { id: 'beijing', name: '北京理工大学', level: '211', type: '理工', city: '北京',
+      base25: 1.2, fee: 7000, duration: 3, ratio2025: '1:10', line2025: '355',
+      majors: '兵器 / 计算机 / 光电',
+      tags: ['国防七子'], website: 'https://www.bit.edu.cn' },
+    'ustc2':    { id: 'ustc2', name: '中国地质大学（北京）', level: '211', type: '理工', city: '北京',
+      base25: 0.9, fee: 6000, duration: 3, ratio2025: '1:8', line2025: '335',
+      majors: '地质 / 资源 / 环境',
+      tags: ['行业'], website: 'https://www.cug.edu.cn' },
+    'cuc':      { id: 'cuc', name: '中国传媒大学', level: '211', type: '传媒', city: '北京',
+      base25: 1.2, fee: 10000, duration: 3, ratio2025: '1:11', line2025: '365',
+      majors: '新闻传播 / 艺术 / 数字媒体',
+      tags: ['传媒'], website: 'https://www.cuc.edu.cn' },
+    'cua':      { id: 'cua', name: '中国农业大学', level: '211', type: '农林', city: '北京',
+      base25: 0.9, fee: 5000, duration: 3, ratio2025: '1:8', line2025: '335',
+      majors: '农业 / 食品 / 兽医',
+      tags: ['农林'], website: 'https://www.cau.edu.cn' },
+    'cau':      { id: 'cau', name: '中央财经大学', level: '211', type: '财经', city: '北京',
+      base25: 1.3, fee: 8000, duration: 3, ratio2025: '1:12', line2025: '370',
+      majors: '金融 / 会计 / 统计 / 经济',
+      tags: ['财经'], website: 'https://www.cufe.edu.cn' },
+    'bua':      { id: 'bua', name: '北京外国语大学', level: '211', type: '语言', city: '北京',
+      base25: 1.1, fee: 7000, duration: 3, ratio2025: '1:10', line2025: '360',
+      majors: '外语 / 翻译 / 国际关系',
+      tags: ['语言'], website: 'https://www.bfsu.edu.cn' },
+    'tsinghua2': { id: 'tsinghua2', name: '北京体育大学', level: '211', type: '体育', city: '北京',
+      base25: 0.7, fee: 5000, duration: 3, ratio2025: '1:6', line2025: '330',
+      majors: '体育 / 运动训练',
+      tags: ['行业'], website: 'https://www.bsu.edu.cn' },
+    'rcces2':   { id: 'rcces2', name: '北京邮电大学', level: '211', type: '理工', city: '北京',
+      base25: 1.1, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '350',
+      majors: '通信 / 计算机 / 电子',
+      tags: ['信息'], website: 'https://www.bupt.edu.cn' },
+    'bnu':      { id: 'bnu', name: '北京师范大学', level: '985', type: '师范', city: '北京',
+      base25: 1.4, fee: 7000, duration: 3, ratio2025: '1:12', line2025: '360',
+      majors: '教育 / 心理 / 中文 / 历史',
+      tags: ['师范', '自划线'], website: 'https://www.bnu.edu.cn' },
+    'tsu':      { id: 'tsu', name: '天津大学', level: '985', type: '理工', city: '天津',
+      base25: 1.4, fee: 7000, duration: 3, ratio2025: '1:12', line2025: '360',
+      majors: '化工 / 机械 / 建筑 / 经管',
+      tags: ['自划线'], website: 'https://www.tju.edu.cn' },
+    'hebu2':    { id: 'hebu2', name: '河北大学', level: '211', type: '综合', city: '保定',
+      base25: 0.6, fee: 4500, duration: 3, ratio2025: '1:6', line2025: '325',
+      majors: '医学 / 中文 / 历史',
+      tags: ['行业'], website: 'https://www.hbu.edu.cn' },
+    'nbu':      { id: 'nbu', name: '宁波大学', level: '211', type: '综合', city: '宁波',
+      base25: 0.7, fee: 5000, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '水产 / 材料 / 法学',
+      tags: ['行业'], website: 'https://www.nbu.edu.cn' },
+    'zju4':     { id: 'zju4', name: '杭州电子科技大学', level: '双非', type: '理工', city: '杭州',
+      base25: 0.7, fee: 4500, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '计算机 / 电子 / 通信',
+      tags: ['信息'], website: 'https://www.hdu.edu.cn' },
+    'szu':      { id: 'szu', name: '深圳大学', level: '双非', type: '综合', city: '深圳',
+      base25: 0.9, fee: 5500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '计算机 / 电子 / 金融 / 法学',
+      tags: ['深圳'], website: 'https://www.szu.edu.cn' },
+    'sdu2':     { id: 'sdu2', name: '上海大学', level: '211', type: '综合', city: '上海',
+      base25: 0.8, fee: 5500, duration: 3, ratio2025: '1:8', line2025: '335',
+      majors: '美术 / 通信 / 法学 / 经管',
+      tags: ['上海'], website: 'https://www.shu.edu.cn' },
+    'npu2':     { id: 'npu2', name: '南京邮电大学', level: '双非', type: '理工', city: '南京',
+      base25: 0.7, fee: 4500, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '通信 / 计算机 / 电子',
+      tags: ['信息'], website: 'https://www.njupt.edu.cn' },
+    'hdut':     { id: 'hdut', name: '杭州师范大学', level: '双非', type: '师范', city: '杭州',
+      base25: 0.5, fee: 4000, duration: 3, ratio2025: '1:6', line2025: '320',
+      majors: '教育 / 心理 / 中文',
+      tags: ['师范'], website: 'https://www.hznu.edu.cn' },
+    'sdu3':     { id: 'sdu3', name: '山东师范大学', level: '双非', type: '师范', city: '济南',
+      base25: 0.5, fee: 4000, duration: 3, ratio2025: '1:6', line2025: '320',
+      majors: '教育 / 数学 / 中文',
+      tags: ['师范'], website: 'https://www.sdnu.edu.cn' },
+    'hnu2':     { id: 'hnu2', name: '湖南师范大学', level: '211', type: '师范', city: '长沙',
+      base25: 0.7, fee: 4500, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '教育 / 文学 / 艺术',
+      tags: ['师范'], website: 'https://www.hunnu.edu.cn' },
+    'scut3':    { id: 'scut3', name: '西南财经大学', level: '211', type: '财经', city: '成都',
+      base25: 1.2, fee: 8000, duration: 3, ratio2025: '1:11', line2025: '365',
+      majors: '金融 / 会计 / 统计',
+      tags: ['财经'], website: 'https://www.swufe.edu.cn' },
+    'sdsu2':    { id: 'sdsu2', name: '首都师范大学', level: '211', type: '师范', city: '北京',
+      base25: 0.8, fee: 5000, duration: 3, ratio2025: '1:7', line2025: '335',
+      majors: '教育 / 中文 / 心理',
+      tags: ['师范'], website: 'https://www.cnu.edu.cn' },
+    'xjtu2':    { id: 'xjtu2', name: '西北师范大学', level: '双非', type: '师范', city: '兰州',
+      base25: 0.5, fee: 4000, duration: 3, ratio2025: '1:6', line2025: '320',
+      majors: '教育 / 数学 / 中文',
+      tags: ['师范'], website: 'https://www.nwnu.edu.cn' },
+    'jlu3':     { id: 'jlu3', name: '江南大学', level: '211', type: '综合', city: '无锡',
+      base25: 0.9, fee: 5500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '食品 / 设计 / 计算机',
+      tags: ['食品'], website: 'https://www.jiangnan.edu.cn' },
+    'zju5':     { id: 'zju5', name: '郑州大学', level: '211', type: '综合', city: '郑州',
+      base25: 0.7, fee: 4500, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '医学 / 法学 / 机械',
+      tags: ['行业'], website: 'https://www.zzu.edu.cn' },
+    'njust3':   { id: 'njust3', name: '南京理工大学', level: '211', type: '理工', city: '南京',
+      base25: 1.0, fee: 6000, duration: 3, ratio2025: '1:9', line2025: '345',
+      majors: '兵器 / 计算机 / 光电',
+      tags: ['国防七子'], website: 'https://www.njust.edu.cn' },
+    'njust4':   { id: 'njust4', name: '南京航空航天大学', level: '211', type: '理工', city: '南京',
+      base25: 1.1, fee: 6500, duration: 3, ratio2025: '1:9', line2025: '350',
+      majors: '航空 / 机械 / 计算机',
+      tags: ['国防七子'], website: 'https://www.nuaa.edu.cn' },
+    'zju6':     { id: 'zju6', name: '中国矿业大学', level: '211', type: '理工', city: '徐州',
+      base25: 0.8, fee: 5000, duration: 3, ratio2025: '1:7', line2025: '335',
+      majors: '矿业 / 安全 / 机械',
+      tags: ['行业'], website: 'https://www.cumt.edu.cn' },
+    'zju7':     { id: 'zju7', name: '河海大学', level: '211', type: '理工', city: '南京',
+      base25: 0.8, fee: 5000, duration: 3, ratio2025: '1:7', line2025: '335',
+      majors: '水利 / 土木 / 环境',
+      tags: ['行业'], website: 'https://www.hhu.edu.cn' },
+    'zju8':     { id: 'zju8', name: '东华大学', level: '211', type: '综合', city: '上海',
+      base25: 0.8, fee: 5500, duration: 3, ratio2025: '1:7', line2025: '335',
+      majors: '纺织 / 设计 / 计算机',
+      tags: ['行业'], website: 'https://www.dhu.edu.cn' },
+    'zju9':     { id: 'zju9', name: '上海外国语大学', level: '211', type: '语言', city: '上海',
+      base25: 1.0, fee: 7000, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '外语 / 翻译 / 国际事务',
+      tags: ['语言'], website: 'https://www.sisu.edu.cn' },
+    'zjtu':     { id: 'zjtu', name: '西南交通大学', level: '211', type: '理工', city: '成都',
+      base25: 0.9, fee: 5500, duration: 3, ratio2025: '1:8', line2025: '340',
+      majors: '交通 / 机械 / 计算机',
+      tags: ['行业'], website: 'https://www.swjtu.edu.cn' },
+    'njust5':   { id: 'njust5', name: '福州大学', level: '211', type: '综合', city: '福州',
+      base25: 0.7, fee: 4500, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '化学 / 电气 / 计算机',
+      tags: ['行业'], website: 'https://www.fzu.edu.cn' },
+    'njust6':   { id: 'njust6', name: '长安大学', level: '211', type: '理工', city: '西安',
+      base25: 0.7, fee: 4500, duration: 3, ratio2025: '1:7', line2025: '330',
+      majors: '土木 / 交通 / 水利',
+      tags: ['行业'], website: 'https://www.chd.edu.cn' }
   };
 
   /* 推荐分组（冲/稳/保） */
@@ -3739,7 +4146,11 @@ html, body {
     { id: 'sysu',     group: '保底（稳 211）', tier: 'safe' },
     { id: 'sdsu',     group: '保底（稳 211）', tier: 'safe' },
     { id: 'scut',     group: '保底（稳 211）', tier: 'safe' },
-    { id: 'swu',      group: '保底（稳 211）', tier: 'safe' }
+    { id: 'swu',      group: '保底（稳 211）', tier: 'safe' },
+    { id: 'sdu',      group: '保底（稳 211）', tier: 'safe' },
+    { id: 'zju',      group: '保底（稳 211）', tier: 'safe' },
+    { id: 'njust3',   group: '保底（稳 211）', tier: 'safe' },
+    { id: 'njust4',   group: '保底（稳 211）', tier: 'safe' }
   ];
   /* 估算成功率（默认 target=380）：基于目标分与 2025 参考线的差距 */
   (function () {
@@ -3769,6 +4180,7 @@ html, body {
       { id: 'school',        label: '考研择校' },
       { id: 'apply',        label: '志愿模拟' },
       { id: 'signup',       label: '报名模拟' },
+      { id: 'exam',         label: '科目识别' },
       { id: 'plan',         label: '备考计划' },
       { id: 'score-analysis', label: '成绩分析' },
       { id: 'mock',         label: '模考' },
@@ -3803,7 +4215,32 @@ html, body {
     kp_schoolsMeta: kp_schoolsMeta,
 
     /** 推荐院校分组（冲/稳/保） */
-    kp_suggestSchools: kp_suggestSchools
+    kp_suggestSchools: kp_suggestSchools,
+
+    /** 考试科目识别规则（按学科门类） */
+    kp_examRules: {
+      philosophy:   { en: '英语一', math: '数学一', major: '专业课（自命题）' },
+      economics:    { en: '英语一', math: '数学三', major: '专业课（自命题）' },
+      law:          { en: '英语一', math: null,      major: '专业课（自命题）' },
+      literature:   { en: '英语一', math: null,      major: '专业课（自命题）' },
+      history:      { en: '英语一', math: null,      major: '专业课（自命题）' },
+      education:    { en: '英语二', math: null,      major: '311 教育学专业基础（统考）' },
+      science:      { en: '英语一', math: '数学一', major: '专业课（自命题）' },
+      engineering:  { en: '英语一', math: '数学一', major: '专业课（自命题）' },
+      agriculture:  { en: '英语二', math: '数学一', major: '300 农学基础（统考）' },
+      medicine:     { en: '英语二', math: null,      major: '306 临床医学综合（统考）' },
+      military:     { en: '英语二', math: '数学一', major: '专业课（自命题）' },
+      management:   { en: '英语二', math: '数学三', major: '专业课（自命题）' },
+      arts:         { en: '英语二', math: null,      major: '专业课（自命题）' },
+      'MBA':        { en: '英语二', math: null,      major: '199 管理类联考综合（统考）' },
+      'MPA':        { en: '英语二', math: null,      major: '199 管理类联考综合（统考）' },
+      'MEM':        { en: '英语二', math: null,      major: '199 管理类联考综合（统考）' },
+      accounting:   { en: '英语二', math: '数学二', major: '199 管理类联考综合（统考）' },
+      'legal-master': { en: '英语一', math: null,    major: '397 法硕基础 / 398 法硕综合（统考）' },
+      computer:     { en: '英语一', math: '数学一', major: '408 计算机学科专业基础（统考）' },
+      architecture:  { en: '英语二', math: null,      major: '131 建筑学基础（统考）' },
+      sports:        { en: '英语二', math: null,      major: '306 体育学基础（统考）' }
+    }
   };
 
   global.KP_CONTENT = KP_CONTENT;
@@ -4188,7 +4625,10 @@ html, body {
     'apply.draft': {},          /* 志愿草稿 {hot, match, safe} */
     'apply.submissions': [],    /* 志愿提交记录 [{id, chance, draft, score, ts, date}] */
     'signup.state': {},         /* 报名状态 {nodes:{}, info:{}} */
-    'score.submissions': []     /* 成绩记录 [{id, label, scores, total, pct, ts, date}] */
+    'score.submissions': [],    /* 成绩记录 [{id, label, scores, total, pct, ts, date}] */
+    'exam.recognized': [],      /* 科目识别记录 [{result, ts}] */
+    'score.nomath': false,      /* 成绩分析：当前是否不考数学（3 科计） */
+    'school.custom': []         /* 用户自定义院校 [{id, name, major, line, addedAt}] */
   };
 
   /* 内存态：init() 前为空，init() 后与 localStorage 同步 */
@@ -5341,12 +5781,40 @@ html, body {
     return 0.18;
   }
 
+  /* ---------- 用户自定义院校（输入校名+专业 → 自动识别科目） ---------- */
+  S.addCustomSchool = function (name, major, line) {
+    var store = global.KP_STORE;
+    if (!store) return;
+    var list = store.get('school.custom') || [];
+    var id = 'custom_' + name.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '');
+    var exists = list.some(function (s) { return s.id === id; });
+    if (!exists) {
+      list.unshift({
+        id: id,
+        name: name,
+        major: major || '',
+        line: line ? Number(line) : 340,
+        addedAt: new Date().toISOString()
+      });
+      store.set('school.custom', list);
+    }
+    /* 若识别了科目，保存识别记录 */
+    if (global.KP_EXAM && name && major) {
+      var result = global.KP_EXAM.identify(name, major);
+      var recs = store.get('exam.recognized') || [];
+      recs.unshift({ result: result, ts: new Date().toISOString() });
+      if (recs.length > 20) recs.length = 20;
+      store.set('exam.recognized', recs);
+    }
+  };
+
   /* ---------- 视图 ---------- */
   S.render = function (view) {
     var content = global.KP_CONTENT ? global.KP_CONTENT.kp_suggestSchools : [];
     var meta = global.KP_CONTENT ? global.KP_CONTENT.kp_schoolsMeta : {};
     var store = global.KP_STORE;
     var storeFavs = store ? store.get('school.list') || [] : [];
+    var customList = store ? store.get('school.custom') || [] : [];
     var favSet = {};
     storeFavs.forEach(function (f) { favSet[f.id] = true; });
 
@@ -5362,6 +5830,52 @@ html, body {
 
     var tierLabel = { hot: '热门', match: '匹配', safe: '保底' };
     var tierColor = { hot: 'var(--bad)', match: 'var(--brand-500)', safe: 'var(--ok)' };
+
+    /* 自定义院校区块 */
+    var customHtml = '';
+    if (customList.length) {
+      customHtml = '<div class="sugg-card" data-sugg-tier="custom">' +
+        '<div class="sugg-card__head">' +
+          '<span class="sugg-card__group">我的院校</span>' +
+          '<span class="sugg-card__tier" style="color:var(--brand-600, #4f46e5)">' +
+            customList.length + ' 所</span>' +
+        '</div>' +
+        '<div class="sugg-card__list">' +
+        customList.map(function (cs) {
+          var ch = estChance(score, cs.line);
+          var exam = global.KP_EXAM && cs.major ? global.KP_EXAM.identify(cs.name, cs.major) : null;
+          var examTag = exam && exam.matched
+            ? '<div class="sugg-row__exam">' + esc(exam.english) + (exam.math ? ' · ' + esc(exam.math) : '') + '</div>'
+            : '';
+          return '<div class="sugg-row sugg-row--custom">' +
+            '<span class="sugg-row__name">' + esc(cs.name) +
+              (cs.major ? ' <span class="sugg-row__major">' + esc(cs.major) + '</span>' : '') +
+            '</span>' +
+            '<span class="sugg-row__tag">' + esc(cs.line) + ' 分</span>' +
+            '<span class="sugg-row__prob" style="color:var(--brand-500, #4f46e5)">' +
+              Math.round(ch * 100) + '%</span>' +
+            examTag +
+            '<button class="sugg-row__del" data-del-custom="' + esc(cs.id) + '">✕</button>' +
+          '</div>';
+        }).join('') +
+        '</div>' +
+      '</div>';
+    }
+
+    /* 自定义院校输入表单 */
+    var addFormHtml =
+      '<div class="school-custom-form">' +
+        '<div class="school-custom-form__title">添加我的报考院校</div>' +
+        '<div class="school-custom-form__row">' +
+          '<input class="school-custom-form__input" type="text" data-custom-name ' +
+            'placeholder="院校名称（如：复旦大学）" />' +
+          '<input class="school-custom-form__input" type="text" data-custom-major ' +
+            'placeholder="专业（如：计算机科学与技术）" />' +
+          '<input class="school-custom-form__input school-custom-form__input--line" type="number" data-custom-line ' +
+            'placeholder="参考线" min="200" max="500" />' +
+        '</div>' +
+        '<button class="btn btn--primary school-custom-form__btn" data-custom-add>+ 添加并识别科目</button>' +
+      '</div>';
 
     var rows = '';
     Object.keys(groups).forEach(function (g) {
@@ -5393,7 +5907,9 @@ html, body {
     viewEl.innerHTML =
       '<div class="card school-card">' +
         '<h2 class="card__title">考研择校</h2>' +
-        '<p class="card__desc">按「目标分 ' + score + ' 分」匹配推荐 · 点击行查看详情</p>' +
+        '<p class="card__desc">共 ' + (Object.keys(meta).length) + ' 所院校 · 按「目标分 ' + score + ' 分」匹配推荐</p>' +
+        addFormHtml +
+        customHtml +
         rows +
         '<div class="sugg-actions">' +
           '<button class="btn btn--primary" data-open-suggest>模拟报考</button>' +
@@ -5414,8 +5930,47 @@ html, body {
           var target = content[0] && meta[content[0].id];
           if (target && global.KP_APP.activate) global.KP_APP.activate('apply');
         }
+        return;
+      }
+      /* 添加自定义院校 */
+      var addBtn = e.target.closest('[data-custom-add]');
+      if (addBtn) {
+        var nameEl = viewEl.querySelector('[data-custom-name]');
+        var majorEl = viewEl.querySelector('[data-custom-major]');
+        var lineEl = viewEl.querySelector('[data-custom-line]');
+        var name = nameEl ? nameEl.value.trim() : '';
+        var major = majorEl ? majorEl.value.trim() : '';
+        var line = lineEl ? lineEl.value.trim() : '';
+        if (!name) { flash('请输入院校名称'); return; }
+        S.addCustomSchool(name, major, line || undefined);
+        if (nameEl) nameEl.value = '';
+        if (majorEl) majorEl.value = '';
+        if (lineEl) lineEl.value = '';
+        flash(major ? '已添加并识别科目' : '已添加（未填专业，跳过科目识别）');
+        S.render(viewEl);
+        return;
+      }
+      /* 删除自定义院校 */
+      var delBtn = e.target.closest('[data-del-custom]');
+      if (delBtn) {
+        var delId = delBtn.getAttribute('data-del-custom');
+        var store = global.KP_STORE;
+        if (store) {
+          var list = store.get('school.custom') || [];
+          list = list.filter(function (s) { return s.id !== delId; });
+          store.set('school.custom', list);
+        }
+        S.render(viewEl);
       }
     }, true);
+
+    function flash(msg) {
+      var hint = document.getElementById('offline-hint');
+      if (!hint) return;
+      hint.textContent = msg;
+      hint.classList.add('show');
+      setTimeout(function () { hint.classList.remove('show'); }, 2200);
+    }
   };
 
   function esc(s) {
@@ -5774,6 +6329,257 @@ html, body {
 })(typeof window !== 'undefined' ? window : this);
 
 
+/* 模块：考试科目识别
+ * 数据层：KP_CONTENT.kp_examRules（按学科门类 → 统考科目）
+ * 存储层：kp_store 键 'exam.recognized'（用户识别记录）
+ * 功能：用户输入报考院校 + 专业/学科 → 自动识别 4 门考试科目
+ *       （政治 / 英语 / 数学或自命题 / 专业课）
+ */
+(function (global) {
+  'use strict';
+
+  var E = {};
+
+  /* ---------- 识别规则（按学科门类，参考 2026 考研统考科目） ---------- */
+  var RULES = {
+    '哲学':       { en: '英语一', math: '数学一', major: '专业课（自命题）' },
+    '经济学':     { en: '英语一', math: '数学三', major: '专业课（自命题）' },
+    '法学':       { en: '英语一', math: null,      major: '专业课（自命题）' },
+    '文学':       { en: '英语一', math: null,      major: '专业课（自命题）' },
+    '历史学':     { en: '英语一', math: null,      major: '专业课（自命题）' },
+    '教育学':     { en: '英语二', math: null,      major: '311 教育学专业基础（统考）' },
+    '理学':       { en: '英语一', math: '数学一', major: '专业课（自命题）' },
+    '工学':       { en: '英语一', math: '数学一', major: '专业课（自命题）' },
+    '农学':       { en: '英语二', math: '数学一', major: '300 农学基础（统考）' },
+    '医学':       { en: '英语二', math: null,      major: '306 临床医学综合（统考）' },
+    '军事学':     { en: '英语二', math: '数学一', major: '专业课（自命题）' },
+    '管理学':     { en: '英语二', math: '数学三', major: '专业课（自命题）' },
+    '艺术学':     { en: '英语二', math: null,      major: '专业课（自命题）' },
+    '交叉学科':   { en: '英语二', math: null,      major: '专业课（自命题）' },
+    '新闻传播':   { en: '英语一', math: null,      major: '新闻与传播专业基础（统考）' },
+    '会计':       { en: '英语二', math: '数学二', major: '199 管理类联考综合（统考）' },
+    'MPA':        { en: '英语二', math: null,      major: '199 管理类联考综合（统考）' },
+    'MBA':        { en: '英语二', math: null,      major: '199 管理类联考综合（统考）' },
+    'MEM':        { en: '英语二', math: null,      major: '199 管理类联考综合（统考）' },
+    '法律硕士':   { en: '英语一', math: null,      major: '397 法硕基础 / 398 法硕综合（统考）' },
+    '计算机':     { en: '英语一', math: '数学一', major: '408 计算机学科专业基础（统考）' },
+    '建筑学':     { en: '英语二', math: null,      major: '131 建筑学基础（统考）' },
+    '体育学':     { en: '英语二', math: null,      major: '306 体育学基础（统考）' }
+  };
+
+  /* ---------- 学科门类匹配（关键词 → 规则键） ---------- */
+  var KEYWORD_MAP = {
+    '哲学':       ['哲学', '伦理学', '逻辑学', '美学'],
+    '经济学':     ['经济学', '金融学', '国际经济', '世界经济', '数量经济', '经济统计', '产业经济'],
+    '法学':       ['法学', '法律', '知识产权', '刑法', '民法', '诉讼法', '国际法'],
+    '文学':       ['汉语言', '中国文学', '比较文学', '文艺学', '语言学'],
+    '历史学':     ['历史', '考古', '文博', '史学'],
+    '教育学':     ['教育学', '教育技术', '学科教学', '课程与教学', '教育心理'],
+    '理学':       ['数学', '物理', '化学', '生物', '地理', '大气', '海洋', '地质', '天文', '生态', '材料', '环境科学', '心理'],
+    '工学':       ['软件', '电子', '通信', '机械', '电气', '土木', '水利', '交通', '航空', '航天', '兵器', '控制', '仪器', '测绘', '能源', '动力', '核能', '食品', '轻工', '纺织', '冶金', '矿业', '安全', '化工', '海洋工程', '船舶', '船舶与海洋'],
+    '农学':       ['农业', '农学', '园艺', '植物保护', '畜牧', '兽医', '草学', '林学', '林业', '水产', '草业'],
+    '医学':       ['临床', '医学', '药学', '基础医学', '护理', '公共卫生', '卫生事业', '口腔', '影像', '麻醉'],
+    '军事学':     ['军事', '军械'],
+    '管理学':     ['工商管理', '管理科学与工程', '工业工程', '市场营销', '人力资源管理', '会计学', '审计', '技术经济', '物流', '管理'],
+    '艺术学':     ['美术', '音乐', '舞蹈', '戏剧', '电影', '广播电视', '艺术设计', '设计学', '音乐学', '表演', '播音', '艺术'],
+    '交叉学科':   ['人工智能', '集成电路', '智能科学', '量子', '碳中和'],
+    '新闻传播':   ['新闻', '传播', '传媒', '广告', '出版', '网络传播'],
+    '会计':       ['会计', 'MPACC', 'mpacc'],
+    'MPA':        ['MPA', '公共管理', '工商管理硕士', '公共管理硕士'],
+    'MBA':        ['MBA', '工商管理硕士'],
+    'MEM':        ['MEM', '工程管理硕士'],
+    '法律硕士':   ['法律硕士', '法硕', '法律（法学）', '法律（非法学）'],
+    '建筑学':     ['建筑学', '城乡规划', '风景园林', '建筑'],
+    '体育学':     ['体育', '运动', '武术', '球类', '体能'],
+    '计算机':     ['计算机科学', '计算机技术', '计算机', '软件工程']
+  };
+
+  /* ---------- 学科门类识别 ---------- */
+  E.matchCategory = function (majorInput) {
+    if (!majorInput || !majorInput.trim()) return null;
+    var q = String(majorInput).trim().toLowerCase();
+    var qUpper = String(majorInput).trim();
+    var matched = [];
+    for (var cat in KEYWORD_MAP) {
+      var kws = KEYWORD_MAP[cat];
+      for (var i = 0; i < kws.length; i++) {
+        var kw = kws[i];
+        if (qUpper.indexOf(kw) >= 0 || q.indexOf(kw.toLowerCase()) >= 0) {
+          matched.push(cat);
+          break;
+        }
+      }
+    }
+    if (!matched.length) return null;
+    /* MBA/MEM/MPA 等联考优先；其次会计；最后按命中顺序取第一个 */
+    if (matched.indexOf('MBA') >= 0) return 'MBA';
+    if (matched.indexOf('MEM') >= 0) return 'MEM';
+    if (matched.indexOf('MPA') >= 0) return 'MPA';
+    if (matched.indexOf('会计') >= 0) return '会计';
+    if (matched.indexOf('法律硕士') >= 0) return '法律硕士';
+    if (matched.indexOf('计算机') >= 0) return '计算机';
+    if (matched.indexOf('建筑学') >= 0) return '建筑学';
+    if (matched.indexOf('体育学') >= 0) return '体育学';
+    if (matched.indexOf('新闻传播') >= 0) return '新闻传播';
+    return matched[0];
+  };
+
+  /* ---------- 院校名称 → 门类（仅看校名时兜底） ---------- */
+  var SCHOOL_CATEGORY = [
+    { re: /(计算机|软件|电子|通信|邮电)/, cat: '计算机' },
+    { re: /(航空|航天|国防|兵器)/,        cat: '工学' },
+    { re: /(师范|教育)/,                   cat: '教育学' },
+    { re: /(财经|金融|会计|税务|海关)/,     cat: '管理学' },
+    { re: /(政法|公安)/,                   cat: '法学' },
+    { re: /(医学院|医科大学|药学)/,        cat: '医学' },
+    { re: /(外国语|语言)/,                 cat: '文学' },
+    { re: /(艺术|美术学院|音乐学院)/,      cat: '艺术学' },
+    { re: /(体育|运动)/,                   cat: '体育学' },
+    { re: /(农业|林业|水产|牧)/,          cat: '农学' },
+    { re: /(矿业|石油|地质|冶金|化工)/,    cat: '工学' },
+    { re: /(交通|铁路|船舶)/,             cat: '工学' },
+    { re: /(建筑|城建)/,                   cat: '建筑学' },
+    { re: /(海洋)/,                         cat: '工学' },
+    { re: /(民族)/,                         cat: '文学' },
+    { re: /(中央|清华|北大|复旦|浙大)/,    cat: '管理学' }
+  ];
+
+  E.matchSchool = function (schoolName) {
+    if (!schoolName || !schoolName.trim()) return null;
+    var s = String(schoolName).trim();
+    for (var i = 0; i < SCHOOL_CATEGORY.length; i++) {
+      if (SCHOOL_CATEGORY[i].re.test(s)) return SCHOOL_CATEGORY[i].cat;
+    }
+    return null;
+  };
+
+  /* ---------- 识别 4 门考试科目 ---------- */
+  E.identify = function (schoolName, majorInput) {
+    var cat = E.matchCategory(majorInput) || E.matchSchool(schoolName);
+    var rule = cat ? RULES[cat] : null;
+    var result = {
+      school: schoolName || '',
+      majorInput: majorInput || '',
+      category: cat,
+      politics: '101 思想政治理论',
+      english: rule ? rule.en : '英语二（默认）',
+      math: rule && rule.math ? rule.math : null,
+      major: rule ? rule.major : '专业课（自命题，未匹配到规则）',
+      matched: !!(cat && rule)
+    };
+    if (!result.math) result.math = null;
+    return result;
+  };
+
+  /* ---------- 视图 ---------- */
+  E.render = function (view) {
+    var store = global.KP_STORE;
+    var last = store ? (store.get('exam.recognized') || [])[0] : null;
+    var lastHtml = '';
+    if (last && last.result) {
+      lastHtml = '<div class="exam-last" data-exam-last>' +
+        '<div class="exam-last__head"><b>上次识别</b><span class="exam-last__school">' + esc(last.result.school || '') + ' · ' + esc(last.majorInput || '') + '</span></div>' +
+        '<div class="exam-subjects">' + buildSubjects(last.result) + '</div>' +
+      '</div>';
+    }
+
+    var viewEl = view;
+    viewEl.innerHTML =
+      '<div class="card exam-card">' +
+        '<h2 class="card__title">考试科目识别</h2>' +
+        '<p class="card__desc">输入报考院校与专业 → 自动识别 4 门考试科目（政治/英语/数学/专业课）</p>' +
+
+        '<div class="exam-form" data-exam-form>' +
+          '<div class="exam-field" data-exam-field="school">' +
+            '<label class="exam-field__label">报考院校</label>' +
+            '<input class="exam-field__input" type="text" data-exam-input="school" placeholder="如：清华大学 / 浙江大学 / 北京邮电大学" value="' + esc((last && last.result && last.result.school) || '') + '" />' +
+          '</div>' +
+          '<div class="exam-field" data-exam-field="major">' +
+            '<label class="exam-field__label">报考专业 / 学科</label>' +
+            '<input class="exam-field__input" type="text" data-exam-input="major" placeholder="如：计算机科学与技术 / 金融学 / 法律硕士" value="' + esc((last && last.majorInput) || '') + '" />' +
+          '</div>' +
+          '<div class="exam-field" data-exam-field="level">' +
+            '<label class="exam-field__label">层次（可选）</label>' +
+            '<select class="exam-field__select" data-exam-input="level">' +
+              '<option value="">不限</option>' +
+              '<option value="学术型硕士">学术型硕士</option>' +
+              '<option value="专业型硕士">专业型硕士</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="exam-form__actions">' +
+            '<button class="btn btn--primary" data-exam-identify>识别考试科目</button>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="exam-result" data-exam-result>' + lastHtml + '</div>' +
+        '<p class="exam-tip">注：考试科目以院校当年招生简章为准，本工具为「按学科门类的常见规则」快速参考。</p>' +
+      '</div>';
+
+    viewEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-exam-identify]');
+      if (!btn) return;
+      var form = viewEl.querySelector('[data-exam-form]');
+      var schoolInput = form.querySelector('[data-exam-input="school"]');
+      var majorInput = form.querySelector('[data-exam-input="major"]');
+      var levelSel = form.querySelector('[data-exam-input="level"]');
+      var school = schoolInput ? schoolInput.value.trim() : '';
+      var major = majorInput ? majorInput.value.trim() : '';
+      if (!school && !major) { flash(viewEl, '请至少填写院校或专业'); return; }
+      var result = E.identify(school, major);
+      var rec = { result: result, ts: new Date().toISOString() };
+      if (store) {
+        var list = store.get('exam.recognized') || [];
+        list.unshift(rec);
+        if (list.length > 20) list.length = 20;
+        store.set('exam.recognized', list);
+      }
+      var box = viewEl.querySelector('[data-exam-result]');
+      box.innerHTML = '<div class="exam-last" data-exam-last>' +
+        '<div class="exam-last__head"><b>识别结果</b>' +
+        '<span class="exam-last__school">' + esc(school || '（未填院校）') + ' · ' + esc(major || '（未填专业）') + '</span></div>' +
+        buildSubjects(result) +
+        '</div>';
+      flash(viewEl, result.matched ? '已识别' : '未匹配到规则，建议查院校招生简章');
+    }, true);
+  };
+
+  /* 构建 4 门科目 HTML */
+  function buildSubjects(r) {
+    var items = [
+      { label: '政治', text: r.politics },
+      { label: '英语', text: r.english },
+      { label: '数学', text: r.math || '不考数学' },
+      { label: '专业课', text: r.major }
+    ];
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      html += '<div class="exam-subject" data-exam-subject=' + esc(it.label) + '>' +
+        '<div class="exam-subject__label">' + esc(it.label) + '</div>' +
+        '<div class="exam-subject__text">' + esc(it.text) + '</div>' +
+      '</div>';
+    }
+    return html;
+  }
+
+  function flash(view, msg) {
+    var hint = document.getElementById('offline-hint');
+    if (!hint) return;
+    hint.textContent = msg;
+    hint.classList.add('show');
+    setTimeout(function () { hint.classList.remove('show'); }, 2200);
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  global.KP_EXAM = E;
+})(typeof window !== 'undefined' ? window : this);
+
+
 /* 模块：考试成绩分析
  * 数据层：KP_CONTENT.kp_scoreNorm（全国平均分参考）
  * 存储层：kp_store 'score.submissions'（成绩记录）
@@ -5817,7 +6623,7 @@ html, body {
     return Math.max(0, Math.min(1, 0.5 + integral / 2.5066282746));
   }
 
-  C.addRecord = function (scores, label, view) {
+  C.addRecord = function (scores, label, view, noMath) {
     var store = global.KP_STORE;
     if (!store) return;
     var subs = store.get('score.submissions') || [];
@@ -5825,20 +6631,28 @@ html, body {
     SUBJECTS.forEach(function (s) {
       var v = Number(scores[s]) || 0;
       total += v;
-      maxTotal += FULL[s];
+      /* 不考数学：数学不计入满分（总分按 3 科计） */
+      if (noMath && s === '数学') { /* skip */ }
+      else maxTotal += FULL[s];
     });
-    /* 位次估算：各科分别估算后取平均 */
+    /* 位次估算：各科分别估算后取平均（不考数学则 3 科平均） */
     var pctAvg = 0;
+    var cnt = 0;
     SUBJECTS.forEach(function (s) {
+      if (noMath && s === '数学') return;
       var v = Number(scores[s]) || 0;
       var n = NORM[s];
-      pctAvg += estPercentile(v, n.avg, n.sd) / SUBJECTS.length;
+      pctAvg += estPercentile(v, n.avg, n.sd);
+      cnt++;
     });
+    pctAvg = cnt ? pctAvg / cnt : 0;
     var sub = {
       id: 'sc' + Date.now().toString(36),
       label: label || ('第 ' + (subs.length + 1) + ' 次'),
       scores: scores,
       total: total,
+      maxTotal: maxTotal,
+      noMath: !!noMath,
       pct: Math.round(pctAvg * 10000) / 100,
       ts: new Date().toISOString(),
       date: new Date().toISOString().slice(0, 10)
@@ -5853,6 +6667,21 @@ html, body {
     var store = global.KP_STORE;
     var subs = store ? (store.get('score.submissions') || []) : [];
     var self = this;
+
+    /* 读上次科目识别结果（来自 KP_EXAM / store） */
+    var lastExam = store ? (store.get('exam.recognized') || [])[0] : null;
+    var examResult = lastExam && lastExam.result ? lastExam.result : null;
+    var noMath = !!(examResult && examResult.matched && !examResult.math);
+    noMath = noMath || !!(store && store.get('score.nomath'));
+    var examHintHtml = examResult
+      ? '<div class="score-form__exam-hint" data-score-exam-hint>' +
+          '<span class="score-form__exam-tag">📌 已识别科目（' + esc(examResult.school || '未填院校') + ' · ' + esc(examResult.majorInput || '未填专业') + '）</span>' +
+          '<span class="score-form__exam-subj">政治 ' + esc(examResult.politics || '') + ' · 英语 ' + esc(examResult.english || '') + ' · ' +
+            (examResult.math ? esc(examResult.math) : '不考数学') + ' · ' + esc(examResult.major || '') + '</span>' +
+          (noMath ? '<label class="score-form__exam-nomath"><input type="checkbox" data-score-nomath ' + (noMath ? 'checked' : '') + ' /> 本批次不考数学（总分按 3 科计）</label>' : '') +
+          '<button class="score-form__exam-edit" data-score-exam-edit>改</button>' +
+        '</div>'
+      : '<div class="score-form__exam-hint" data-score-exam-hint><button class="btn btn--ghost" data-score-exam-open>🎯 识别考试科目</button></div>';
 
     var latest = subs[0] || null;
 
@@ -5898,6 +6727,7 @@ html, body {
       listHtml = '<h3 class="card__title" style="margin-top:var(--sp-4)">提交记录</h3><div class="score-list">' +
         subs.slice(0, 10).map(function (s) {
           var scores = SUBJECTS.map(function (k) {
+            if (s.noMath && k === '数学') return '<span class="score-chip score-chip--muted">数学 不考</span>';
             return '<span class="score-chip">' + k + ' ' + esc(String(s.scores[k] || 0)) + '</span>';
           }).join('');
           return '<div class="score-item">' +
@@ -5924,6 +6754,7 @@ html, body {
             '<input class="score-form__label-input" type="text" data-score-label ' +
               'placeholder="如：第 3 次模考" value="" />' +
           '</div>' +
+          examHintHtml +
           '<div class="score-form__grid">' +
             SUBJECTS.map(function (s) {
               return '<div class="score-input" data-score-input="' + s + '">' +
@@ -5952,6 +6783,16 @@ html, body {
     }
 
     view.addEventListener('click', function (e) {
+      var openExam = e.target.closest('[data-score-exam-open]');
+      if (openExam) {
+        if (global.KP_APP && global.KP_APP.activate) global.KP_APP.activate('exam');
+        return;
+      }
+      var editExam = e.target.closest('[data-score-exam-edit]');
+      if (editExam) {
+        if (global.KP_APP && global.KP_APP.activate) global.KP_APP.activate('exam');
+        return;
+      }
       var sub = e.target.closest('[data-score-submit]');
       if (!sub) return;
       var form = view.querySelector('[data-score-form]');
@@ -5960,9 +6801,14 @@ html, body {
         var el = form.querySelector('[data-score-input="' + s + '"] input');
         scores[s] = el ? (Number(el.value) || 0) : 0;
       });
+      /* 不考数学：数学记 0 且不计入满分（总分按 3 科计） */
+      var noMathChk = form.querySelector('[data-score-nomath]');
+      var noMath = !!(noMathChk && noMathChk.checked);
+      if (noMath) scores['数学'] = 0;
       var labelEl = form.querySelector('[data-score-label]');
       var label = labelEl ? labelEl.value.trim() : '';
-      self.addRecord(scores, label || undefined, view);
+      if (store) store.set('score.nomath', noMath);
+      self.addRecord(scores, label || undefined, view, noMath);
     }, true);
   };
 
@@ -5977,7 +6823,7 @@ html, body {
   var KP_APP = {};
 
   var MODULES = [
-    'dashboard', 'school', 'apply', 'signup',
+    'dashboard', 'school', 'apply', 'signup', 'exam',
     'plan', 'score-analysis', 'mock', 'notes'
   ];
 
@@ -5986,6 +6832,7 @@ html, body {
     school:         '考研择校',
     apply:          '志愿模拟',
     signup:         '报名模拟',
+    exam:           '科目识别',
     plan:           '备考计划',
     'score-analysis': '成绩分析',
     mock:           '模考',
@@ -6131,6 +6978,7 @@ html, body {
           '<a class="dash-entry" href="#school"><span class="dash-entry__icon">🏫</span> 择校</a>' +
           '<a class="dash-entry" href="#apply"><span class="dash-entry__icon">📝</span> 志愿</a>' +
           '<a class="dash-entry" href="#signup"><span class="dash-entry__icon">📑</span> 报名</a>' +
+          '<a class="dash-entry" href="#exam"><span class="dash-entry__icon">🎯</span> 科目</a>' +
           '<a class="dash-entry" href="#score-analysis"><span class="dash-entry__icon">📊</span> 成绩</a>' +
         '</div>';
 
@@ -6173,6 +7021,10 @@ html, body {
           break;
         case 'signup':
           if (global.KP_SIGNUP) global.KP_SIGNUP.render(v);
+          else renderPlaceholder(v, moduleId);
+          break;
+        case 'exam':
+          if (global.KP_EXAM) global.KP_EXAM.render(v);
           else renderPlaceholder(v, moduleId);
           break;
         case 'score-analysis':

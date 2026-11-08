@@ -853,10 +853,210 @@
   border-color: var(--brand-500);
 }
 
+/* ---------- 科目识别（exam） ---------- */
+.exam-card { margin-top: var(--sp-3); }
+.exam-form {
+  margin: var(--sp-4) 0;
+  padding: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2, var(--gray-50));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.exam-field { display: flex; flex-direction: column; gap: 4px; }
+.exam-field__label { font-size: 13px; color: var(--text-secondary); }
+.exam-field__input,
+.exam-field__select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 15px;
+}
+.exam-field__input:focus,
+.exam-field__select:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-500) 15%, transparent);
+}
+.exam-form__actions { text-align: right; }
+.exam-last {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.exam-last__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+}
+.exam-last__head b { font-size: 14px; color: var(--text); }
+.exam-last__school { font-size: 13px; color: var(--text-secondary); }
+.exam-subjects {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-2);
+}
+@media (min-width: 769px) {
+  .exam-subjects { grid-template-columns: repeat(4, 1fr); }
+}
+.exam-subject {
+  padding: var(--sp-3);
+  border-radius: 10px;
+  background: var(--surface-2, var(--gray-50));
+  border: 1px solid var(--border);
+}
+.exam-subject__label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.exam-subject__text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+.exam-tip {
+  margin-top: var(--sp-3);
+  font-size: 12px;
+  color: var(--text-tertiary, var(--gray-400));
+  line-height: 1.5;
+}
+
+/* ---------- 成绩分析：科目识别提示 ---------- */
+.score-form__exam-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--brand-500) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-500) 20%, transparent);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.score-form__exam-tag { font-weight: 600; color: var(--brand-600, #4f46e5); }
+.score-form__exam-subj { color: var(--text); }
+.score-form__exam-nomath {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+}
+.score-form__exam-edit {
+  border: none;
+  background: var(--brand-500);
+  color: #fff;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.score-chip--muted {
+  background: var(--gray-100);
+  color: var(--text-tertiary, var(--gray-400));
+  text-decoration: line-through;
+}
+
+/* ---------- 择校：用户自定义院校 ---------- */
+.school-custom-form {
+  margin: var(--sp-4) 0;
+  padding: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2, var(--gray-50));
+}
+.school-custom-form__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--sp-3);
+}
+.school-custom-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+@media (min-width: 769px) {
+  .school-custom-form__row { grid-template-columns: 2fr 2fr 1fr; }
+}
+.school-custom-form__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+}
+.school-custom-form__input--line {
+  grid-column: span 2;
+}
+@media (min-width: 769px) {
+  .school-custom-form__input--line { grid-column: auto; }
+}
+.school-custom-form__input:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-500) 15%, transparent);
+}
+.school-custom-form__btn { width: 100%; }
+.sugg-row--custom {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: start;
+  gap: var(--sp-2);
+}
+.sugg-row__major {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: block;
+}
+.sugg-row__exam {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--brand-500) 8%, transparent);
+}
+.sugg-row__del {
+  border: none;
+  background: var(--gray-100);
+  color: var(--text-secondary);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sugg-row__del:hover, .sugg-row__del:active { background: var(--bad); color: #fff; }
+
 /* ---------- 按钮按压缩放（移动端手感） ---------- */
 @media (hover: none) {
   .btn:active, .chip:active, .tabbar__item:active, .sheet__item:active,
-  .sugg-row:active, .dash-entry:active, .dash-task:active {
+  .sugg-row:active, .dash-entry:active, .dash-task:active,
+  .score-form__exam-edit:active, .sugg-row__del:active {
     transform: scale(0.97);
   }
 }
